@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 16: Intro to Concentration</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* ==========================================================================
+           INTERACTIVITY 1: THE CONCENTRATION AQUARIUM
+           ========================================================================== */
+        .aquarium-wrapper {
+            background: #1a1a24;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .aquarium-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .beaker-environment {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 350px;
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .beaker-glass {
+            width: 250px;
+            height: 300px;
+            border: 4px solid rgba(255, 255, 255, 0.4);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 -10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .beaker-rim {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 270px;
+            height: 20px;
+            border: 4px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .beaker-markings {
+            position: absolute;
+            left: 10px;
+            bottom: 20px;
+            height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .beaker-mark {
+            width: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.6);
+            position: relative;
+        }
+
+        .beaker-mark::after {
+            content: attr(data-vol);
+            position: absolute;
+            left: 25px;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .water-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; /* Changed dynamically by JS */
+            background: linear-gradient(180deg, rgba(0, 195, 255, 0.3) 0%, rgba(0, 102, 255, 0.6) 100%);
+            transition: height 0.5s ease-in-out, background 0.5s ease;
+            z-index: 1;
+            border-top: 2px solid rgba(0, 195, 255, 0.8);
+        }
+
+        .particle-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .solute-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle at 30% 30%, #fff, #aaa);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
+        }
+
+        .dashboard {
+            width: 300px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .dash-panel {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #00f2ff;
+        }
+
+        .dash-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        
+        .dash-row:last-child { margin-bottom: 0; }
+        .dash-label { color: #aaa; }
+        .dash-val { color: #00f2ff; font-weight: bold; }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .sim-btn {
+            background: #2a2a35;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .sim-btn:hover { background: #00f2ff; color: #000; border-color: #00f2ff; }
+        .sim-btn-danger { border-color: #ff3366; color: #ff3366; }
+        .sim-btn-danger:hover { background: #ff3366; color: #fff; }
+
+        /* ==========================================================================
+           INTERACTIVITY 2: THE PPM MAGNIFYING GLASS
+           ========================================================================== */
+        .zoom-container {
+            background: #111;
+            border: 2px solid #444;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .zoom-slider-wrapper {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .zoom-slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #00f2ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00f2ff;
+        }
+
+        .microscope-view {
+            width: 300px;
+            height: 300px;
+            border: 8px solid #333;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0, 195, 255, 0.2), 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .micro-water {
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 195, 255, 0.4);
+            border-radius: 50%;
+            margin: 1px;
+        }
+
+        .micro-contaminant {
+            width: 10px;
+            height: 10px;
+            background: #ff3366;
+            border-radius: 50%;
+            margin: 1px;
+            box-shadow: 0 0 5px #ff3366;
+            z-index: 5;
+            position: relative;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.3); }
+        }
+
+        .zoom-label {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00f2ff;
+            font-family: monospace;
+            margin-top: 20px;
+        }
+
+        /* ==========================================================================
+           STANDARD CONTENT BOXES
+           ========================================================================== */
+        .concept-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 5px solid #00f2ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .concept-box h3 {
+            color: #00f2ff;
+            margin-top: 0;
+        }
+
+        .formula-card {
+            background: #1a1a24;
+            border: 1px solid #444;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .formula-card:hover {
+            transform: translateY(-5px);
+            border-color: #00f2ff;
+            box-shadow: 0 5px 15px rgba(0, 242, 255, 0.1);
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .highlight-text {
+            color: #00f2ff;
+            font-weight: bold;
+        }
+
+        .alert-text {
+            color: #ff3366;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html" class="active">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>16. Intro to Concentration</h1>
+            <p class="subtitle">Expressing the crowdedness of particles in a solution</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Vocabulary of Solutions</h2>
+            <p>Up until now, we have mostly dealt with solid masses or pure gases. However, the vast majority of chemical reactions occurring in nature, in your body, and in industrial laboratories take place in <strong>solution</strong>.</p>
+            
+            <div style="text-align: center; margin: 2rem 0;">
+                
+                <svg width="400" height="150" viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="sol" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00f2ff" stop-opacity="0.3" />
+                            <stop offset="100%" stop-color="#0066ff" stop-opacity="0.7" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="50" y="50" width="60" height="80" rx="5" fill="none" stroke="#fff" stroke-width="3"/>
+                    <circle cx="80" cy="110" r="15" fill="#fff" />
+                    <text x="80" y="145" fill="#fff" font-family="sans-serif" font-size="12" text-anchor="middle">Solute (Solid)</text>
+                    <text x="130" y="95" fill="#fff" font-size="24">+</text>
+                    <rect x="160" y="50" width="60" height="80" rx="5" fill="none" stroke="#fff" stroke-width="3"/>
+                    <rect x="163" y="80" width="54" height="47" fill="url(#sol)"/>
+                    <text x="190" y="145" fill="#fff" font-family="sans-serif" font-size="12" text-anchor="middle">Solvent (Liquid)</text>
+                    <text x="240" y="95" fill="#fff" font-size="24">→</text>
+                    <rect x="270" y="50" width="60" height="80" rx="5" fill="none" stroke="#fff" stroke-width="3"/>
+                    <rect x="273" y="70" width="54" height="57" fill="url(#sol)"/>
+                    <circle cx="285" cy="110" r="3" fill="#fff" />
+                    <circle cx="310" cy="100" r="3" fill="#fff" />
+                    <circle cx="300" cy="120" r="3" fill="#fff" />
+                    <circle cx="280" cy="90" r="3" fill="#fff" />
+                    <text x="300" y="145" fill="#fff" font-family="sans-serif" font-size="12" text-anchor="middle">Solution (aq)</text>
+                </svg>
+            </div>
+
+            <p>Before diving into the mathematics, we must establish the formal vocabulary:</p>
+            <ul>
+                <li><span class="highlight-text">Solute:</span> The substance being dissolved (e.g., solid salt crystals).</li>
+                <li><span class="highlight-text">Solvent:</span> The liquid doing the dissolving (e.g., water). If water is the solvent, it is called an <em>aqueous solution</em> ($aq$).</li>
+                <li><span class="highlight-text">Solution:</span> The homogeneous mixture of solute and solvent.</li>
+                <li><span class="highlight-text">Concentration:</span> A mathematical measure of how much solute is dissolved in a specific volume (or mass) of solvent.</li>
+            </ul>
+
+            <div class="concept-box">
+                <h3>💡 Molarity vs. Everything Else</h3>
+                <p>Chemists almost exclusively use <strong>Molarity (mol/L)</strong> because chemical equations rely on mole ratios. However, in industry, agriculture, and medicine, you will frequently encounter alternative units like grams per litre, percentages, and parts-per-million. You must be fluent in converting between them.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>The Six Units of Concentration</h2>
+            <p>Depending on the context, concentration can be expressed in several ways. Memorise the standard formulas below.</p>
+
+            <div class="grid-2col">
+                <div class="formula-card">
+                    <h4>UNIT 1: Molarity (M or mol/L)</h4>
+                    <p>The holy grail for chemists. It describes the number of moles of solute per litre of solution. We will dedicate the entire next lesson to this.</p>
+                    <p style="font-size: 1.5rem; color: #00f2ff;">$$ c = \frac{n}{V} $$</p>
+                </div>
+
+                <div class="formula-card">
+                    <h4>UNIT 2: Grams per Litre (g/L)</h4>
+                    <p>Useful for calculating raw material costs. Describes the mass of solid solute dissolved in one litre of total solution.</p>
+                    <p style="font-size: 1.2rem; color: #00f2ff;">$$ \text{Conc.} = \frac{\text{mass (g)}}{\text{Volume (L)}} $$</p>
+                </div>
+
+                <div class="formula-card">
+                    <h4>UNIT 3: Percentage by Mass (w/w)%</h4>
+                    <p>Commonly used for solid mixtures (like alloys) or highly concentrated acids. It stands for "weight per weight".</p>
+                    <p style="font-size: 1.2rem; color: #00f2ff;">$$ \%(w/w) = \frac{\text{mass solute (g)}}{\text{mass solution (g)}} \times 100 $$</p>
+                </div>
+
+                <div class="formula-card">
+                    <h4>UNIT 4: Percentage by Volume (v/v)%</h4>
+                    <p>Used when mixing two liquids together, such as alcohol in water or fragrances in perfumes.</p>
+                    <p style="font-size: 1.2rem; color: #00f2ff;">$$ \%(v/v) = \frac{\text{vol solute (mL)}}{\text{vol solution (mL)}} \times 100 $$</p>
+                </div>
+
+                <div class="formula-card">
+                    <h4>UNIT 5: Percentage Mass/Volume (w/v)%</h4>
+                    <p>Used extensively in medicine (e.g., IV saline drips). It specifically relates grams to millilitres.</p>
+                    <p style="font-size: 1.2rem; color: #00f2ff;">$$ \%(w/v) = \frac{\text{mass solute (g)}}{\text{vol solution (mL)}} \times 100 $$</p>
+                </div>
+
+                <div class="formula-card">
+                    <h4>UNIT 6: Parts Per Million (ppm)</h4>
+                    <p>Used for extremely dilute solutions, such as heavy metal contaminants in drinking water. 1 ppm means 1 part solute per 1,000,000 parts solution.</p>
+                    <p>For aqueous solutions (where 1 kg of water $\approx$ 1 L), it simplifies beautifully:</p>
+                    <p style="font-size: 1.5rem; color: #00f2ff;">$$ \text{ppm} = \frac{\text{mg}}{\text{L}} $$</p>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px;"><em>Note on Parts per Billion (ppb):</em> If ppm is milligrams per litre ($\text{mg/L}$), then ppb is even smaller: micrograms per litre ($\text{\mu g/L}$).</p>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive Lab: The Virtual Beaker</h2>
+            <p>Let's visualise how adding solute or changing the solvent volume impacts concentration across different units simultaneously. For this simulation, we are using <strong>Sodium Chloride ($NaCl$, Molar Mass = $58.44 \text{ g/mol}$)</strong> dissolved in water.</p>
+
+            <div class="aquarium-wrapper">
+                <div class="aquarium-display">
+                    
+                    <div class="beaker-environment">
+                        <div class="beaker-glass">
+                            <div class="beaker-rim"></div>
+                            <div class="beaker-markings">
+                                <div class="beaker-mark" data-vol="1.0L"></div>
+                                <div class="beaker-mark" data-vol="0.8L"></div>
+                                <div class="beaker-mark" data-vol="0.6L"></div>
+                                <div class="beaker-mark" data-vol="0.4L"></div>
+                                <div class="beaker-mark" data-vol="0.2L"></div>
+                            </div>
+                            <div class="water-body" id="aq-water">
+                                <div class="particle-layer" id="aq-particles">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard">
+                        <div class="dash-panel">
+                            <div class="dash-row">
+                                <span class="dash-label">Solute Mass (NaCl):</span>
+                                <span class="dash-val" id="val-mass">0.00 g</span>
+                            </div>
+                            <div class="dash-row">
+                                <span class="dash-label">Solution Volume:</span>
+                                <span class="dash-val" id="val-vol">0.20 L</span>
+                            </div>
+                        </div>
+
+                        <div class="dash-panel" style="border-left-color: #a855f7;">
+                            <div class="dash-row">
+                                <span class="dash-label">Molarity (mol/L):</span>
+                                <span class="dash-val" style="color: #a855f7;" id="val-mol">0.000 M</span>
+                            </div>
+                            <div class="dash-row">
+                                <span class="dash-label">Concentration (g/L):</span>
+                                <span class="dash-val" style="color: #a855f7;" id="val-gl">0.00 g/L</span>
+                            </div>
+                            <div class="dash-row">
+                                <span class="dash-label">Percentage (w/v)%:</span>
+                                <span class="dash-val" style="color: #a855f7;" id="val-wv">0.00 %</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span style="color: #fff; font-size: 0.9rem; font-weight: bold;">Solute Controls (NaCl)</span>
+                            <div class="control-grid">
+                                <button class="sim-btn" onclick="addSalt(1.5)">+ Add 1.5g</button>
+                                <button class="sim-btn" onclick="addSalt(5.0)">+ Add 5.0g</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span style="color: #fff; font-size: 0.9rem; font-weight: bold;">Solvent Controls (H₂O)</span>
+                            <div class="control-grid">
+                                <button class="sim-btn" onclick="addWater(0.1)">+ Add 100mL</button>
+                                <button class="sim-btn" onclick="addWater(-0.1)">- Evaporate 100mL</button>
+                            </div>
+                        </div>
+
+                        <button class="sim-btn sim-btn-danger" style="margin-top: 10px;" onclick="resetAquarium()">Empty Beaker</button>
+                    </div>
+
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: #777; text-align: center;">*Visual particle count is scaled down for rendering performance. Colour darkens as concentration increases.</p>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Micro-Scale Visualiser</h2>
+            <p>It is difficult to conceptualise just how dilute a "parts per million" or "parts per billion" solution really is. Use the slider below to zoom in on a solution from a dense 10% (w/w) mixture all the way down to a 1 ppm trace concentration.</p>
+
+            <div class="zoom-container">
+                <div class="microscope-view" id="micro-view">
+                    </div>
+                
+                <div class="zoom-label" id="zoom-text">Concentration: 10% (1 in 10)</div>
+                <p id="zoom-desc" style="color: #aaa; margin-top: 10px;">For every 10 molecules of water, there is 1 molecule of contaminant.</p>
+
+                <div class="zoom-slider-wrapper">
+                    <span style="font-weight: bold;">10%</span>
+                    <input type="range" class="zoom-slider" id="zoom-slider" min="1" max="4" value="1" step="1" oninput="updateMicroscope()">
+                    <span style="font-weight: bold;">1 ppb</span>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Guided Worked Solutions</h2>
+            <p>Review these examples to see the formal mathematical working required for the HSC. Click "View Solution" to reveal the step-by-step logic.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: Basic Grams per Litre (Easy)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A student dissolves $14.5 \text{ g}$ of Potassium Nitrate ($KNO_3$) in enough water to make exactly $250 \text{ mL}$ of solution. Calculate the concentration of the solution in $g/L$.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                </div>
+                <div id="ws-1" class="hidden-solution" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Check your units.</strong><br>
+                        Mass is given in grams ($14.5 \text{ g}$). This is correct.<br>
+                        Volume is given in millilitres ($250 \text{ mL}$). We must convert this to Litres by dividing by 1000.<br>
+                        $V = \frac{250}{1000} = 0.250 \text{ L}$</p>
+                        
+                        <p><strong>Step 2: Apply the formula.</strong><br>
+                        $$ c = \frac{mass}{Volume} $$
+                        $$ c = \frac{14.5 \text{ g}}{0.250 \text{ L}} $$
+                        $$ c = 58.0 \text{ g/L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The concentration is $\mathbf{58.0 \text{ g/L}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Percentage % (w/v) to Molarity (Medium)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A medical saline drip is labelled as $0.90\% \text{ (w/v)}$ Sodium Chloride ($NaCl$). Calculate the Molarity ($mol/L$) of this solution.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                </div>
+                <div id="ws-2" class="hidden-solution" style="display: none;">
+                    <div class="worked-solution">
+                        <p><em>This requires unpacking the definition of % (w/v) before applying the molarity formula.</em></p>
+                        
+                        <p><strong>Step 1: Define the percentage.</strong><br>
+                        $0.90\% \text{ (w/v)}$ explicitly means there is $0.90 \text{ g}$ of $NaCl$ dissolved in every $100 \text{ mL}$ of total solution.</p>
+
+                        <p><strong>Step 2: Convert to g/L (Scale it up to 1 Litre).</strong><br>
+                        If there is $0.90 \text{ g}$ in $100 \text{ mL}$, then in $1000 \text{ mL}$ ($1 \text{ L}$), there will be 10 times as much:<br>
+                        $0.90 \times 10 = 9.0 \text{ g/L}$.</p>
+
+                        <p><strong>Step 3: Convert mass to moles to find Molarity.</strong><br>
+                        We know we have $9.0 \text{ g}$ of $NaCl$ in exactly $1 \text{ L}$. Let's find how many moles that mass represents.<br>
+                        $MM(NaCl) = 22.99 + 35.45 = 58.44 \text{ g/mol}$<br>
+                        $$ n = \frac{m}{MM} = \frac{9.0}{58.44} = 0.1540... \text{ mol} $$</p>
+
+                        <p><strong>Final Answer:</strong> Since we have $0.154 \text{ mol}$ floating in exactly $1 \text{ L}$, the Molarity is $\mathbf{0.15 \text{ M}}$ (or $mol/L$, rounded to 2 sig figs based on the $0.90$ given).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Parts Per Million (ppm) in Aqueous Solutions (Hard)</h4>
+                </div>
+                <div class="question-body">
+                    <p>An environmental chemist tests a $500 \text{ mL}$ sample of river water and finds it contains $0.0025 \text{ g}$ of dissolved Lead ($Pb^{2+}$) ions. Calculate the concentration of Lead in parts per million (ppm).</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                </div>
+                <div id="ws-3" class="hidden-solution" style="display: none;">
+                    <div class="worked-solution">
+                        <p><em>For dilute aqueous solutions, the density of the solution is approximately equal to pure water ($1 \text{ kg/L}$). Therefore, $1 \text{ ppm} \approx 1 \text{ mg/L}$. We need to convert our mass to milligrams, and ensure our volume is in Litres.</em></p>
+                        
+                        <p><strong>Step 1: Convert mass to milligrams.</strong><br>
+                        $m = 0.0025 \text{ g}$<br>
+                        To convert grams to milligrams, multiply by 1000:<br>
+                        $m = 0.0025 \times 1000 = 2.5 \text{ mg}$</p>
+
+                        <p><strong>Step 2: Convert volume to Litres.</strong><br>
+                        $V = 500 \text{ mL} = 0.500 \text{ L}$</p>
+
+                        <p><strong>Step 3: Calculate ppm ($mg/L$).</strong><br>
+                        $$ \text{ppm} = \frac{mass \text{ (mg)}}{Volume \text{ (L)}} $$
+                        $$ \text{ppm} = \frac{2.5}{0.500} $$
+                        $$ \text{ppm} = 5.0 $$</p>
+
+                        <p><strong>Final Answer:</strong> The concentration of Lead in the river water is $\mathbf{5.0 \text{ ppm}}$.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: The Commercial Acid Density Trap (Extension)</h4>
+                </div>
+                <div class="question-body">
+                    <p>Commercial concentrated Sulfuric Acid ($H_2SO_4$) is sold as a $98.0\% \text{ (w/w)}$ solution. The manufacturer states on the bottle that the density of the solution is $1.84 \text{ g/mL}$.</p>
+                    <p>Calculate the Molarity ($mol/L$) of this highly concentrated acid. This is a classic HSC "Band 6" calculation.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                </div>
+                <div id="ws-4" class="hidden-solution" style="display: none;">
+                    <div class="worked-solution">
+                        <p><em>To find Molarity ($mol/L$), we need to find the number of moles in exactly $1 \text{ Litre}$ of solution. Let's base our entire calculation on a hypothetical $1.00 \text{ L}$ ($1000 \text{ mL}$) sample.</em></p>
+
+                        <p><strong>Step 1: Find the total mass of $1 \text{ Litre}$ of the solution.</strong><br>
+                        We use the density formula: $\rho = \frac{m}{v} \rightarrow m = \rho \times v$<br>
+                        Mass of $1000 \text{ mL} = 1.84 \text{ g/mL} \times 1000 \text{ mL} = 1840 \text{ g}$.<br>
+                        <em>(This means $1 \text{ Litre}$ of this dense acid weighs $1.84 \text{ kg}$!)</em></p>
+
+                        <p><strong>Step 2: Find the mass of pure $H_2SO_4$ solute in that Litre.</strong><br>
+                        The solution is not pure; it is $98.0\% \text{ (w/w)}$ pure $H_2SO_4$.<br>
+                        Mass of pure $H_2SO_4 = 98.0\% \text{ of } 1840 \text{ g}$<br>
+                        $m(H_2SO_4) = 0.980 \times 1840 = 1803.2 \text{ g}$.<br>
+                        <em>(So we have $1803.2 \text{ g}$ of actual acid per Litre. This is our $g/L$ concentration.)</em></p>
+
+                        <p><strong>Step 3: Convert the mass of solute to Moles.</strong><br>
+                        $MM(H_2SO_4) = (2 \times 1.008) + 32.07 + (4 \times 16.00) = 98.086 \text{ g/mol}$<br>
+                        $$ n = \frac{m}{MM} = \frac{1803.2}{98.086} = 18.3838... \text{ mol} $$</p>
+
+                        <p><strong>Final Answer:</strong> Since there are $18.38 \text{ moles}$ in our $1 \text{ Litre}$ sample, the Molarity is $\mathbf{18.4 \text{ M}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practice-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply what you've learned. Write your working out on paper, check the solution, and use the criteria to assign yourself a score. Your marks are tracked globally.</p>
+
+            <div class="practise-question" id="q-conc-1">
+                <div class="question-header">
+                    <h4>Question 1: The Perfumer's Percentage (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A perfumer mixes $15 \text{ mL}$ of pure essential rose oil with $85 \text{ mL}$ of an ethanol solvent to create a perfume base. Calculate the concentration of the essential oil as a percentage by volume $(v/v)\%$.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-conc-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-conc-1')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-conc-1" style="display: none;">
+                    <p><strong>Hint:</strong> The denominator in the $(v/v)\%$ formula is the volume of the <em>total solution</em>, not just the solvent. You must add the solute volume and solvent volume together first!</p>
+                </div>
+                <div class="hidden-solution" id="sol-conc-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Find total volume of solution.</strong><br>
+                        $V_{\text{solution}} = 15 \text{ mL (oil)} + 85 \text{ mL (ethanol)} = 100 \text{ mL total volume}$</p>
+                        
+                        <p><strong>Step 2: Calculate $(v/v)\%$.</strong><br>
+                        $$ \% (v/v) = \frac{V_{\text{solute}}}{V_{\text{solution}}} \times 100 $$
+                        $$ \% (v/v) = \frac{15}{100} \times 100 = \mathbf{15\%} $$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly identifies that the total volume of the solution is $100 \text{ mL}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates the final percentage as $15\%$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-conc-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-conc-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('conc-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-conc-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-conc-2">
+                <div class="question-header">
+                    <h4>Question 2: Industrial Sugar Vat (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>An industrial vat contains $2500 \text{ L}$ of aqueous solution with a sucrose ($C_{12}H_{22}O_{11}$) concentration of $45.0 \text{ g/L}$. Calculate the exact number of <strong>moles</strong> of sucrose currently dissolved in the vat.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-conc-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-conc-2')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-conc-2" style="display: none;">
+                    <p><strong>Hint:</strong> This is a two-step process. First, find the total mass of sucrose in the vat by multiplying the concentration ($g/L$) by the total volume ($L$). Then, convert that massive number of grams into moles using the Molar Mass of sucrose.</p>
+                </div>
+                <div class="hidden-solution" id="sol-conc-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Find total mass of sucrose.</strong><br>
+                        $c = 45.0 \text{ g/L}$, $V = 2500 \text{ L}$<br>
+                        $m = c \times V = 45.0 \times 2500 = 112,500 \text{ g}$</p>
+                        
+                        <p><strong>Step 2: Calculate Molar Mass of Sucrose.</strong><br>
+                        $MM(C_{12}H_{22}O_{11}) = (12 \times 12.01) + (22 \times 1.008) + (11 \times 16.00)$<br>
+                        $MM = 144.12 + 22.176 + 176.00 = 342.296 \text{ g/mol}$</p>
+
+                        <p><strong>Step 3: Convert mass to moles.</strong><br>
+                        $$ n = \frac{m}{MM} $$
+                        $$ n = \frac{112500}{342.296} = 328.66... \text{ mol} $$</p>
+                        <p><strong>Final Answer:</strong> $\mathbf{329 \text{ mol}}$ (rounded to 3 sig figs based on the $45.0$ given).</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates the total mass of sucrose in the vat ($112,500 \text{ g}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates the Molar Mass of $C_{12}H_{22}O_{11}$ ($\approx 342.3 \text{ g/mol}$).</li>
+                            <li><strong>3 Marks:</strong> Correct final mole calculation ($329 \text{ mol}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-conc-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-conc-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('conc-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-conc-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-conc-3">
+                <div class="question-header">
+                    <h4>Question 3: Heavy Metal Contamination (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Mercury is highly toxic. The legal limit for Mercury ($Hg$) in Australian drinking water is $0.001 \text{ ppm}$. A laboratory tests a $4.50 \text{ L}$ sample of water from a bore and finds it contains $12.5 \text{ \mu g}$ (micrograms) of dissolved Mercury.</p>
+                    <p>Calculate the concentration in ppm and state whether the water is legally safe to drink. <br><em>(Conversion helper: $1 \text{ mg} = 1000 \text{ \mu g}$).</em></p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-conc-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-conc-3')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-conc-3" style="display: none;">
+                    <p><strong>Hint:</strong> Remember that $1 \text{ ppm} = 1 \text{ mg/L}$ for aqueous solutions. You need to convert $12.5 \text{ \mu g}$ into milligrams ($mg$) first by dividing by 1000. Then divide that mass by the total volume in Litres.</p>
+                </div>
+                <div class="hidden-solution" id="sol-conc-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert mass to milligrams.</strong><br>
+                        $m = 12.5 \text{ \mu g}$<br>
+                        $m = \frac{12.5}{1000} = 0.0125 \text{ mg}$</p>
+
+                        <p><strong>Step 2: Calculate ppm ($mg/L$).</strong><br>
+                        $$ \text{ppm} = \frac{\text{mass (mg)}}{\text{Volume (L)}} $$
+                        $$ \text{ppm} = \frac{0.0125 \text{ mg}}{4.50 \text{ L}} = 0.00277... \text{ ppm} $$</p>
+
+                        <p><strong>Step 3: Evaluate Safety.</strong><br>
+                        Calculated concentration ($0.00278 \text{ ppm}$) is greater than the legal limit ($0.001 \text{ ppm}$).<br>
+                        <strong>Final Answer:</strong> Concentration is $\mathbf{0.00278 \text{ ppm}}$. The water is <strong>NOT safe</strong> to drink.</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts micrograms to milligrams ($0.0125 \text{ mg}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly sets up the ppm formula division ($mg/L$).</li>
+                            <li><strong>3 Marks:</strong> Correct final calculation ($0.00278 \text{ ppm}$).</li>
+                            <li><strong>4 Marks:</strong> Correctly states the water is unsafe based on comparing their calculated value to the limit.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-conc-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-conc-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('conc-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-conc-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-conc-4">
+                <div class="question-header">
+                    <h4>Question 4: The Commercial Acid Trick (Extension)</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Commercial concentrated Nitric Acid ($HNO_3$) is sold as a $70.0\% \text{ (w/w)}$ solution. It is stated on the supplier's Material Safety Data Sheet (MSDS) that the density of this solution is $1.41 \text{ g/mL}$.</p>
+                    <p>Calculate the Molarity ($mol/L$) of this commercial acid. Provide your answer to 3 significant figures.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-conc-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-conc-4')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-conc-4" style="display: none;">
+                    <p><strong>Hint:</strong> Just like the worked example, assume you have exactly $1 \text{ L}$ ($1000 \text{ mL}$) of the solution. Use the density to find out how much that $1 \text{ L}$ weighs in total grams. Then use the $70.0\%$ to find the mass of pure $HNO_3$ in that Litre. Finally, convert that mass to moles using $n = m/MM$.</p>
+                </div>
+                <div class="hidden-solution" id="sol-conc-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>To find Molarity ($mol/L$), we assume a volume of exactly $1 \text{ Litre}$ ($1000 \text{ mL}$) to make the maths straightforward.</em></p>
+                        
+                        <p><strong>Step 1: Find total mass of $1 \text{ Litre}$ of solution.</strong><br>
+                        Density = $1.41 \text{ g/mL}$.<br>
+                        Mass of $1000 \text{ mL} = 1000 \text{ mL} \times 1.41 \text{ g/mL} = 1410 \text{ g}$.</p>
+
+                        <p><strong>Step 2: Find the mass of pure $HNO_3$ solute.</strong><br>
+                        The solution is $70.0\% \text{ (w/w)}$ pure $HNO_3$.<br>
+                        Mass of $HNO_3 = 70.0\% \text{ of } 1410 \text{ g}$<br>
+                        Mass of $HNO_3 = 0.700 \times 1410 = 987 \text{ g}$.<br>
+                        <em>(This means the concentration is $987 \text{ g/L}$)</em></p>
+
+                        <p><strong>Step 3: Convert mass of $HNO_3$ to Moles.</strong><br>
+                        $MM(HNO_3) = 1.008 + 14.01 + (3 \times 16.00) = 63.018 \text{ g/mol}$<br>
+                        $$ n = \frac{m}{MM} = \frac{987}{63.018} = 15.662... \text{ mol} $$</p>
+
+                        <p><strong>Step 4: State Molarity.</strong><br>
+                        Since there are $15.66 \text{ mol}$ in our assumed $1 \text{ L}$, the Molarity is $\mathbf{15.7 \text{ M}}$ (to 3 sig figs).</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Logically assumes a volume to work with (e.g., $1 \text{ L}$ or $100 \text{ mL}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly uses density to calculate the total mass of the solution ($1410 \text{ g}$ for $1\text{L}$).</li>
+                            <li><strong>3 Marks:</strong> Applies the w/w percentage to find the mass of pure $HNO_3$ ($987 \text{ g}$).</li>
+                            <li><strong>4 Marks:</strong> Correctly determines the Molar Mass of $HNO_3$ and divides the mass by it.</li>
+                            <li><strong>5 Marks:</strong> Arrives at the correct final Molarity ($15.7 \text{ mol/L}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-conc-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-conc-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('conc-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-conc-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="molarity-formula.html" class="btn-next">Proceed to Lesson 17: Molarity Formula &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * ------------------------------------------------------------------------
+         * INITIALISATION
+         * ------------------------------------------------------------------------
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            // Restore saved marks from standard browser localStorage
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('conc-1');
+            checkIfQuestionAnswered('conc-2');
+            checkIfQuestionAnswered('conc-3');
+            checkIfQuestionAnswered('conc-4');
+            
+            // Initialise Virtual Beaker & Microscope
+            updateAquarium();
+            updateMicroscope();
+        });
+
+        /**
+         * ------------------------------------------------------------------------
+         * SELF-MARKING ENGINE LOGIC (Replicated from index.html)
+         * ------------------------------------------------------------------------
+         */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                
+                // Trigger MathJax to typeset the newly revealed equations
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            // Construct unique storage key
+            const storageKey = 'chem_mod2_q_' + questionId;
+
+            // Retrieve previous mark to adjust total accurately
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            // Save new mark
+            localStorage.setItem(storageKey, selectedMark);
+
+            // Feedback
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "var(--accent-green)";
+
+            // Update global score
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ------------------------------------------------------------------------
+         * INTERACTIVITY 1: THE CONCENTRATION AQUARIUM LOGIC
+         * ------------------------------------------------------------------------
+         */
+        let aqState = {
+            mass: 0.0,      // grams of NaCl
+            volume: 0.2,    // Litres
+            maxVolume: 1.0,
+            mm: 58.44       // Molar mass of NaCl
+        };
+
+        const particleLayer = document.getElementById('aq-particles');
+
+        function addSalt(grams) {
+            // Prevent ridiculous saturation visually
+            if (aqState.mass + grams > 300) {
+                alert("The solution is highly saturated! Add water first.");
+                return;
+            }
+            aqState.mass += grams;
+            updateAquarium();
+            spawnParticles(grams);
+        }
+
+        function addWater(litres) {
+            if (aqState.volume + litres > aqState.maxVolume) {
+                aqState.volume = aqState.maxVolume;
+            } else if (aqState.volume + litres < 0.1) {
+                aqState.volume = 0.1; // Prevent empty beaker / divide by zero
+            } else {
+                aqState.volume += litres;
+            }
+            document.getElementById('vol-slider').value = aqState.volume * 1000;
+            updateAquarium();
+            shuffleParticles();
+        }
+
+        function updateVolume(ml) {
+            aqState.volume = ml / 1000;
+            updateAquarium();
+            shuffleParticles();
+        }
+
+        function resetAquarium() {
+            aqState.mass = 0;
+            aqState.volume = 0.2;
+            document.getElementById('vol-slider').value = 200;
+            particleLayer.innerHTML = '';
+            updateAquarium();
+        }
+
+        function updateAquarium() {
+            // Calculations
+            let gL = aqState.mass / aqState.volume;
+            let moles = aqState.mass / aqState.mm;
+            let molL = moles / aqState.volume;
+            let wv = (aqState.mass / (aqState.volume * 1000)) * 100;
+
+            // Update DOM Text
+            document.getElementById('val-mass').innerText = aqState.mass.toFixed(2) + " g";
+            document.getElementById('val-vol').innerText = aqState.volume.toFixed(2) + " L";
+            document.getElementById('val-mol').innerText = molL.toFixed(3) + " M";
+            document.getElementById('val-gl').innerText = gL.toFixed(2) + " g/L";
+            document.getElementById('val-wv').innerText = wv.toFixed(2) + " %";
+
+            // Highlight if highly concentrated
+            const molText = document.getElementById('val-mol');
+            if (molL > 4.0) {
+                molText.style.color = "#ff3366";
+            } else {
+                molText.style.color = "#00f2ff";
+            }
+
+            // Update Water Visuals
+            const waterEl = document.getElementById('aq-water');
+            // Height: max 260px mapped to 1.0L
+            let hPct = (aqState.volume / aqState.maxVolume) * 100;
+            waterEl.style.height = hPct + '%';
+
+            // Colour changes based on molarity (pure = light blue, concentrated = dark)
+            let darkness = Math.min(molL / 5, 1); // 5M is very dark
+            let r = Math.floor(0 + (darkness * 40));
+            let g = Math.floor(195 - (darkness * 100));
+            let b = 255;
+            waterEl.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.4) 0%, rgba(0, 50, 200, 0.8) 100%)`;
+        }
+
+        function spawnParticles(grams) {
+            // Visual multiplier: 1g = 3 particles roughly
+            let numParticles = Math.floor(grams * 3);
+            for(let i=0; i<numParticles; i++) {
+                let p = document.createElement('div');
+                p.className = 'solute-particle';
+                
+                // Start at top, random X
+                p.style.left = (10 + Math.random() * 80) + '%';
+                p.style.top = '0px';
+                
+                particleLayer.appendChild(p);
+
+                // Simple CSS animation via JS timeout
+                setTimeout(() => {
+                    // Fall to random depth within current water volume
+                    let depthPct = Math.random() * 100;
+                    p.style.transition = `top ${1 + Math.random()}s ease-in`;
+                    p.style.top = depthPct + '%';
+                }, 50);
+            }
+        }
+
+        function shuffleParticles() {
+            // When volume changes, particles redistribute
+            let particles = document.getElementsByClassName('solute-particle');
+            for(let i=0; i<particles.length; i++) {
+                let p = particles[i];
+                p.style.transition = `top 0.5s ease-in-out`;
+                p.style.top = (Math.random() * 100) + '%';
+            }
+        }
+
+        /**
+         * ------------------------------------------------------------------------
+         * INTERACTIVITY 2: PPM MICROSCOPE LOGIC
+         * ------------------------------------------------------------------------
+         */
+        const microView = document.getElementById('micro-view');
+        const zoomText = document.getElementById('zoom-text');
+        const zoomDesc = document.getElementById('zoom-desc');
+        
+        function updateMicroscope() {
+            let level = parseInt(document.getElementById('zoom-slider').value);
+            microView.innerHTML = '';
+            
+            // We fill the 300x300 area with dots. Area is roughly 900 dots if 10x10.
+            // Actually, display about 400 dots visually.
+            const totalVisualDots = 400; 
+            let contaminantDots = 0;
+
+            if (level === 1) {
+                // 10%
+                zoomText.innerText = "Concentration: 10% (1 in 10)";
+                zoomDesc.innerText = "For every 10 molecules of water, there is 1 molecule of contaminant. Extremely crowded.";
+                contaminantDots = Math.floor(totalVisualDots * 0.1);
+            } else if (level === 2) {
+                // 1%
+                zoomText.innerText = "Concentration: 1% (1 in 100)";
+                zoomDesc.innerText = "For every 100 molecules of water, there is 1 molecule of contaminant.";
+                contaminantDots = Math.floor(totalVisualDots * 0.01);
+            } else if (level === 3) {
+                // 1 ppm
+                zoomText.innerText = "Concentration: 1 ppm (1 in 1,000,000)";
+                zoomDesc.innerText = "If this circle held 1 million dots, only ONE would be red. Visually, we force 1 red dot to appear here so you can find it.";
+                contaminantDots = 1;
+            } else if (level === 4) {
+                // 1 ppb
+                zoomText.innerText = "Concentration: 1 ppb (1 in 1,000,000,000)";
+                zoomDesc.innerText = "1 Part per Billion. The red dot is gone. You would need 1,000 of these circles just to find a single red dot.";
+                contaminantDots = 0;
+            }
+
+            // Generate dots array and shuffle
+            let dotsArray = [];
+            for(let i=0; i<totalVisualDots; i++) {
+                let d = document.createElement('div');
+                if (i < contaminantDots) {
+                    d.className = 'micro-contaminant';
+                } else {
+                    d.className = 'micro-water';
+                }
+                dotsArray.push(d);
+            }
+
+            // Shuffle array (Fisher-Yates)
+            for (let i = dotsArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [dotsArray[i], dotsArray[j]] = [dotsArray[j], dotsArray[i]];
+            }
+
+            // Append to DOM
+            dotsArray.forEach(dot => microView.appendChild(dot));
+        }
+
+    </script>
+</body>
+</html>

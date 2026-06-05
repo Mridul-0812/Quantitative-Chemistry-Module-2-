@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1: Relative Atomic Mass & Isotopes</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html" class="active">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>1. Relative Atomic Mass</h1>
+            <p class="subtitle">Understanding Isotopes & The Carbon-12 Standard</p>
+        </header>
+
+        <section class="content-section" id="theory">
+            <h2>What is an Isotope?</h2>
+            <p>If you look at the Periodic Table, you will notice that the atomic mass of most elements is not a neat whole number. For example, Chlorine has a mass of $35.45$. Why is this? You cannot have half a proton or a fraction of a neutron!</p>
+            <p>The answer lies in <strong>isotopes</strong>. Isotopes are atoms of the same element that have the same number of protons (atomic number) but a different number of neutrons. Because they have different numbers of neutrons, they have different mass numbers.</p>
+            
+            <ul class="feature-list">
+                <li><strong>Protons:</strong> Define the element (e.g., all Chlorine atoms have 17 protons).</li>
+                <li><strong>Neutrons:</strong> Define the isotope (e.g., Chlorine-35 has 18 neutrons, Chlorine-37 has 20 neutrons).</li>
+                <li><strong>Electrons:</strong> Dictate the chemical properties. Since isotopes have the same number of electrons, their chemical reactions are virtually identical.</li>
+            </ul>
+
+            <hr class="section-divider">
+
+            <h2>Relative Atomic Mass ($A_r$)</h2>
+            <p>Because atoms are unfathomably small, weighing them in grams is impractical. Instead, chemists use a relative scale. The standard for this scale is the <strong>Carbon-12 isotope</strong>, which is assigned an exact mass of $12.00$ atomic mass units (amu).</p>
+            <p>The <strong>Relative Atomic Mass ($A_r$)</strong> of an element is the weighted average mass of all its naturally occurring isotopes, relative to one-twelfth ($1/12$) the mass of an atom of Carbon-12.</p>
+            
+            <div class="hidden-solution" style="display: block; background: rgba(0,240,255,0.05); border-left: 4px solid #00f0ff; padding: 1.5rem; border-radius: 8px;">
+                <h4>The Formula:</h4>
+                <p>$$A_r = \frac{(I_1 \times \%_1) + (I_2 \times \%_2) + \dots}{100}$$</p>
+                <p>Where $I$ is the isotopic mass, and $\%$ is the percentage abundance of that isotope.</p>
+            </div>
+            
+            <p>This data is typically gathered using a device called a mass spectrometer, which separates isotopes based on their mass-to-charge ratio.</p>
+            
+        </section>
+
+        <section class="content-section" id="interactivity">
+            <h2>Interactive: Isotope Weighted Average Simulator</h2>
+            <p>Adjust the sliders below to see how the percentage abundance of two fictional isotopes (Element-X) affects the final Relative Atomic Mass ($A_r$). Notice how the final $A_r$ always sits closer to the most abundant isotope.</p>
+            
+            <div class="practise-question" style="background: rgba(176,38,255,0.05); border-color: rgba(176,38,255,0.3);">
+                <div class="question-header">
+                    <h4>Element-X: Isotope Mixer</h4>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <label for="isotope1-slider"><strong>Isotope X-10 (Mass = 10 amu):</strong> <span id="iso1-val">50</span>%</label>
+                    <input type="range" id="isotope1-slider" min="0" max="100" value="50" style="width: 100%; margin-top: 1rem; cursor: pointer;">
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <label><strong>Isotope X-12 (Mass = 12 amu):</strong> <span id="iso2-val">50</span>%</label>
+                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 1rem; position: relative;">
+                        <div id="iso2-bar" style="width: 50%; height: 100%; background: var(--accent-cyan); border-radius: 4px; transition: width 0.1s;"></div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding: 1.5rem; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid var(--glass-border);">
+                    <h3 style="margin-bottom: 0;">Calculated $A_r$: <span id="dynamic-ar" style="color: #00e676; font-size: 2rem;">11.00</span></h3>
+                    <p style="margin-top: 0.5rem; font-family: monospace; color: var(--text-secondary);" id="dynamic-equation">
+                        Ar = ((10 × 50) + (12 × 50)) / 100
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Review these examples before attempting the practice questions. Click to expand each solution.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: Easy</h4>
+                </div>
+                <p>Boron has two naturally occurring isotopes: Boron-10 (mass 10.01 amu) with an abundance of $19.9\%$, and Boron-11 (mass 11.01 amu) with an abundance of $80.1\%$. Calculate the relative atomic mass of Boron.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Write down the formula.</strong></p>
+                    <p>$$A_r = \frac{(Mass_1 \times \%_1) + (Mass_2 \times \%_2)}{100}$$</p>
+                    <p><strong>Step 2: Substitute the values.</strong></p>
+                    <p>$$A_r = \frac{(10.01 \times 19.9) + (11.01 \times 80.1)}{100}$$</p>
+                    <p>$$A_r = \frac{199.199 + 881.901}{100}$$</p>
+                    <p>$$A_r = \frac{1081.1}{100} = 10.81$$</p>
+                    <p><em>Note: The answer makes sense because 10.81 is much closer to 11 than 10, reflecting the 80.1% abundance of Boron-11.</em></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Medium</h4>
+                </div>
+                <p>Magnesium has three stable isotopes: Mg-24 (mass $23.99$ amu, $79.0\%$), Mg-25 (mass $24.99$ amu, $10.0\%$), and Mg-26 (mass $25.98$ amu, $11.0\%$). Calculate the relative atomic mass of Magnesium.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Extend the formula for three isotopes.</strong></p>
+                    <p>$$A_r = \frac{(M_1 \times \%_1) + (M_2 \times \%_2) + (M_3 \times \%_3)}{100}$$</p>
+                    <p><strong>Step 2: Substitute and solve.</strong></p>
+                    <p>$$A_r = \frac{(23.99 \times 79.0) + (24.99 \times 10.0) + (25.98 \times 11.0)}{100}$$</p>
+                    <p>$$A_r = \frac{1895.21 + 249.9 + 285.78}{100}$$</p>
+                    <p>$$A_r = \frac{2430.89}{100} = 24.31$$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Hard (Algebraic Reversal)</h4>
+                </div>
+                <p>Gallium has two isotopes: Ga-69 (mass $68.93$ amu) and Ga-71 (mass $70.92$ amu). The relative atomic mass of Gallium is $69.72$. Determine the percentage abundance of each isotope.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                <div id="ws-3" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Set up algebraic variables.</strong></p>
+                    <p>Let the abundance of Ga-69 be $x$.</p>
+                    <p>Since the total abundance must be $100\%$, the abundance of Ga-71 must be $(100 - x)$.</p>
+                    <p><strong>Step 2: Substitute into the $A_r$ formula.</strong></p>
+                    <p>$$69.72 = \frac{(68.93 \times x) + (70.92 \times (100 - x))}{100}$$</p>
+                    <p><strong>Step 3: Solve for $x$.</strong></p>
+                    <p>Multiply both sides by 100:</p>
+                    <p>$$6972 = 68.93x + 7092 - 70.92x$$</p>
+                    <p>Group the $x$ terms:</p>
+                    <p>$$6972 - 7092 = 68.93x - 70.92x$$</p>
+                    <p>$$-120 = -1.99x$$</p>
+                    <p>$$x = \frac{120}{1.99} = 60.3\%$$</p>
+                    <p><strong>Step 4: Find the other abundance.</strong></p>
+                    <p>Abundance of Ga-71 = $100 - 60.3 = 39.7\%$</p>
+                    <p><em>Final Answer: Ga-69 is 60.3%, Ga-71 is 39.7%.</em></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Extension (Mass Spectrometry Ratios)</h4>
+                </div>
+                <p>A mass spectrum for a diatomic element shows peaks at mass-to-charge ($m/z$) ratios of 158, 160, and 162 in a ratio of 1:2:1. Identify the element, its naturally occurring isotopes, and their relative abundances.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                <div id="ws-4" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Analyse the diatomic nature.</strong></p>
+                    <p>The peaks represent molecules ($X_2$). The masses are 158, 160, and 162. This means the atomic mass of a single atom $X$ is approximately half of these values: roughly 79 and 81.</p>
+                    <p><strong>Step 2: Identify the element.</strong></p>
+                    <p>Looking at the periodic table, the element with an atomic mass near 80 is Bromine ($A_r \approx 79.9$).</p>
+                    <p><strong>Step 3: Determine the isotopes.</strong></p>
+                    <p>The isotopes must be Br-79 and Br-81.</p>
+                    <p><strong>Step 4: Prove the abundances using binomial expansion.</strong></p>
+                    <p>If Br-79 and Br-81 are in a 50:50 ratio (or 1:1), the probability of forming the diatomic molecules is:</p>
+                    <ul>
+                        <li>$Br^{79}-Br^{79}$ (mass 158): $0.5 \times 0.5 = 0.25$ (1 part)</li>
+                        <li>$Br^{79}-Br^{81}$ and $Br^{81}-Br^{79}$ (mass 160): $(0.5 \times 0.5) + (0.5 \times 0.5) = 0.50$ (2 parts)</li>
+                        <li>$Br^{81}-Br^{81}$ (mass 162): $0.5 \times 0.5 = 0.25$ (1 part)</li>
+                    </ul>
+                    <p>This matches the 1:2:1 ratio perfectly, proving Bromine exists as $50\%$ Br-79 and $50\%$ Br-81 naturally.</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise">
+            <h2>Practice Questions</h2>
+            <p>Attempt the questions below. Once completed, reveal the NESA marking criteria to assign yourself a score.</p>
+
+            <div class="practise-question" id="q-ram-1">
+                <div class="question-header">
+                    <h4>Question 1</h4>
+                    <span class="marks-allocated">[1 Mark]</span>
+                </div>
+                <div class="question-body">
+                    <p>Define the term <em>isotope</em>.</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-ram-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-ram-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-ram-1" style="display: none;">
+                    <p><strong>Hint:</strong> Mention the subatomic particles. Which ones stay the same, and which ones change?</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-ram-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Model Answer:</h5>
+                        <p>Isotopes are atoms of the same element that have the same number of protons but a different number of neutrons.</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly defines isotopes by referencing both the identical proton number and the differing neutron number.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-ram-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-ram-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('ram-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-ram-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-ram-2">
+                <div class="question-header">
+                    <h4>Question 2</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Silver exists as two stable isotopes: Ag-107 (mass 106.90 amu, abundance $51.84\%$) and Ag-109 (mass 108.90 amu, abundance $48.16\%$). Calculate the relative atomic mass of Silver to two decimal places.</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-ram-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-ram-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-ram-2" style="display: none;">
+                    <p><strong>Hint:</strong> Use the standard $A_r$ formula. Don't forget to divide the entire sum by 100.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-ram-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$A_r = \frac{(106.90 \times 51.84) + (108.90 \times 48.16)}{100}$$</p>
+                        <p>$$A_r = \frac{5541.696 + 5244.624}{100}$$</p>
+                        <p>$$A_r = \frac{10786.32}{100} = 107.86$$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct substitution of values into the relative atomic mass formula.</li>
+                            <li><strong>2 Marks:</strong> Provides the correct final answer ($107.86$) rounded to two decimal places.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-ram-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-ram-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('ram-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-ram-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-ram-3">
+                <div class="question-header">
+                    <h4>Question 3</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Copper has a relative atomic mass of $63.55$. It consists of two isotopes: Cu-63 (mass $62.93$ amu) and Cu-65 (mass $64.93$ amu). Determine the percentage abundance of the Cu-63 isotope.</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-ram-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-ram-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-ram-3" style="display: none;">
+                    <p><strong>Hint:</strong> Let the abundance of Cu-63 be $x$. The abundance of Cu-65 will then be $(100 - x)$. Use algebra to solve for $x$.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-ram-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>Let abundance of Cu-63 = $x$</p>
+                        <p>Let abundance of Cu-65 = $100 - x$</p>
+                        <p>$$63.55 = \frac{(62.93 \times x) + (64.93 \times (100 - x))}{100}$$</p>
+                        <p>$$6355 = 62.93x + 6493 - 64.93x$$</p>
+                        <p>$$6355 - 6493 = -2.00x$$</p>
+                        <p>$$-138 = -2.00x$$</p>
+                        <p>$$x = 69\%$$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly sets up the algebraic expression defining the two abundances as $x$ and $100-x$.</li>
+                            <li><strong>2 Marks:</strong> Correct substitution into the $A_r$ formula and attempts algebraic expansion.</li>
+                            <li><strong>3 Marks:</strong> Correctly calculates the final abundance of Cu-63 as $69\%$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-ram-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-ram-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('ram-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-ram-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-ram-4">
+                <div class="question-header">
+                    <h4>Question 4</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A sample of Silicon is analysed in a mass spectrometer. The output yields the following data:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; margin-bottom: 1rem; color: #fff; text-align: left;">
+                        <tr style="border-bottom: 1px solid var(--glass-border);">
+                            <th style="padding: 10px;">Isotope</th>
+                            <th style="padding: 10px;">Isotopic Mass (amu)</th>
+                            <th style="padding: 10px;">Relative Intensity</th>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 10px;">Si-28</td>
+                            <td style="padding: 10px;">27.98</td>
+                            <td style="padding: 10px;">100.0</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 10px;">Si-29</td>
+                            <td style="padding: 10px;">28.98</td>
+                            <td style="padding: 10px;">5.10</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Si-30</td>
+                            <td style="padding: 10px;">29.97</td>
+                            <td style="padding: 10px;">3.40</td>
+                        </tr>
+                    </table>
+                    <p>Calculate the relative atomic mass of this Silicon sample. <em>(Note carefully: The data provides relative intensity, not percentage abundance).</em></p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-ram-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-ram-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-ram-4" style="display: none;">
+                    <p><strong>Hint:</strong> Relative intensity does not necessarily add up to 100. First, find the total intensity by adding the three values together. Then, calculate the percentage abundance for each isotope before using the $A_r$ formula (or divide the sum of (mass × intensity) by the total intensity).</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-ram-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Calculate Total Intensity.</strong></p>
+                        <p>Total Intensity = $100.0 + 5.10 + 3.40 = 108.5$</p>
+                        <p><strong>Step 2: Modify the $A_r$ formula to divide by total intensity instead of 100.</strong></p>
+                        <p>$$A_r = \frac{(Mass_1 \times Int_1) + (Mass_2 \times Int_2) + (Mass_3 \times Int_3)}{\text{Total Intensity}}$$</p>
+                        <p>$$A_r = \frac{(27.98 \times 100.0) + (28.98 \times 5.10) + (29.97 \times 3.40)}{108.5}$$</p>
+                        <p>$$A_r = \frac{2798 + 147.798 + 101.898}{108.5}$$</p>
+                        <p>$$A_r = \frac{3047.696}{108.5} = 28.09$$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Recognises that relative intensity must be summed ($108.5$) rather than assuming it equals 100.</li>
+                            <li><strong>2 Marks:</strong> Correctly substitutes mass and intensity values into the numerator.</li>
+                            <li><strong>3 Marks:</strong> Divides the sum of the numerator by the calculated total intensity ($108.5$).</li>
+                            <li><strong>4 Marks:</strong> Correct final answer of $28.09$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-ram-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-ram-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('ram-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-ram-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="molar-mass-basics.html" class="btn-next">Proceed to Lesson 2: Molar Mass Basics &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * GLOBAL SYSTEM INITIALISATION
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('ram-1');
+            checkIfQuestionAnswered('ram-2');
+            checkIfQuestionAnswered('ram-3');
+            checkIfQuestionAnswered('ram-4');
+            initIsotopeSimulator(); // Start the custom interactive element
+        });
+
+        /**
+         * ISOTOPE SIMULATOR LOGIC
+         * Handles the dynamic changing of the slider and calculation of Ar
+         */
+        function initIsotopeSimulator() {
+            const slider1 = document.getElementById('isotope1-slider');
+            const val1Display = document.getElementById('iso1-val');
+            const val2Display = document.getElementById('iso2-val');
+            const bar2 = document.getElementById('iso2-bar');
+            const arDisplay = document.getElementById('dynamic-ar');
+            const eqDisplay = document.getElementById('dynamic-equation');
+
+            const mass1 = 10.00;
+            const mass2 = 12.00;
+
+            slider1.addEventListener('input', function() {
+                const abundance1 = parseInt(slider1.value, 10);
+                const abundance2 = 100 - abundance1;
+
+                // Update text displays
+                val1Display.innerText = abundance1;
+                val2Display.innerText = abundance2;
+
+                // Update visual bar for isotope 2
+                bar2.style.width = abundance2 + '%';
+
+                // Calculate the new Ar
+                const currentAr = ((mass1 * abundance1) + (mass2 * abundance2)) / 100;
+                
+                // Update Ar Display (fixed to 2 decimal places)
+                arDisplay.innerText = currentAr.toFixed(2);
+
+                // Update formula string for educational visibility
+                eqDisplay.innerText = `Ar = ((${mass1} × ${abundance1}) + (${mass2} × ${abundance2})) / 100`;
+            });
+        }
+
+        /**
+         * TOGGLE UI ELEMENTS (Hints & Solutions)
+         */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                
+                // Re-render LaTeX math if hidden initially
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        /**
+         * MARKING ENGINE LOGIC (localStorage implementation)
+         */
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "var(--success-green)";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                    feedbackSpan.style.color = "var(--text-secondary)";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

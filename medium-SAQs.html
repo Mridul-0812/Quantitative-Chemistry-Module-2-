@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Quantitative Chemistry - Section III (Medium)</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+    :root {
+        --bg-dark: #0f172a;
+        --card-bg: #1e293b;
+        --accent-blue: #0ea5e9;
+        --text-light: #f8fafc;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --success-green: #22c55e;
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        display: flex;
+    }
+
+    /* Sidebar - Matching previous modules */
+    #sidebar {
+        width: 260px;
+        background: #1e1b4b;
+        height: 100vh;
+        position: fixed;
+        padding: 20px;
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+    }
+
+    .nav-header h2 { color: var(--accent-blue); margin-bottom: 5px; }
+    .nav-list { list-style: none; padding: 0; }
+    .nav-list li { margin: 10px 0; }
+    .nav-list a { color: #cbd5e1; text-decoration: none; font-size: 0.9rem; }
+    .nav-list a:hover, .nav-list a.active { color: var(--accent-blue); font-weight: bold; }
+    .nav-section-title { color: #64748b; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; margin-top: 20px; }
+
+    /* Main Content */
+    #main-content {
+        margin-left: 300px;
+        padding: 40px;
+        width: calc(100% - 300px);
+        max-width: 1000px;
+    }
+
+    .saq-container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 35px;
+        margin-bottom: 50px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .question-title {
+        color: var(--accent-blue);
+        border-bottom: 1px solid #334155;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .sub-question {
+        margin: 25px 0;
+        padding-left: 20px;
+        border-left: 3px solid #334155;
+    }
+
+    .sub-question:hover {
+        border-left-color: var(--accent-blue);
+    }
+
+    /* Interactive Elements */
+    .btn-tool {
+        background: #334155;
+        color: white;
+        border: 1px solid var(--accent-blue);
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: 0.3s;
+    }
+
+    .btn-tool:hover { background: var(--accent-blue); }
+
+    .marking-zone {
+        background: rgba(15, 23, 42, 0.5);
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+        border: 1px dashed var(--accent-blue);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    select.mark-dropdown {
+        background: #0f172a;
+        color: white;
+        border: 1px solid var(--accent-blue);
+        padding: 10px;
+        border-radius: 5px;
+        width: 120px;
+    }
+
+    /* Graphing Suite */
+    .graph-wrapper {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        position: relative;
+    }
+
+    #charles-canvas {
+        display: block;
+        margin: 0 auto;
+        background-image: 
+            linear-gradient(#eee 1px, transparent 1px),
+            linear-gradient(90deg, #eee 1px, transparent 1px);
+        background-size: 20px 20px;
+        cursor: crosshair;
+        border: 2px solid #94a3b8;
+    }
+
+    .hidden-content {
+        display: none;
+        background: #0f172a;
+        padding: 25px;
+        border-radius: 8px;
+        margin-top: 20px;
+        border-left: 4px solid var(--success-green);
+    }
+
+    .criteria-table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+    }
+
+    .criteria-table th, .criteria-table td {
+        border: 1px solid #334155;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .criteria-table th { background: #1e1b4b; color: var(--accent-blue); }
+
+    .marks-badge {
+        background: var(--accent-blue);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        float: right;
+    }
+</style>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+    };
+
+    let totalMarksEarned = 0;
+
+    function reveal(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === "block" ? "none" : "block";
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function addMarks(selectId, max) {
+        const val = parseInt(document.getElementById(selectId).value);
+        totalMarksEarned += val;
+        document.getElementById('total-marks').innerText = totalMarksEarned;
+        document.getElementById(selectId).disabled = true;
+        alert(`Logged ${val} / ${max} marks for this question.`);
+    }
+
+    // Graph Logic
+    let gPoints = [];
+    function initGraph() {
+        const canvas = document.getElementById('charles-canvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            gPoints.push({x, y});
+            renderGraph();
+        });
+    }
+
+    function renderGraph() {
+        const canvas = document.getElementById('charles-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Redraw points
+        ctx.fillStyle = "#ef4444";
+        gPoints.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+            ctx.fill();
+        });
+
+        // Draw lines
+        if(gPoints.length > 1) {
+            ctx.strokeStyle = "#0ea5e9";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(gPoints[0].x, gPoints[0].y);
+            for(let i=1; i<gPoints.length; i++) {
+                ctx.lineTo(gPoints[i].x, gPoints[i].y);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function clearGraph() {
+        gPoints = [];
+        renderGraph();
+    }
+
+    window.onload = initGraph;
+</script>
+</head>
+<body>
+
+<nav id="sidebar">
+    <div class="nav-header">
+        <h2>Module 2</h2>
+        <p>Quantitative Chemistry</p>
+        <div style="margin-top:15px; color:var(--accent-blue)">
+            Exam Score: <span id="total-marks">0</span>
+        </div>
+    </div>
+    <ul class="nav-list">
+        <li class="nav-section-title">Final Assessment</li>
+        <li><a href="final-exam.html">Section I: MCQs</a></li>
+        <li><a href="easy-SAQs.html">Section II: SAQ (Easy)</a></li>
+        <li><a href="medium-SAQs.html" class="active">Section III: SAQ (Medium)</a></li>
+        <li><a href="hard-SAQs.html">Section IV: SAQ (Hard)</a></li>
+    </ul>
+</nav>
+
+<main id="main-content">
+    <header>
+        <h1>Section III: Medium Complexity Questions</h1>
+        <p>This section focuses on multi-step stoichiometry, limiting reagents, and data plotting. Self-assess using the dropdowns.</p>
+    </header>
+
+    <div class="saq-container">
+        <h3 class="question-title">Question 1: The Combustion of Magnesium [8 Marks]</h3>
+        <p>A student reacts 4.86 g of Magnesium ribbon with 4.00 g of Oxygen gas to produce Magnesium Oxide ($MgO$).</p>
+        
+        <div class="sub-question">
+            <span class="marks-badge">2 Marks</span>
+            <p><strong>a)</strong> Write a balanced chemical equation for this reaction, including states.</p>
+        </div>
+
+        <div class="sub-question">
+            <span class="marks-badge">3 Marks</span>
+            <p><strong>b)</strong> Determine which reactant is the limiting reagent through calculation.</p>
+        </div>
+
+        <div class="sub-question">
+            <span class="marks-badge">3 Marks</span>
+            <p><strong>c)</strong> Calculate the mass of $MgO$ produced and the mass of the excess reagent remaining.</p>
+        </div>
+
+        <button class="btn-tool" onclick="reveal('hint-1')">Hint</button>
+        <button class="btn-tool" onclick="reveal('sol-1')">Reveal Solution</button>
+
+        <div id="hint-1" class="hidden-content" style="border-left-color: var(--accent-blue);">
+            <p><strong>Hint:</strong> First convert both masses to moles. Use the mole ratio from your balanced equation ($2:1$) to compare how much of each you actually need versus what you have.</p>
+        </div>
+
+        <div id="sol-1" class="hidden-content">
+            <h4>Marking Criteria</h4>
+            <table class="criteria-table">
+                <tr><th>Marks</th><th>Requirements</th></tr>
+                <tr><td>7-8</td><td>Correct equation, clear LR identification, correct final mass for both product and excess (3 sig figs).</td></tr>
+                <tr><td>4-6</td><td>Correct LR but minor error in excess reagent mass or molar mass values.</td></tr>
+            </table>
+
+            <h4>Detailed Worked Solution</h4>
+            <p><strong>a) Balanced Equation:</strong><br>
+            $2Mg(s) + O_2(g) \rightarrow 2MgO(s)$</p>
+
+            <p><strong>b) Finding Limiting Reagent:</strong><br>
+            $n(Mg) = \frac{4.86}{24.31} = 0.200 \text{ mol}$<br>
+            $n(O_2) = \frac{4.00}{32.00} = 0.125 \text{ mol}$<br>
+            Required $n(O_2)$ for all $Mg = \frac{0.200}{2} = 0.100 \text{ mol}$.<br>
+            Since we have $0.125 \text{ mol}$ of $O_2$, <strong>$Mg$ is the limiting reagent</strong>.</p>
+
+            <p><strong>c) Mass Calculations:</strong><br>
+            $n(MgO) = n(Mg) = 0.200 \text{ mol}$<br>
+            $m(MgO) = 0.200 \times (24.31 + 16.00) = 8.06 \text{ g}$<br>
+            Excess $O_2$ used $= 0.100 \text{ mol}$. Remaining $= 0.125 - 0.100 = 0.025 \text{ mol}$.<br>
+            $m(O_2 \text{ excess}) = 0.025 \times 32.00 = 0.800 \text{ g}$.</p>
+        </div>
+
+        <div class="marking-zone">
+            <span>Score your attempt:</span>
+            <select id="mark-1" class="mark-dropdown">
+                <option value="0">0 Marks</option>
+                <option value="4">4 Marks</option>
+                <option value="8">8 Marks</option>
+            </select>
+            <button class="btn-tool" onclick="addMarks('mark-1', 8)">Submit Marks</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3 class="question-title">Question 2: Data Analysis & Charles' Law [7 Marks]</h3>
+        <p>An experiment was conducted to observe the volume of a gas at different temperatures at constant pressure. Plot the data and extrapolate to find Absolute Zero.</p>
+        
+        <table class="criteria-table" style="max-width:300px">
+            <tr><th>Temp (°C)</th><th>Vol (mL)</th></tr>
+            <tr><td>0</td><td>100</td></tr>
+            <tr><td>50</td><td>118</td></tr>
+            <tr><td>100</td><td>137</td></tr>
+        </table>
+
+        <div class="graph-wrapper">
+            <canvas id="charles-canvas" width="500" height="300"></canvas>
+            <p style="text-align:center; font-size:0.8rem; color:#64748b">Click to plot points. (X-axis: Temp, Y-axis: Vol)</p>
+            <button class="btn-tool" onclick="clearGraph()">Reset Graph</button>
+        </div>
+
+        <div class="sub-question">
+            <span class="marks-badge">3 Marks</span>
+            <p><strong>a)</strong> Plot the points and draw a line of best fit. Extrapolate back to $V = 0$.</p>
+        </div>
+
+        <div class="sub-question">
+            <span class="marks-badge">4 Marks</span>
+            <p><strong>b)</strong> Using the gradient formula ($y = mx + c$), determine the theoretical temperature where volume is zero. Explain the significance of this value.</p>
+        </div>
+
+        <button class="btn-tool" onclick="reveal('sol-2')">Reveal Solution</button>
+
+        <div id="sol-2" class="hidden-content">
+            <h4>Worked Solution</h4>
+            <p><strong>a) Graphing:</strong> The line should be a straight diagonal increasing from left to right. When extrapolated backwards (to the left), it should cross the X-axis (Temperature) at approximately $-273^\circ C$.</p>
+            
+            <p><strong>b) Calculation:</strong><br>
+            Find gradient $m$: $\frac{137 - 100}{100 - 0} = 0.37$<br>
+            Equation: $V = 0.37T + 100$<br>
+            Set $V = 0$: $0 = 0.37T + 100 \rightarrow T = \frac{-100}{0.37} \approx -270.3^\circ C$.<br>
+            <strong>Significance:</strong> This represents 0 Kelvin, the temperature at which molecular motion theoretically ceases.</p>
+        </div>
+
+        <div class="marking-zone">
+            <span>Score your attempt:</span>
+            <select id="mark-2" class="mark-dropdown">
+                <option value="0">0 Marks</option>
+                <option value="3">3 Marks</option>
+                <option value="7">7 Marks</option>
+            </select>
+            <button class="btn-tool" onclick="addMarks('mark-2', 7)">Submit Marks</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3 class="question-title">Question 3: Identifying an Unknown Organic Compound [6 Marks]</h3>
+        <p>A compound is found to contain $85.7\%$ Carbon and $14.3\%$ Hydrogen by mass. Its molar mass is determined to be $56.12 \text{ g/mol}$.</p>
+        
+        <div class="sub-question">
+            <span class="marks-badge">3 Marks</span>
+            <p><strong>a)</strong> Determine the empirical formula of the compound.</p>
+        </div>
+        <div class="sub-question">
+            <span class="marks-badge">3 Marks</span>
+            <p><strong>b)</strong> Determine the molecular formula of the compound.</p>
+        </div>
+
+        <button class="btn-tool" onclick="reveal('sol-3')">Reveal Solution</button>
+
+        <div id="sol-3" class="hidden-content">
+            <h4>Detailed Solution</h4>
+            <p><strong>Empirical Formula:</strong><br>
+            $n(C) = 85.7 / 12.01 = 7.136 \text{ mol}$<br>
+            $n(H) = 14.3 / 1.008 = 14.187 \text{ mol}$<br>
+            Divide by smallest ($7.136$):<br>
+            $C = 1, H = 1.99 \approx 2$.<br>
+            <strong>Empirical Formula: $CH_2$</strong></p>
+
+            <p><strong>Molecular Formula:</strong><br>
+            $EMM (CH_2) = 12.01 + 2(1.008) = 14.026 \text{ g/mol}$<br>
+            Multiplier $n = \frac{56.12}{14.026} \approx 4$.<br>
+            Molecular formula $= 4 \times (CH_2) = \mathbf{C_4H_8}$</p>
+        </div>
+
+        <div class="marking-zone">
+            <span>Score:</span>
+            <select id="mark-3" class="mark-dropdown">
+                <option value="0">0</option>
+                <option value="3">3</option>
+                <option value="6">6</option>
+            </select>
+            <button class="btn-tool" onclick="addMarks('mark-3', 6)">Submit Marks</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3 class="question-title">Question 4: Standard Solution Preparation [6 Marks]</h3>
+        <p>A lab technician needs to prepare $500 \text{ mL}$ of a $0.100 \text{ M}$ solution of Sodium Hydroxide ($NaOH$).</p>
+        
+        <div class="sub-question">
+            <span class="marks-badge">2 Marks</span>
+            <p><strong>a)</strong> Calculate the mass of solid $NaOH$ pellets required.</p>
+        </div>
+        <div class="sub-question">
+            <span class="marks-badge">4 Marks</span>
+            <p><strong>b)</strong> Describe the procedure for preparing this standard solution using a volumetric flask. Include two safety precautions.</p>
+        </div>
+
+        <button class="btn-tool" onclick="reveal('sol-4')">Reveal Solution</button>
+
+        <div id="sol-4" class="hidden-content">
+            <h4>Solution</h4>
+            <p><strong>a) Calculation:</strong><br>
+            $n = C \times V = 0.100 \times 0.500 = 0.050 \text{ mol}$<br>
+            $m = n \times MM = 0.050 \times (22.99 + 16.00 + 1.008) = 2.00 \text{ g}$</p>
+
+            <p><strong>b) Procedure:</strong><br>
+            1. Weigh 2.00 g $NaOH$ in a beaker.<br>
+            2. Dissolve in a small volume of deionised water.<br>
+            3. Transfer to $500 \text{ mL}$ volumetric flask using a funnel.<br>
+            4. Rinse beaker and add washings to flask.<br>
+            5. Fill to mark (meniscus) and invert to mix.<br>
+            <strong>Safety:</strong> $NaOH$ is corrosive; wear gloves and goggles. Heat is released when dissolving; add solid to water slowly.</p>
+        </div>
+
+        <div class="marking-zone">
+            <span>Score:</span>
+            <select id="mark-4" class="mark-dropdown">
+                <option value="0">0</option>
+                <option value="3">3</option>
+                <option value="6">6</option>
+            </select>
+            <button class="btn-tool" onclick="addMarks('mark-4', 6)">Submit Marks</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3 class="question-title">Question 5: Decomposition of Sodium Azide [8 Marks]</h3>
+        <p>Airbags deploy using the reaction: $2NaN_3(s) \rightarrow 2Na(s) + 3N_2(g)$.</p>
+        
+        <div class="sub-question">
+            <span class="marks-badge">4 Marks</span>
+            <p><strong>a)</strong> Calculate the volume of $N_2$ gas produced from $65.0 \text{ g}$ of $NaN_3$ at Standard Laboratory Conditions (SLC: $100 \text{ kPa}, 298 \text{ K}$). $V_m = 24.79 \text{ L/mol}$.</p>
+        </div>
+        <div class="sub-question">
+            <span class="marks-badge">4 Marks</span>
+            <p><strong>b)</strong> If the reaction takes place at $80^\circ C$ and $110 \text{ kPa}$, what would be the new volume? (Use Ideal Gas Law).</p>
+        </div>
+
+        <button class="btn-tool" onclick="reveal('sol-5')">Reveal Solution</button>
+
+        <div id="sol-5" class="hidden-content">
+            <h4>Worked Solution</h4>
+            <p><strong>a) Volume at SLC:</strong><br>
+            $MM(NaN_3) = 22.99 + (3 \times 14.01) = 65.02 \text{ g/mol}$<br>
+            $n(NaN_3) = 65.0 / 65.02 \approx 1.00 \text{ mol}$<br>
+            Ratio $NaN_3 : N_2 = 2:3$. So $n(N_2) = 1.50 \text{ mol}$.<br>
+            $V = 1.50 \times 24.79 = \mathbf{37.19 \text{ L}}$</p>
+
+            <p><strong>b) Non-Standard Conditions:</strong><br>
+            $P = 110 \text{ kPa}, T = 80 + 273.15 = 353.15 \text{ K}$<br>
+            $V = \frac{nRT}{P} = \frac{1.50 \times 8.314 \times 353.15}{110} = \mathbf{40.05 \text{ L}}$</p>
+        </div>
+
+        <div class="marking-zone">
+            <span>Score:</span>
+            <select id="mark-5" class="mark-dropdown">
+                <option value="0">0</option>
+                <option value="4">4</option>
+                <option value="8">8</option>
+            </select>
+            <button class="btn-tool" onclick="addMarks('mark-5', 8)">Submit Marks</button>
+        </div>
+    </div>
+
+    <footer style="text-align:center; padding: 40px;">
+        <button class="btn-tool" style="padding:15px 40px; font-size:1.1rem" onclick="window.location.href='hard-SAQs.html'">
+            Final Challenge: Hard SAQs →
+        </button>
+    </footer>
+</main>
+</body>
+</html>

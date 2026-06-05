@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Excellence - Quantitative Chemistry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel+Decorative:wght@400;700;900&family=Montserrat:ital,wght@0,300;0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. ROOT VARIABLES & THEME SETTINGS
+           ========================================================================== */
+        :root {
+            /* 24-Karat Gold Gradients */
+            --gold-light: #fcf6ba;
+            --gold-base: #bf953f;
+            --gold-dark: #aa771c;
+            --gold-accent: #fbf5b7;
+            --gold-shadow: #b38728;
+            
+            /* Complex Gold Linear Gradients */
+            --gradient-gold-linear: linear-gradient(
+                to right, 
+                #BF953F, 
+                #FCF6BA, 
+                #B38728, 
+                #FBF5B7, 
+                #AA771C
+            );
+            
+            --gradient-gold-vertical: linear-gradient(
+                to bottom, 
+                #AA771C, 
+                #FBF5B7, 
+                #B38728, 
+                #FCF6BA, 
+                #BF953F
+            );
+
+            --gradient-gold-diagonal: linear-gradient(
+                135deg, 
+                #BF953F 0%, 
+                #FCF6BA 25%, 
+                #B38728 50%, 
+                #FBF5B7 75%, 
+                #AA771C 100%
+            );
+
+            /* Background Colors */
+            --bg-deep-charcoal: #0a0a0a;
+            --bg-rich-navy: #040814;
+            --bg-parchment: #121212;
+            
+            /* Typography Variables */
+            --font-title: 'Cinzel Decorative', cursive;
+            --font-body: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+            --font-signature: 'Alex Brush', cursive;
+            
+            /* Layout & Spacing */
+            --border-width-outer: 15px;
+            --border-width-inner: 4px;
+            --padding-main: 60px;
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESETS
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep-charcoal);
+            background-image: radial-gradient(circle at center, #1a1a24 0%, #050508 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+            font-family: var(--font-body);
+            color: var(--gold-light);
+            overflow-x: hidden;
+        }
+
+        /* ==========================================================================
+           3. CERTIFICATE CONTAINER & BORDERS
+           ========================================================================== */
+        .certificate-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            min-height: 850px;
+            background-color: var(--bg-rich-navy);
+            box-shadow: 
+                0 0 50px rgba(191, 149, 63, 0.15),
+                0 0 100px rgba(170, 119, 28, 0.1),
+                inset 0 0 80px rgba(0, 0, 0, 0.8);
+            padding: var(--padding-main);
+            overflow: hidden;
+        }
+
+        /* Background Pattern Layer */
+        .certificate-bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                linear-gradient(30deg, #bf953f 12%, transparent 12.5%, transparent 87%, #bf953f 87.5%, #bf953f),
+                linear-gradient(150deg, #bf953f 12%, transparent 12.5%, transparent 87%, #bf953f 87.5%, #bf953f),
+                linear-gradient(30deg, #bf953f 12%, transparent 12.5%, transparent 87%, #bf953f 87.5%, #bf953f),
+                linear-gradient(150deg, #bf953f 12%, transparent 12.5%, transparent 87%, #bf953f 87.5%, #bf953f),
+                linear-gradient(60deg, #b38728 25%, transparent 25.5%, transparent 75%, #b38728 75%, #b38728), 
+                linear-gradient(60deg, #b38728 25%, transparent 25.5%, transparent 75%, #b38728 75%, #b38728);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+        }
+
+        /* Elaborate Outer Gold Border */
+        .border-outer {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            border: var(--border-width-outer) solid transparent;
+            border-image: var(--gradient-gold-linear) 1;
+            z-index: 2;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.9),
+                0 0 15px rgba(252, 246, 186, 0.3);
+        }
+
+        /* Intricate Inner Filigree Border */
+        .border-inner {
+            position: absolute;
+            top: 55px;
+            left: 55px;
+            right: 55px;
+            bottom: 55px;
+            border: var(--border-width-inner) solid transparent;
+            border-image: var(--gradient-gold-vertical) 1;
+            z-index: 2;
+            padding: 40px;
+        }
+
+        .border-inner::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 1px solid var(--gold-base);
+            opacity: 0.5;
+        }
+
+        .border-inner::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid var(--gold-shadow);
+            opacity: 0.3;
+        }
+
+        /* ==========================================================================
+           4. ORNAMENTAL CORNERS
+           ========================================================================== */
+        .corner {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            z-index: 3;
+            background-size: contain;
+            background-repeat: no-repeat;
+            fill: url(#gold-gradient-svg);
+            filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.8));
+        }
+
+        .corner-tl {
+            top: 25px;
+            left: 25px;
+            transform: rotate(0deg);
+        }
+
+        .corner-tr {
+            top: 25px;
+            right: 25px;
+            transform: rotate(90deg);
+        }
+
+        .corner-bl {
+            bottom: 25px;
+            left: 25px;
+            transform: rotate(-90deg);
+        }
+
+        .corner-br {
+            bottom: 25px;
+            right: 25px;
+            transform: rotate(180deg);
+        }
+
+        /* ==========================================================================
+           5. MAIN CERTIFICATE CONTENT
+           ========================================================================== */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 60px;
+        }
+
+        /* Header Section */
+        .header-section {
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            font-family: var(--font-sans);
+            font-size: 1.1rem;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            background: var(--gradient-gold-linear);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 25px;
+            margin-top: 30px;
+            animation: shimmer 5s infinite linear;
+        }
+
+        .main-title {
+            font-family: var(--font-title);
+            font-size: 4.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            /* Gold Text Effect */
+            background: var(--gradient-gold-diagonal);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.9),
+                -1px -1px 0 rgba(252, 246, 186, 0.2);
+        }
+
+        .title-ornament {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0 40px;
+        }
+
+        .title-ornament::before,
+        .title-ornament::after {
+            content: '';
+            width: 150px;
+            height: 2px;
+            background: var(--gradient-gold-linear);
+            margin: 0 20px;
+        }
+
+        /* Recipient Section */
+        .presentation-text {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--gold-base);
+            margin-bottom: 10px;
+        }
+
+        .recipient-line {
+            width: 60%;
+            height: 2px;
+            background: var(--gradient-gold-linear);
+            margin: 30px auto 10px;
+            position: relative;
+        }
+
+        .recipient-line::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -6px;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold-base);
+        }
+
+        .recipient-placeholder {
+            font-family: var(--font-title);
+            font-size: 2.2rem;
+            color: var(--gold-accent);
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        /* ==========================================================================
+           6. THE CHEMISTRY GENIUS SECTION (MODULE 2)
+           ========================================================================== */
+        .genius-section {
+            background: rgba(10, 10, 10, 0.6);
+            border: 1px solid rgba(191, 149, 63, 0.3);
+            border-radius: 8px;
+            padding: 30px 40px;
+            margin: 20px auto;
+            width: 85%;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .genius-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: var(--gradient-gold-linear);
+        }
+        
+        .genius-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: var(--gradient-gold-linear);
+        }
+
+        .award-reason {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: #d1d5db;
+        }
+
+        .highlight-text {
+            color: var(--gold-light);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .equations-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .equation-box {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.8rem;
+            color: var(--gold-light);
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(191, 149, 63, 0.5);
+            padding: 10px 20px;
+            border-left: 3px solid var(--gold-base);
+            border-right: 3px solid var(--gold-base);
+            background: rgba(0, 0, 0, 0.3);
+            display: inline-block;
+        }
+
+        .equation-title {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--gold-shadow);
+            margin-bottom: 5px;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+        
+        .fraction span:first-child {
+            border-bottom: 2px solid var(--gold-light);
+            padding: 0 5px;
+        }
+        
+        .fraction span:last-child {
+            padding: 0 5px;
+        }
+
+        /* ==========================================================================
+           7. FOOTER & SIGNATURES
+           ========================================================================== */
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 40px;
+            padding: 0 30px;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 300px;
+            position: relative;
+        }
+
+        .signature {
+            font-family: var(--font-signature);
+            font-size: 3.5rem;
+            color: var(--gold-light);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            margin-bottom: -10px;
+            transform: rotate(-3deg);
+        }
+
+        .signature-line {
+            width: 100%;
+            height: 1px;
+            background: var(--gradient-gold-linear);
+            margin-bottom: 10px;
+        }
+
+        .signature-title {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold-shadow);
+        }
+
+        /* Seal / Stamp */
+        .seal-container {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: slowRotate 30s linear infinite;
+        }
+
+        .seal-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #FCF6BA, #BF953F, #AA771C);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 20px rgba(0,0,0,0.8),
+                inset 0 0 15px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .seal-content {
+            position: absolute;
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            color: #111;
+            font-weight: 900;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
+            text-align: center;
+            line-height: 1;
+            z-index: 21;
+        }
+
+        .seal-content span {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            margin-top: 5px;
+        }
+
+        /* ==========================================================================
+           8. ANIMATIONS & KEYFRAMES
+           ========================================================================== */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes slowRotate {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Responsive Design (if viewed on smaller screens) */
+        @media (max-width: 1024px) {
+            .certificate-wrapper { padding: 40px; min-height: 700px; }
+            .main-title { font-size: 3.5rem; }
+            .content-layer { padding: 10px 20px; }
+            .genius-section { width: 95%; padding: 20px; }
+            .equation-box { font-size: 1.4rem; }
+            .footer-section { flex-direction: column; align-items: center; gap: 40px; }
+            .seal-container { position: relative; bottom: 0; left: 0; transform: none; margin: 20px auto; }
+            @keyframes slowRotate {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <svg width="0" height="0" style="position: absolute; width: 0; height: 0;">
+        <defs>
+            <linearGradient id="gold-gradient-svg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#BF953F" />
+                <stop offset="25%" stop-color="#FCF6BA" />
+                <stop offset="50%" stop-color="#B38728" />
+                <stop offset="75%" stop-color="#FBF5B7" />
+                <stop offset="100%" stop-color="#AA771C" />
+            </linearGradient>
+            
+            <radialGradient id="gold-radial-svg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FCF6BA" />
+                <stop offset="50%" stop-color="#BF953F" />
+                <stop offset="100%" stop-color="#AA771C" />
+            </radialGradient>
+        </defs>
+    </svg>
+
+    <div class="certificate-wrapper">
+        
+        <div class="certificate-bg-pattern"></div>
+        
+        <div class="border-outer"></div>
+        <div class="border-inner"></div>
+
+        <svg class="corner corner-tl" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 L100,0 C100,0 80,10 70,30 C60,50 90,60 70,80 C50,100 0,100 0,100 Z" opacity="0.3"/>
+            <path d="M0,0 L85,0 C65,15 55,25 45,45 C35,65 30,75 0,85 Z" fill="url(#gold-gradient-svg)"/>
+            <path d="M0,0 L60,0 C45,15 35,20 25,35 C15,50 10,60 0,60 Z" opacity="0.7"/>
+            <circle cx="15" cy="15" r="5" fill="#fcf6ba" />
+            <circle cx="35" cy="15" r="3" fill="#bf953f" />
+            <circle cx="15" cy="35" r="3" fill="#bf953f" />
+        </svg>
+
+        <svg class="corner corner-tr" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 L100,0 C100,0 80,10 70,30 C60,50 90,60 70,80 C50,100 0,100 0,100 Z" opacity="0.3"/>
+            <path d="M0,0 L85,0 C65,15 55,25 45,45 C35,65 30,75 0,85 Z" fill="url(#gold-gradient-svg)"/>
+            <path d="M0,0 L60,0 C45,15 35,20 25,35 C15,50 10,60 0,60 Z" opacity="0.7"/>
+            <circle cx="15" cy="15" r="5" fill="#fcf6ba" />
+            <circle cx="35" cy="15" r="3" fill="#bf953f" />
+            <circle cx="15" cy="35" r="3" fill="#bf953f" />
+        </svg>
+
+        <svg class="corner corner-bl" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 L100,0 C100,0 80,10 70,30 C60,50 90,60 70,80 C50,100 0,100 0,100 Z" opacity="0.3"/>
+            <path d="M0,0 L85,0 C65,15 55,25 45,45 C35,65 30,75 0,85 Z" fill="url(#gold-gradient-svg)"/>
+            <path d="M0,0 L60,0 C45,15 35,20 25,35 C15,50 10,60 0,60 Z" opacity="0.7"/>
+            <circle cx="15" cy="15" r="5" fill="#fcf6ba" />
+            <circle cx="35" cy="15" r="3" fill="#bf953f" />
+            <circle cx="15" cy="35" r="3" fill="#bf953f" />
+        </svg>
+
+        <svg class="corner corner-br" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 L100,0 C100,0 80,10 70,30 C60,50 90,60 70,80 C50,100 0,100 0,100 Z" opacity="0.3"/>
+            <path d="M0,0 L85,0 C65,15 55,25 45,45 C35,65 30,75 0,85 Z" fill="url(#gold-gradient-svg)"/>
+            <path d="M0,0 L60,0 C45,15 35,20 25,35 C15,50 10,60 0,60 Z" opacity="0.7"/>
+            <circle cx="15" cy="15" r="5" fill="#fcf6ba" />
+            <circle cx="35" cy="15" r="3" fill="#bf953f" />
+            <circle cx="15" cy="35" r="3" fill="#bf953f" />
+        </svg>
+
+        <div class="content-layer">
+            
+            <div class="header-section">
+                <div class="sub-title">Global Academy of Sciences</div>
+                <h1 class="main-title">Certificate of Excellence</h1>
+                <div class="title-ornament">
+                    <svg width="40" height="40" viewBox="0 0 100 100">
+                        <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="url(#gold-gradient-svg)" stroke-width="4"/>
+                        <circle cx="50" cy="50" r="15" fill="url(#gold-gradient-svg)" />
+                        <ellipse cx="50" cy="50" rx="35" ry="12" transform="rotate(45 50 50)" fill="none" stroke="#fcf6ba" stroke-width="1.5"/>
+                        <ellipse cx="50" cy="50" rx="35" ry="12" transform="rotate(135 50 50)" fill="none" stroke="#fcf6ba" stroke-width="1.5"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="recipient-section">
+                <div class="presentation-text">This exquisite commendation is proudly presented to</div>
+                <div class="recipient-placeholder">THE ESTEEMED BEARER</div>
+                <div class="recipient-line"></div>
+            </div>
+
+            <div class="genius-section">
+                <div class="award-reason">
+                    For demonstrating unparalleled intellectual rigor, exceptional analytical prowess, and complete mastery over <span class="highlight-text">Module 2: Quantitative Chemistry</span>. This certificate recognises the ability to navigate the complexities of stoichiometry, empirical methodologies, and the dynamic behavior of gases with the precision of a true scientist.
+                </div>
+                
+                <div class="equations-container">
+                    
+                    <div>
+                        <div class="equation-title">General Hydrocarbon Combustion Stoichiometry</div>
+                        <div class="equation-box">
+                            C<sub>x</sub>H<sub>y</sub>O<sub>z</sub> + 
+                            [ x + <div class="fraction"><span>y</span><span>4</span></div> - <div class="fraction"><span>z</span><span>2</span></div> ] O<sub>2</sub>(g) 
+                            &rarr; 
+                            x CO<sub>2</sub>(g) + <div class="fraction"><span>y</span><span>2</span></div> H<sub>2</sub>O(g)
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="equation-title">The Van der Waals Equation of State (Real Gases)</div>
+                        <div class="equation-box">
+                            [ P + a &middot; ( <div class="fraction"><span>n</span><span>V</span></div> )<sup>2</sup> ] 
+                            &times; 
+                            [ V - n &middot; b ] 
+                            = n &middot; R &middot; T
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <div class="signature-block">
+                    <div class="signature" style="opacity: 0;">Signature Here</div>
+                    <div class="signature-line"></div>
+                    <div class="signature-title">Board of Directors</div>
+                </div>
+
+                <div class="signature-block">
+                    <div class="signature" style="letter-spacing: 2px;">Mridul Gupta</div>
+                    <div class="signature-line"></div>
+                    <div class="signature-title">Head of Chemistry<br><span style="font-size: 0.7rem; color: #777;">Mridul Gupta</span></div>
+                </div>
+            </div>
+
+            <div class="seal-container">
+                <svg width="180" height="180" viewBox="0 0 200 200" style="position: absolute;">
+                    <g fill="url(#gold-gradient-svg)">
+                        <polygon points="100,0 105,20 120,5 115,25 135,15 125,35 150,30 135,45 165,50 145,60 180,75 155,80 190,100 160,100 190,120 155,115 180,135 145,130 165,150 135,145 150,170 125,155 135,185 115,165 120,195 105,170 100,200 95,170 80,195 85,165 65,185 75,155 50,170 65,145 35,150 55,130 20,135 45,115 10,120 40,100 10,80 45,85 20,65 55,70 35,50 65,55 50,30 75,45 65,15 85,35 80,5 95,25" />
+                    </g>
+                    <circle cx="100" cy="100" r="75" fill="#040814" stroke="url(#gold-gradient-svg)" stroke-width="4"/>
+                    <circle cx="100" cy="100" r="65" fill="none" stroke="#fcf6ba" stroke-width="1" stroke-dasharray="5,5"/>
+                </svg>
+                
+                <div class="seal-content">
+                    CHEM
+                    <span>MOD II</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

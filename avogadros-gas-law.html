@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 24: Avogadro's Gas Law - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY & CONTENT STYLES
+           ========================================================================== */
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .math-focus {
+            background: #111424;
+            border: 1px dashed #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        .highlight-text { color: #0ea5e9; font-weight: bold; }
+        .danger-text { color: #ef4444; font-weight: bold; }
+        .success-text { color: #22c55e; font-weight: bold; }
+        .purple-text { color: #a855f7; font-weight: bold; }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: BALLOON INFLATOR SIMULATOR
+           -------------------------------------------------------------------------- */
+        .simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .balloon-assembly {
+            width: 250px;
+            height: 300px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            border: 2px dashed #475569;
+            border-radius: 15px;
+        }
+
+        .balloon-membrane {
+            position: absolute;
+            bottom: 20px;
+            width: 100px; /* Dynamic */
+            height: 120px; /* Dynamic */
+            background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.8), rgba(2, 132, 199, 0.8));
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            z-index: 2;
+            transition: all 0.3s ease-out;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .balloon-knot {
+            position: absolute;
+            bottom: 5px;
+            width: 15px;
+            height: 20px;
+            background: #0284c7;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            z-index: 1;
+        }
+
+        .gas-cavity {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 3px #fff;
+        }
+
+        .pump-nozzle {
+            position: absolute;
+            bottom: -5px;
+            width: 30px;
+            height: 40px;
+            background: #94a3b8;
+            border-radius: 4px;
+            z-index: 4;
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .val-highlight {
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: #38bdf8;
+            cursor: pointer;
+        }
+
+        .gauge-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .gauge-metric {
+            font-size: 2.5rem;
+            color: #a855f7;
+            font-family: monospace;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: GRAPHING TOOL
+           -------------------------------------------------------------------------- */
+        .graphing-container {
+            background: #111424;
+            border: 1px solid #3f4a75;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .graph-box {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            text-align: center;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .graph-title {
+            color: #f8fafc;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        canvas {
+            background: #0f172a;
+            border-left: 2px solid #94a3b8;
+            border-bottom: 2px solid #94a3b8;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        /* --------------------------------------------------------------------------
+           STANDARD EDUCATIONAL UI
+           -------------------------------------------------------------------------- */
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: #22c55e; color: #000; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-hard { background: #ef4444; color: #fff; }
+        .badge-extension { background: #a855f7; color: #fff; }
+
+        .practise-question {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .question-header h4 { margin: 0; font-size: 1.3rem; color: #f8fafc; }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #ec4899;
+            font-weight: bold;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .interaction-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        
+        .btn-hint, .btn-reveal, .btn-submit-mark {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover { background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b; }
+        .btn-reveal:hover { background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981; }
+        .btn-submit-mark { background: #0ea5e9; color: #000; border: none; }
+        .btn-submit-mark:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+
+        .hidden-hint {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            color: #cbd5e1;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .worked-solution h5 { color: #0ea5e9; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-size: 1.2rem; }
+        .marking-criteria { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .marking-criteria h5 { color: #10b981; margin-bottom: 1rem; font-size: 1.1rem; }
+        .marking-criteria ul { list-style-type: none; margin-left: 0; }
+        .marking-criteria li { padding-left: 2rem; position: relative; margin-bottom: 0.8rem; color: #cbd5e1; }
+        .marking-criteria li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; font-size: 1.1rem; }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            background: #2a2f4c;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #3f4a75;
+        }
+
+        .mark-dropdown {
+            background: #111424;
+            color: #f8fafc;
+            border: 1px solid #3f4a75;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html" class="active">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>24. Avogadro's Gas Law</h1>
+            <p class="subtitle">The Mathematical Relationship Between Volume and Moles</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Law of Equal Volumes</h2>
+            <p>We have examined how Pressure, Volume, and Temperature interact. But what happens if we actively pump <em>more gas</em> into a flexible container? In 1811, Italian scientist Amedeo Avogadro proposed a revolutionary hypothesis that became a cornerstone of modern stoichiometry.</p>
+
+            <div class="theory-box">
+                <h3>Avogadro's Law Definition</h3>
+                <p>For a gas held at a strictly <strong>constant temperature ($T$) and constant pressure ($P$)</strong>, the volume ($V$) of the gas is <strong>directly proportional</strong> to the number of moles ($n$) of the gas.</p>
+                <p>Furthermore, Avogadro stated that <em>equal volumes of ANY ideal gas, at the same temperature and pressure, contain the exact same number of molecules (moles)</em>, regardless of the size or mass of the individual gas particles.</p>
+            </div>
+
+            [Image illustrating Avogadro's law: three identical balloons containing different gases (He, O2, CO2) but all having the same volume, indicating they contain the same number of moles]
+
+            <div class="math-focus">
+                <h3 style="color: #f8fafc; margin-top: 0;">Mathematical Derivation</h3>
+                <p>Since Volume ($V$) is directly proportional to Moles ($n$), we write:</p>
+                <p style="font-size: 1.5rem; margin: 15px 0;">$$ V \propto n $$</p>
+                <p>Introducing a constant of proportionality ($k$):</p>
+                <p style="font-size: 1.5rem; margin: 15px 0; color: #f59e0b;">$$ V = k \times n \quad \implies \quad \frac{V}{n} = k $$</p>
+                <p>Because dividing the Volume by the Moles always yields a constant value ($k$) under fixed conditions, we can equate two different states of a gas system:</p>
+                <p style="font-size: 2.2rem; font-weight: bold; color: #0ea5e9; background: #0f172a; padding: 20px; border-radius: 8px; display: inline-block; border: 1px solid #334155;">
+                    $$ \frac{V_1}{n_1} = \frac{V_2}{n_2} $$
+                </p>
+            </div>
+        </section>
+
+        <section class="content-section" id="ideal-gas-link">
+            <h2>The Future Link: The Ideal Gas Law</h2>
+            <p>As with the previous laws, we can derive Avogadro's Law directly from the <strong>Ideal Gas Law ($PV = nRT$)</strong>.</p>
+            
+            <p>If we rearrange $PV = nRT$ to group our changing variables ($V$ and $n$) on one side, and our constants on the other, we get:</p>
+            <p style="font-size: 1.5rem; text-align: center; margin: 10px 0;">$$ \frac{V}{n} = \frac{RT}{P} $$</p>
+            <ul>
+                <li><strong>$P$</strong> is the Pressure (constant).</li>
+                <li><strong>$T$</strong> is the Temperature (constant).</li>
+                <li><strong>$R$</strong> is the Universal Gas Constant (<span class="purple-text">$8.314 \text{ J K}^{-1} \text{ mol}^{-1}$</span>).</li>
+            </ul>
+            <p>Since the entire right side of the equation consists of constants, the term $\frac{RT}{P}$ evaluates to a single constant number ($k$). Therefore, $\frac{V}{n} = k$, proving Avogadro's Law perfectly!</p>
+        </section>
+
+        <section class="content-section" id="interactive-balloon">
+            <h2>Interactive: The Gas Pump Simulator</h2>
+            <p>Use the slider below to inject more moles of gas into the elastic balloon. The balloon membrane will expand to keep the internal pressure perfectly balanced with the atmosphere outside. Notice the direct, linear expansion of the volume.</p>
+            
+            <div class="simulator-container">
+                <div class="balloon-assembly">
+                    <div class="balloon-membrane" id="sim-balloon">
+                        <div class="gas-cavity" id="sim-cavity">
+                            </div>
+                    </div>
+                    <div class="balloon-knot"></div>
+                    <div class="pump-nozzle"></div>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="slider-group">
+                        <label>
+                            <span>Amount of Gas ($n$):</span>
+                            <span class="val-highlight" id="sim-moles-val">1.0 mol</span>
+                        </label>
+                        <input type="range" id="sim-moles-slider" min="0.5" max="5.0" value="1.0" step="0.1" oninput="updateAvogadroSim()">
+                    </div>
+
+                    <div class="gauge-panel">
+                        <span style="color: #94a3b8; text-transform: uppercase; font-size: 0.9rem;">Internal Volume ($V$)</span>
+                        <div class="gauge-metric" id="sim-vol-val">24.5 L</div>
+                    </div>
+                    
+                    <p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 10px;">
+                        $\frac{V}{n} = \text{Constant } (24.5)$<br>
+                        Pressure ($P$) and Temperature ($T$) are locked.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-graphs">
+            <h2>Interactive: Graphing Avogadro's Law</h2>
+            <p>Adjust the moles slider above to see the relationship between Volume and Moles plotted below. As expected, a direct proportionality results in a straight line passing through the origin.</p>
+
+            <div class="graphing-container">
+                <div class="graph-box">
+                    <div class="graph-title">Volume vs. Moles</div>
+                    <canvas id="canvas-vn" width="300" height="200"></canvas>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">A direct straight line originating from (0,0)</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Study how the formula $\frac{V_1}{n_1} = \frac{V_2}{n_2}$ is applied in these HSC-style worked examples. Pay attention to how mass must often be converted to moles first.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Example 1: Direct Molar Substitution</h4>
+                </div>
+                <div class="question-body">
+                    <p>A weather balloon containing $2.50 \text{ mol}$ of Helium gas occupies a volume of $60.0 \text{ L}$. A technician pumps an additional $1.50 \text{ mol}$ of Helium into the balloon. Assuming pressure and temperature remain constant, calculate the final volume of the balloon.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-avo-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-avo-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Extract the data</strong><br>
+                        $V_1 = 60.0 \text{ L}$<br>
+                        $n_1 = 2.50 \text{ mol}$<br>
+                        $V_2 = \text{ ?}$<br>
+                        $n_2 = 2.50 \text{ mol (initial)} + 1.50 \text{ mol (added)} = 4.00 \text{ mol}$</p>
+
+                        <p><strong>Step 2: Apply Avogadro's Law</strong><br>
+                        $$ \frac{V_1}{n_1} = \frac{V_2}{n_2} $$
+                        $$ \frac{60.0}{2.50} = \frac{V_2}{4.00} $$</p>
+
+                        <p><strong>Step 3: Rearrange and solve</strong><br>
+                        Multiply both sides by $4.00$ to isolate $V_2$:<br>
+                        $$ V_2 = \left(\frac{60.0}{2.50}\right) \times 4.00 $$
+                        $$ V_2 = 24.0 \times 4.00 = 96.0 \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The final volume of the balloon is $\mathbf{96.0 \text{ L}}$.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Example 2: Mass to Moles Conversion</h4>
+                </div>
+                <div class="question-body">
+                    <p>A cylinder fitted with a movable piston contains $32.0 \text{ g}$ of Oxygen gas ($O_2$), occupying a volume of $24.5 \text{ L}$. How many grams of Oxygen gas must be released from the cylinder to reduce the volume to $15.0 \text{ L}$ at constant temperature and pressure?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-avo-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-avo-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert Initial Mass to Moles</strong><br>
+                        $MM(O_2) = 2 \times 16.00 = 32.00 \text{ g/mol}$<br>
+                        $n_1 = \frac{m}{MM} = \frac{32.0}{32.00} = 1.00 \text{ mol}$</p>
+
+                        <p><strong>Step 2: Setup the Equation</strong><br>
+                        $V_1 = 24.5 \text{ L}$<br>
+                        $n_1 = 1.00 \text{ mol}$<br>
+                        $V_2 = 15.0 \text{ L}$<br>
+                        $n_2 = \text{ ?}$<br>
+                        $$ \frac{24.5}{1.00} = \frac{15.0}{n_2} $$</p>
+
+                        <p><strong>Step 3: Solve for $n_2$</strong><br>
+                        Cross-multiply:<br>
+                        $24.5 \times n_2 = 15.0 \times 1.00$<br>
+                        $n_2 = \frac{15.0}{24.5} = 0.6122... \text{ mol}$ (This is the final moles required).</p>
+
+                        <p><strong>Step 4: Find the Moles Released</strong><br>
+                        $\text{Moles released} = n_1 - n_2$<br>
+                        $\text{Moles released} = 1.00 - 0.6122 = 0.3877... \text{ mol}$</p>
+                        
+                        <p><strong>Step 5: Convert Released Moles to Mass</strong><br>
+                        $m = n \times MM = 0.3877 \times 32.00 = \mathbf{12.4 \text{ g}}$</p>
+
+                        <p><strong>Final Answer:</strong> $\mathbf{12.4 \text{ g}}$ of $O_2$ must be released (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Example 3: Comparing Different Gases</h4>
+                </div>
+                <div class="question-body">
+                    <p>At a specific temperature and pressure, $4.00 \text{ g}$ of Helium gas ($He$) occupies $25.0 \text{ L}$. Under identical conditions of temperature and pressure, what mass of Carbon Dioxide gas ($CO_2$) is required to occupy a volume of $75.0 \text{ L}$?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-avo-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-avo-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>Avogadro's Law states that equal volumes of ANY ideal gas under the same conditions contain the same number of moles. Therefore, we can use the data from Helium to find the proportional constant for Carbon Dioxide.</em></p>
+                        
+                        <p><strong>Step 1: Calculate moles of Helium</strong><br>
+                        $MM(He) = 4.003 \text{ g/mol}$<br>
+                        $n(He) = \frac{4.00}{4.003} = 0.99925 \text{ mol}$</p>
+
+                        <p><strong>Step 2: Apply Avogadro's Ratio</strong><br>
+                        Let state 1 be Helium, state 2 be Carbon Dioxide.<br>
+                        $$ \frac{V_{He}}{n_{He}} = \frac{V_{CO_2}}{n_{CO_2}} $$
+                        $$ \frac{25.0}{0.99925} = \frac{75.0}{n_{CO_2}} $$</p>
+
+                        <p><strong>Step 3: Solve for moles of $CO_2$</strong><br>
+                        $$ n_{CO_2} = \frac{75.0 \times 0.99925}{25.0} = 2.99775 \text{ mol} $$</p>
+
+                        <p><strong>Step 4: Convert moles of $CO_2$ to mass</strong><br>
+                        $MM(CO_2) = 12.01 + (2 \times 16.00) = 44.01 \text{ g/mol}$<br>
+                        $m = n \times MM = 2.99775 \times 44.01 = \mathbf{131.93 \text{ g}}$</p>
+
+                        <p><strong>Final Answer:</strong> $\mathbf{132 \text{ g}}$ of $CO_2$ is required (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Example 4: Reaction Stoichiometry Integration</h4>
+                </div>
+                <div class="question-body">
+                    <p>Methane ($CH_4$) combusts in Oxygen ($O_2$) according to the equation:<br>
+                    $CH_4(g) + 2O_2(g) \rightarrow CO_2(g) + 2H_2O(l)$</p>
+                    <p>If $5.00 \text{ L}$ of Methane completely reacts with $10.0 \text{ L}$ of Oxygen at constant temperature and pressure, calculate the final volume of the gas mixture remaining after the reaction. <em>(Assume the water formed is completely liquid with negligible volume).</em></p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-avo-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-avo-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>Because Volume is directly proportional to Moles (Avogadro's Law), we can use the stoichiometric coefficients from the balanced equation directly as volume ratios!</em></p>
+                        
+                        <p><strong>Step 1: Check Reactants</strong><br>
+                        Equation ratio $CH_4 : O_2$ is $1 : 2$.<br>
+                        We have $5.00 \text{ L}$ of $CH_4$ and $10.0 \text{ L}$ of $O_2$. This is exactly a $1:2$ ratio, so both reactants will be completely consumed.</p>
+
+                        <p><strong>Step 2: Determine Products</strong><br>
+                        The products are $1 \text{ vol } CO_2(g)$ and $2 \text{ vol } H_2O(l)$.<br>
+                        Because the water is liquid, it contributes approximately $0 \text{ L}$ to the final <em>gas</em> volume.<br>
+                        We only need to calculate the volume of $CO_2$ produced.</p>
+
+                        <p><strong>Step 3: Apply Volume Ratios</strong><br>
+                        Ratio of $CH_4(g) : CO_2(g)$ is $1 : 1$.<br>
+                        Therefore, if $5.00 \text{ L}$ of $CH_4$ reacts, exactly $5.00 \text{ L}$ of $CO_2$ gas will be produced.</p>
+
+                        <p><strong>Final Answer:</strong> The final volume of the gas mixture is $\mathbf{5.00 \text{ L}}$ (consisting entirely of Carbon Dioxide).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Test your grasp of Avogadro's Law. Complete your working on paper, then use the self-marking engine below to track your progress.</p>
+
+            <div class="practise-question" id="q-avo-1">
+                <div class="question-header">
+                    <h4>Question 1: Direct Substitution (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $4.50 \text{ L}$ container holds $0.250 \text{ mol}$ of Nitrogen gas. If the container expands to hold $0.800 \text{ mol}$ of Nitrogen gas at the same temperature and pressure, calculate the new volume.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-avo-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-avo-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-avo-1">
+                    <p><strong>Hint:</strong> Setup the ratio $\frac{4.50}{0.250} = \frac{V_2}{0.800}$. Multiply both sides by $0.800$ to solve for $V_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-avo-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$ \frac{V_1}{n_1} = \frac{V_2}{n_2} $$</p>
+                        <p>$$ \frac{4.50}{0.250} = \frac{V_2}{0.800} $$</p>
+                        <p>$$ V_2 = \left(\frac{4.50}{0.250}\right) \times 0.800 $$</p>
+                        <p>$$ V_2 = 18 \times 0.800 = \mathbf{14.4 \text{ L}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly substitutes variables into Avogadro's Law.</li>
+                            <li><strong>2 Marks:</strong> Correct final volume of $14.4 \text{ L}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-avo-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-avo-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('avo-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-avo-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-avo-2">
+                <div class="question-header">
+                    <h4>Question 2: Finding Gas Released (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A balloon contains $1.20 \text{ mol}$ of gas and has a volume of $30.0 \text{ L}$. Gas is slowly released from the balloon until its volume drops to $18.0 \text{ L}$. Calculate the number of moles of gas that were <em>removed</em> from the balloon.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-avo-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-avo-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-avo-2">
+                    <p><strong>Hint:</strong> Step 1: Use the formula to find the <em>final</em> number of moles ($n_2$) remaining in the balloon. Step 2: Subtract this final amount from the initial $1.20 \text{ mol}$ to find how much was removed.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-avo-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Find Final Moles ($n_2$):</strong><br>
+                        $$ \frac{30.0}{1.20} = \frac{18.0}{n_2} $$
+                        $$ 30.0 \times n_2 = 18.0 \times 1.20 $$
+                        $$ n_2 = \frac{21.6}{30.0} = 0.720 \text{ mol} $$</p>
+
+                        <p><strong>2. Find Moles Removed:</strong><br>
+                        $\text{Removed} = n_1 - n_2$<br>
+                        $\text{Removed} = 1.20 - 0.720 = \mathbf{0.480 \text{ mol}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly sets up the algebraic fraction to solve for $n_2$.</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates the final moles inside the balloon ($0.720 \text{ mol}$).</li>
+                            <li><strong>3 Marks:</strong> Correctly subtracts to find the moles removed ($0.48 \text{ mol}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-avo-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-avo-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('avo-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-avo-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-avo-3">
+                <div class="question-header">
+                    <h4>Question 3: Mass Identity (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>At a constant temperature and pressure, $2.50 \text{ g}$ of Hydrogen gas ($H_2$) occupies a volume of $31.0 \text{ L}$. An unknown gas under the exact same conditions requires $55.0 \text{ g}$ to occupy the same $31.0 \text{ L}$ volume. Calculate the Molar Mass of the unknown gas.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-avo-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-avo-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-avo-3">
+                    <p><strong>Hint:</strong> Avogadro's law states that equal volumes of gases contain equal moles. If the volume of the unknown gas is the same as the Hydrogen ($31.0 \text{ L}$), it must contain the exact same number of moles. Calculate the moles of $H_2$, then use that mole value and the $55.0 \text{ g}$ mass to find the Molar Mass ($MM = m/n$).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-avo-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Calculate moles of Hydrogen ($H_2$):</strong><br>
+                        $MM(H_2) = 2 \times 1.008 = 2.016 \text{ g/mol}$<br>
+                        $n(H_2) = \frac{m}{MM} = \frac{2.50}{2.016} = 1.240... \text{ mol}$</p>
+                        
+                        <p><strong>2. Apply Avogadro's Principle:</strong><br>
+                        Since both gases occupy $31.0 \text{ L}$ at the same conditions, they must contain the same number of moles.<br>
+                        $n(\text{unknown}) = 1.240... \text{ mol}$</p>
+
+                        <p><strong>3. Calculate Molar Mass:</strong><br>
+                        $$ MM = \frac{m}{n} $$
+                        $$ MM = \frac{55.0}{1.240...} = 44.35... \text{ g/mol} $$
+                        Rounding to 3 sig figs: $\mathbf{44.4 \text{ g/mol}}$ <em>(This happens to be the molar mass of Nitrous Oxide, $N_2O$, or Carbon Dioxide, $CO_2$!)</em></p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates the moles of Hydrogen ($1.24 \text{ mol}$).</li>
+                            <li><strong>2 Marks:</strong> Explicitly states or mathematically demonstrates that the moles of the unknown gas must equal the moles of Hydrogen.</li>
+                            <li><strong>3 Marks:</strong> Uses the rearranged mole formula ($MM = m/n$) correctly.</li>
+                            <li><strong>4 Marks:</strong> Correct final Molar Mass ($\approx 44.4 \text{ g/mol}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-avo-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-avo-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('avo-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-avo-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-avo-4">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Question 4: Volume Stoichiometry (Extension)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Nitrogen gas ($N_2$) reacts with Hydrogen gas ($H_2$) to produce Ammonia gas ($NH_3$) according to the Haber process. Write the balanced equation.</p>
+                    <p>If $15.0 \text{ L}$ of Nitrogen gas is reacted with an excess of Hydrogen gas at constant temperature and pressure, calculate the final volume of Ammonia gas produced.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-avo-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-avo-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-avo-4">
+                    <p><strong>Hint:</strong> Balance the equation $N_2 + H_2 \rightarrow NH_3$ first. Because the conditions are constant, Avogadro's Law allows you to treat the stoichiometric coefficients directly as a "Volume Ratio", just like a mole ratio!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-avo-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Balanced Equation:</strong><br>
+                        $N_2(g) + 3H_2(g) \rightarrow 2NH_3(g)$</p>
+                        
+                        <p><strong>2. Apply Volume Ratios (Avogadro's Law):</strong><br>
+                        Because $V \propto n$, the mole ratio of $1 : 3 : 2$ is identical to the volume ratio.<br>
+                        Ratio of $N_2 : NH_3$ is $1 : 2$.</p>
+
+                        <p><strong>3. Calculate Volume:</strong><br>
+                        $$ V(NH_3) = V(N_2) \times \frac{2}{1} $$
+                        $$ V(NH_3) = 15.0 \text{ L} \times 2 = \mathbf{30.0 \text{ L}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly balances the equation ($1N_2 + 3H_2 \rightarrow 2NH_3$).</li>
+                            <li><strong>2 Marks:</strong> Identifies the ratio between Nitrogen and Ammonia is $1:2$.</li>
+                            <li><strong>3 Marks:</strong> Applies Avogadro's concept that mole ratios can be used directly as volume ratios.</li>
+                            <li><strong>4 Marks:</strong> Correct final volume ($30.0 \text{ L}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-avo-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-avo-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('avo-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-avo-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="combined-gas-law.html" class="btn-next">Proceed to Lesson 25: Combined Gas Law &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION & CORE SYSTEM LOGIC
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('avo-1');
+            checkIfQuestionAnswered('avo-2');
+            checkIfQuestionAnswered('avo-3');
+            checkIfQuestionAnswered('avo-4');
+
+            initAvogadroSim();
+            initAvogadroGraphSim();
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: BALLOON SIMULATOR
+         * ==========================================
+         */
+        const AVO_CONSTANT = 24.5; // V/n = k. Approx Molar Volume at SLC.
+        let particles = [];
+        
+        class Particle {
+            constructor() {
+                // Initialize in center
+                this.x = 50; 
+                this.y = 50; 
+                this.vx = (Math.random() - 0.5) * 6;
+                this.vy = (Math.random() - 0.5) * 6;
+                this.el = document.createElement('div');
+                this.el.className = 'particle';
+                document.getElementById('sim-cavity').appendChild(this.el);
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off elliptical bounds roughly
+                if (this.x <= 5 || this.x >= 95) this.vx *= -1;
+                if (this.y <= 5 || this.y >= 95) this.vy *= -1;
+
+                this.el.style.left = this.x + '%';
+                this.el.style.top = this.y + '%';
+            }
+        }
+
+        function initAvogadroSim() {
+            updateAvogadroSim();
+            requestAnimationFrame(animateAvogadroSim);
+        }
+
+        function updateAvogadroSim() {
+            const moles = parseFloat(document.getElementById('sim-moles-slider').value);
+            document.getElementById('sim-moles-val').innerText = moles.toFixed(1) + " mol";
+
+            // Math: V / n = k. V = k * n
+            const vol = AVO_CONSTANT * moles;
+            document.getElementById('sim-vol-val').innerText = vol.toFixed(1) + " L";
+
+            // Visual updates
+            // Balloon max width/height based on moles
+            // Map 0.5 to 5.0 moles to 80px to 220px dimensions
+            const dim = 50 + (moles * 35); 
+            const balloon = document.getElementById('sim-balloon');
+            balloon.style.width = dim + 'px';
+            balloon.style.height = (dim * 1.2) + 'px'; // Slightly taller than wide
+
+            // Update particle count
+            // 1 mol = 10 particles
+            const targetParticles = Math.floor(moles * 15);
+            
+            if (targetParticles > particles.length) {
+                const toAdd = targetParticles - particles.length;
+                for(let i=0; i<toAdd; i++) particles.push(new Particle());
+            } else if (targetParticles < particles.length) {
+                // Remove excess
+                const toRemove = particles.length - targetParticles;
+                for(let i=0; i<toRemove; i++) {
+                    let p = particles.pop();
+                    p.el.remove();
+                }
+            }
+        }
+
+        function animateAvogadroSim() {
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animateAvogadroSim);
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 2: GRAPHING TOOL LOGIC
+         * ==========================================
+         */
+        const cvsVN = document.getElementById('canvas-vn');
+        const ctxVN = cvsVN.getContext('2d');
+
+        function initAvogadroGraphSim() {
+            // Tie to the main slider
+            document.getElementById('sim-moles-slider').addEventListener('input', updateAvogadroGraphs);
+            updateAvogadroGraphs();
+        }
+
+        function updateAvogadroGraphs() {
+            const moles = parseFloat(document.getElementById('sim-moles-slider').value);
+            const vol = AVO_CONSTANT * moles;
+            drawVNGraph(moles, vol);
+        }
+
+        function drawVNGraph(n, v) {
+            ctxVN.clearRect(0, 0, cvsVN.width, cvsVN.height);
+            
+            // Axes
+            ctxVN.strokeStyle = '#334155';
+            ctxVN.lineWidth = 1;
+            
+            // V vs n line (y = kx)
+            // Scale: n (x-axis) 0-5.0 -> 0-300px (x * 60)
+            // Scale: V (y-axis) 0-150 L -> 200-0px (200 - v * 1.33)
+            ctxVN.beginPath();
+            ctxVN.strokeStyle = '#0ea5e9';
+            ctxVN.lineWidth = 3;
+            ctxVN.moveTo(0, 200); // Origin (0,0)
+            ctxVN.lineTo(5.0 * 60, 200 - ((AVO_CONSTANT * 5.0) * 1.333)); 
+            ctxVN.stroke();
+
+            // Draw current point
+            let currentX = n * 60;
+            let currentY = 200 - (v * 1.333);
+            ctxVN.beginPath();
+            ctxVN.arc(currentX, currentY, 6, 0, Math.PI * 2);
+            ctxVN.fillStyle = '#f59e0b';
+            ctxVN.fill();
+            ctxVN.strokeStyle = '#fff';
+            ctxVN.lineWidth = 2;
+            ctxVN.stroke();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 17: Molarity Formula | Module 2: Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* ==========================================================================
+           INTERACTIVITY 1: THE SOLUTION SYNTHESISER
+           ========================================================================== */
+        .synthesiser-container {
+            display: flex;
+            flex-wrap: wrap;
+            background: #111424; /* Matching dark theme */
+            border: 2px solid #3f4a75;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            gap: 40px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flask-display {
+            position: relative;
+            width: 250px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+        }
+
+        /* SVG Flask styling */
+        .flask-svg {
+            position: absolute;
+            bottom: 0;
+            z-index: 10;
+            pointer-events: none;
+            drop-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .liquid-fill {
+            position: absolute;
+            bottom: 25px;
+            width: 140px;
+            height: 20px; /* Dynamic height */
+            background: rgba(0, 150, 255, 0.1); /* Dynamic color */
+            border-radius: 10px 10px 25px 25px;
+            transition: all 0.5s ease-in-out;
+            z-index: 5;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .particle-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 6;
+        }
+
+        .solute-spec {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffffff;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: drift 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(5px, -5px); }
+        }
+
+        .synth-controls {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            background: rgba(0,0,0,0.2);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #2e3650;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .val-highlight {
+            color: #00f2ff;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        /* Custom Slider */
+        .synth-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #3f4a75;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .synth-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00f2ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00f2ff;
+            transition: transform 0.1s;
+        }
+        
+        .synth-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .molarity-readout {
+            text-align: center;
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid #00f2ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .big-m {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00f2ff;
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+            font-family: monospace;
+        }
+
+        /* ==========================================================================
+           INTERACTIVITY 2: THE MAGIC TRIANGLE EXPLORER
+           ========================================================================== */
+        .triangle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #181a2e;
+            border: 1px solid #3f4a75;
+            padding: 40px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+
+        .magic-triangle-svg {
+            width: 300px;
+            height: 260px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+        }
+
+        .tri-section {
+            fill: #1e223c;
+            stroke: #00f2ff;
+            stroke-width: 3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tri-section:hover {
+            fill: rgba(0, 242, 255, 0.2);
+        }
+
+        .tri-section.active {
+            fill: rgba(0, 242, 255, 0.4);
+            stroke-width: 5;
+        }
+
+        .tri-text {
+            fill: #ffffff;
+            font-size: 40px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            pointer-events: none; /* Let clicks pass to polygon */
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .formula-display-area {
+            margin-top: 30px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #f8fafc;
+            background: #111424;
+            padding: 15px 40px;
+            border-radius: 8px;
+            border-left: 5px solid #a855f7;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* ==========================================================================
+           INTERACTIVITY 3: ION DISSOCIATION VISUALISER
+           ========================================================================== */
+        .ion-visualiser {
+            background: #111424;
+            border: 1px solid #2e3650;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .ion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .pool {
+            width: 100%;
+            height: 200px;
+            background: radial-gradient(ellipse at top, #1e223c, #111424);
+            border: 2px solid #3f4a75;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ion {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .ion-mg {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a855f7, #7e22ce);
+            font-size: 1.2rem;
+            z-index: 2;
+        }
+
+        .ion-cl {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            font-size: 0.9rem;
+            z-index: 1;
+        }
+
+        .btn-dissolve {
+            background: #a855f7;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .btn-dissolve:hover {
+            background: #c084fc;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Miscellaneous utilities */
+        .callout-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html" class="active">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>17. Molarity Formula ($c = \frac{n}{V}$)</h1>
+            <p class="subtitle">The Core Mathematical Language of Chemical Solutions</p>
+        </header>
+
+        <section class="content-section" id="understanding-molarity">
+            <h2>Understanding Molarity</h2>
+            <p>In the previous lesson, we explored various units of concentration (g/L, ppm, percentages). However, as a chemist, you will almost exclusively use <strong>Molarity</strong>. Why? Because chemical equations (like $NaOH + HCl \rightarrow NaCl + H_2O$) are driven by the ratio of particles (moles), not by mass or percentages.</p>
+            
+            <p>Molarity describes the number of <em>moles</em> of solute dissolved in exactly <em>one Litre</em> of solution. The unit is $mol/L$, $mol \cdot L^{-1}$, or simply $M$ (pronounced "molar").</p>
+
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid #3f4a75; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+                <h3 style="color: #00f2ff;">The Molarity Equation</h3>
+                <p style="font-size: 2.5rem; margin: 10px 0;">$$ c = \frac{n}{V} $$</p>
+                <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 30px; color: #94a3b8;">
+                    <li><strong>$c$</strong> = Concentration (mol/L)</li>
+                    <li><strong>$n$</strong> = Moles (mol)</li>
+                    <li><strong>$V$</strong> = Volume (L)</li>
+                </ul>
+            </div>
+
+            <div class="callout-box">
+                <h4 style="color: #f59e0b; margin-top: 0;">⚠️ The Volume Trap</h4>
+                <p>In the laboratory, you will almost always measure solutions using glassware marked in millilitres (mL). <strong>You cannot use mL in the molarity formula!</strong> You must always divide your mL value by 1000 to convert it into Litres before calculating $c$ or $n$.</p>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-synthesiser">
+            <h2>Interactive: The Solution Synthesiser</h2>
+            <p>You are preparing a solution of Copper(II) Sulfate ($CuSO_4$). Adjust the mass of the solid solute added and the volume of water in the flask. Watch how the Molarity responds dynamically. Notice how the colour intensifies as the concentration increases!</p>
+            
+            <div class="synthesiser-container">
+                
+                <div class="flask-display">
+                    <div class="liquid-fill" id="synth-liquid">
+                        <div class="particle-layer" id="synth-particles"></div>
+                    </div>
+                    
+                    <svg class="flask-svg" width="160" height="220" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 60 10 L 60 80" stroke="rgba(255,255,255,0.6)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <path d="M 100 10 L 100 80" stroke="rgba(255,255,255,0.6)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="80" cy="10" rx="25" ry="5" stroke="rgba(255,255,255,0.8)" stroke-width="4" fill="none"/>
+                        <path d="M 60 80 C 40 100, 10 160, 10 190 C 10 210, 30 215, 80 215 C 130 215, 150 210, 150 190 C 150 160, 120 100, 100 80" stroke="rgba(255,255,255,0.6)" stroke-width="4" fill="none"/>
+                        <line x1="60" y1="50" x2="70" y2="50" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <line x1="45" y1="120" x2="55" y2="120" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <line x1="25" y1="160" x2="35" y2="160" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                    </svg>
+                </div>
+
+                <div class="synth-controls">
+                    <div class="control-group">
+                        <label>
+                            <span>Mass of CuSO₄ ($m$):</span>
+                            <span class="val-highlight" id="lbl-mass">16.00 g</span>
+                        </label>
+                        <input type="range" class="synth-slider" id="slide-mass" min="0" max="80" step="0.5" value="16" oninput="updateSynthesiser()">
+                        <span style="font-size: 0.8rem; color: #94a3b8; text-align: right;">Molar Mass ($MM$) = 159.61 g/mol</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span>Volume of H₂O ($V$):</span>
+                            <span class="val-highlight" id="lbl-vol">500 mL (0.50 L)</span>
+                        </label>
+                        <input type="range" class="synth-slider" id="slide-vol" min="100" max="1000" step="50" value="500" oninput="updateSynthesiser()">
+                    </div>
+
+                    <div class="molarity-readout">
+                        <div style="font-weight: bold; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px;">Molarity ($c = \frac{n}{V}$)</div>
+                        <div class="big-m" id="lbl-molarity">0.200 M</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="extended-formula">
+            <h2>The Extended Formula (Mass to Molarity)</h2>
+            <p>Often, you will be given the mass of a solid solute (in grams) and asked to find the molarity. Instead of doing this in two separate steps ($n = \frac{m}{MM}$ then $c = \frac{n}{V}$), you can substitute the mole formula into the concentration formula to create a highly efficient single equation:</p>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <span style="font-size: 2rem; background: #1e223c; padding: 15px 30px; border-radius: 10px; border: 1px solid #3f4a75;">
+                    $$ c = \frac{m}{MM \times V} $$
+                </span>
+            </div>
+            <p>Where $m$ is mass in grams, $MM$ is molar mass, and $V$ is volume in Litres.</p>
+        </section>
+
+        <section class="content-section" id="interactive-triangle">
+            <h2>Interactive: The Magic Triangle Explorer</h2>
+            <p>If algebra isn't your strong suit, the "Magic Triangle" is a foolproof way to rearrange the $c = \frac{n}{V}$ formula. Hover over or click on the variable you want to calculate ($n$, $c$, or $V$). The triangle will show you the exact mathematical operation required.</p>
+            
+            <div class="triangle-container">
+                <svg class="magic-triangle-svg" viewBox="0 0 300 260">
+                    <polygon points="150,10 50,130 250,130" class="tri-section" id="tri-n" onmouseover="activateTriangle('n')" onclick="activateTriangle('n')" />
+                    <text x="150" y="90" class="tri-text">n</text>
+                    
+                    <polygon points="50,130 150,130 150,250 0,250" class="tri-section" id="tri-c" onmouseover="activateTriangle('c')" onclick="activateTriangle('c')" />
+                    <text x="75" y="190" class="tri-text">c</text>
+                    
+                    <polygon points="150,130 250,130 300,250 150,250" class="tri-section" id="tri-v" onmouseover="activateTriangle('V')" onclick="activateTriangle('V')" />
+                    <text x="225" y="190" class="tri-text">V</text>
+                    
+                    <line x1="50" y1="130" x2="250" y2="130" stroke="#00f2ff" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="150" y1="130" x2="150" y2="250" stroke="#00f2ff" stroke-width="4" stroke-linecap="round"/>
+                    
+                    <text x="150" y="190" fill="#a855f7" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="central">×</text>
+                    <text x="150" y="130" fill="#a855f7" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="central">÷</text>
+                </svg>
+
+                <div class="formula-display-area" id="tri-formula-display">
+                    <span style="color: #94a3b8; font-size: 1.2rem;">Hover over a variable</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="ion-concentration">
+            <h2>Ion Concentrations in Solution</h2>
+            <p>Furthermore, when ionic compounds dissolve, they dissociate into ions. Dissolving $1.0 \text{ mol}$ of Magnesium Chloride ($MgCl_2$) in $1.0 \text{ L}$ of water creates a $1.0 \text{ M}$ solution of $MgCl_2$. However, because the formula dictates <em>two</em> chlorine atoms per molecule, the concentration of Chloride ions ($Cl^-$) is actually $2.0 \text{ M}$!</p>
+            <p>Use square brackets to denote concentration of a specific species: $[Cl^-] = 2.0 \text{ M}$.</p>
+        </section>
+
+        <section class="content-section" id="interactive-ions">
+            <h2>Interactive: Ion Dissociation Visualiser</h2>
+            <p>Click "Dissolve" to drop a generic $MgCl_2$ lattice into the water pool. Watch it break apart into 1 Magnesium ion and 2 Chloride ions.</p>
+            
+            <div class="ion-visualiser">
+                <div class="ion-header">
+                    <span style="font-family: monospace; font-size: 1.2rem; color: #a855f7;">$MgCl_2(s) \rightarrow Mg^{2+}(aq) + 2Cl^{-}(aq)$</span>
+                    <button class="btn-dissolve" onclick="triggerDissociation()">Dissolve Molecule</button>
+                </div>
+                
+                <div class="pool" id="ion-pool">
+                    <div id="solid-lattice" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; transition: top 0.5s ease-in;">
+                        <div class="ion ion-cl" id="cl-1" style="position: relative;">Cl⁻</div>
+                        <div class="ion ion-mg" id="mg-center" style="position: relative; margin: 0 -10px;">Mg²⁺</div>
+                        <div class="ion ion-cl" id="cl-2" style="position: relative;">Cl⁻</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Review the meticulous, step-by-step working out expected in high-level HSC examinations. Ensure you pay attention to the unit conversions and significant figures.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: Finding Concentration (Easy)</h4>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the molarity of a solution prepared by dissolving $0.500 \text{ mol}$ of Sodium Chloride ($NaCl$) in water to make a final volume of $250 \text{ mL}$.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="ws-1" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Convert Volume to Litres</strong><br>
+                        $V = \frac{250}{1000} = 0.250 \text{ L}$</p>
+                        
+                        <p><strong>Step 2: Apply the Formula</strong><br>
+                        $$ c = \frac{n}{V} $$
+                        $$ c = \frac{0.500}{0.250} = 2.00 \text{ mol/L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The concentration is $\mathbf{2.00 \text{ M}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Finding Mass Required (Medium)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A laboratory technician needs to prepare $500 \text{ mL}$ of a $0.150 \text{ M}$ solution of Potassium Permanganate ($KMnO_4$). Calculate the mass of solid $KMnO_4$ that must be weighed out.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="ws-2" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Find Required Moles</strong><br>
+                        Rearrange $c = \frac{n}{V}$ to $n = c \times V$. Remember $V$ must be in Litres ($0.500 \text{ L}$).<br>
+                        $n = 0.150 \times 0.500 = 0.0750 \text{ mol}$</p>
+
+                        <p><strong>Step 2: Convert Moles to Mass</strong><br>
+                        Determine Molar Mass ($MM$) of $KMnO_4$:<br>
+                        $MM = 39.10 + 54.94 + (4 \times 16.00) = 158.04 \text{ g/mol}$<br>
+                        $m = n \times MM = 0.0750 \times 158.04 = 11.853 \text{ g}$</p>
+
+                        <p><strong>Final Answer:</strong> Weigh out $\mathbf{11.9 \text{ g}}$ of $KMnO_4$ (to 3 sig figs).</p>
+                        <p><em>Alternative Method: Use $c = \frac{m}{MM \times V}$ in one step!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Hydrated Salts (Hard)</h4>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the volume of water (in mL) required to dissolve $15.0 \text{ g}$ of Copper(II) Sulfate Pentahydrate ($CuSO_4 \cdot 5H_2O$) to produce exactly a $0.200 \text{ M}$ solution of Copper Sulfate.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="ws-3" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Calculate Molar Mass including Hydration Water</strong><br>
+                        When weighing out the solid, the mass includes the trapped water molecules.<br>
+                        $MM = 63.55 + 32.07 + (4 \times 16.00) + 5 \times (2 \times 1.008 + 16.00)$<br>
+                        $MM = 159.62 + 5(18.016) = 249.7 \text{ g/mol}$</p>
+
+                        <p><strong>Step 2: Calculate Moles</strong><br>
+                        $$ n = \frac{m}{MM} = \frac{15.0}{249.7} = 0.06007 \text{ mol} $$</p>
+
+                        <p><strong>Step 3: Calculate Volume in Litres</strong><br>
+                        Rearrange $c = \frac{n}{V}$ to $V = \frac{n}{c}$.<br>
+                        $$ V = \frac{0.06007}{0.200} = 0.30035 \text{ L} $$</p>
+
+                        <p><strong>Step 4: Convert to mL</strong><br>
+                        $V = 0.30035 \times 1000 = 300.35 \text{ mL}$</p>
+
+                        <p><strong>Final Answer:</strong> Required volume is $\mathbf{300 \text{ mL}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Ion Concentration in Mixtures (Extension)</h4>
+                </div>
+                <div class="question-body">
+                    <p>$100 \text{ mL}$ of $0.50 \text{ M}$ Sodium Chloride ($NaCl$) is mixed with $200 \text{ mL}$ of $0.30 \text{ M}$ Magnesium Chloride ($MgCl_2$). Assume volumes are additive. Calculate the final concentration of Chloride ions ($[Cl^-]$) in the resulting mixture.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                </div>
+                <div id="ws-4" class="hidden-solution" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Total Volume</strong><br>
+                        $V_{total} = 100 \text{ mL} + 200 \text{ mL} = 300 \text{ mL} = 0.300 \text{ L}$</p>
+
+                        <p><strong>Step 2: Moles of Chloride from $NaCl$</strong><br>
+                        $n(NaCl) = c \times V = 0.50 \times 0.100 = 0.050 \text{ mol}$<br>
+                        Since $NaCl \rightarrow Na^+ + Cl^-$, $n(Cl^-) = 0.050 \text{ mol}$.</p>
+
+                        <p><strong>Step 3: Moles of Chloride from $MgCl_2$</strong><br>
+                        $n(MgCl_2) = c \times V = 0.30 \times 0.200 = 0.060 \text{ mol}$<br>
+                        Since $MgCl_2 \rightarrow Mg^{2+} + 2Cl^-$, the moles of chloride are double!<br>
+                        $n(Cl^-) = 0.060 \times 2 = 0.120 \text{ mol}$.</p>
+
+                        <p><strong>Step 4: Total Moles and Final Concentration</strong><br>
+                        $n_{total}(Cl^-) = 0.050 + 0.120 = 0.170 \text{ mol}$<br>
+                        $$ [Cl^-] = \frac{n_{total}}{V_{total}} = \frac{0.170}{0.300} = 0.5666... \text{ M} $$</p>
+
+                        <p><strong>Final Answer:</strong> $\mathbf{0.57 \text{ M}}$ (to 2 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply your knowledge. Write out your working, reveal the solutions, and mark yourself according to the strict criteria provided. Your score updates instantly in the sidebar.</p>
+
+            <div class="practise-question" id="q-molar-1">
+                <div class="question-header">
+                    <h4>Question 1: Direct Calculation (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the number of moles of Hydrochloric acid ($HCl$) present in a $50.0 \text{ mL}$ beaker if the concentration is $2.50 \text{ M}$.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-molar-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-molar-1')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-molar-1" style="display: none;">
+                    <p><strong>Hint:</strong> Use the rearranged formula $n = c \times V$. Don't forget to convert $50.0 \text{ mL}$ into Litres!</p>
+                </div>
+                <div class="hidden-solution" id="sol-molar-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$V = \frac{50.0}{1000} = 0.0500 \text{ L}$</p>
+                        <p>$n = c \times V$</p>
+                        <p>$n = 2.50 \times 0.0500$</p>
+                        <p>$n = \mathbf{0.125 \text{ mol}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts volume to Litres ($0.0500 \text{ L}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly applies the formula to find $0.125 \text{ mol}$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-molar-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-molar-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('molar-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-molar-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-molar-2">
+                <div class="question-header">
+                    <h4>Question 2: Mass to Molarity (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A chemist dissolves $8.00 \text{ g}$ of Sodium Hydroxide ($NaOH$) pellets in distilled water and transfers it to a volumetric flask, making the solution up to exactly $400 \text{ mL}$. Calculate the Molarity of the solution.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-molar-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-molar-2')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-molar-2" style="display: none;">
+                    <p><strong>Hint:</strong> Step 1: Find Molar Mass of $NaOH$. Step 2: Find moles using $n = m/MM$. Step 3: Divide by volume in Litres.</p>
+                </div>
+                <div class="hidden-solution" id="sol-molar-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$MM(NaOH) = 22.99 + 16.00 + 1.008 = 40.00 \text{ g/mol}$</p>
+                        <p>$n = \frac{m}{MM} = \frac{8.00}{40.00} = 0.200 \text{ mol}$</p>
+                        <p>$V = 0.400 \text{ L}$</p>
+                        <p>$c = \frac{n}{V} = \frac{0.200}{0.400} = \mathbf{0.500 \text{ M}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates Molar Mass of $NaOH$ ($\sim 40 \text{ g/mol}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates moles of $NaOH$ ($0.200 \text{ mol}$).</li>
+                            <li><strong>3 Marks:</strong> Correct final molarity calculation ($0.500 \text{ M}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-molar-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-molar-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('molar-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-molar-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-molar-3">
+                <div class="question-header">
+                    <h4>Question 3: Solution Preparation (Hard)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>What mass of Barium Nitrate, $Ba(NO_3)_2$, is required to prepare $2.50 \text{ L}$ of a $0.150 \text{ M}$ solution?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-molar-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-molar-3')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-molar-3" style="display: none;">
+                    <p><strong>Hint:</strong> Use $n = c \times V$ to find moles needed. Then calculate the complex molar mass of $Ba(NO_3)_2$ (don't forget the brackets mean 2 Nitrogens and 6 Oxygens!). Finally, $m = n \times MM$.</p>
+                </div>
+                <div class="hidden-solution" id="sol-molar-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$n = c \times V = 0.150 \times 2.50 = 0.375 \text{ mol}$</p>
+                        <p>$MM(Ba(NO_3)_2) = 137.3 + 2 \times (14.01 + 3 \times 16.00) = 261.32 \text{ g/mol}$</p>
+                        <p>$m = n \times MM = 0.375 \times 261.32$</p>
+                        <p>$m = \mathbf{98.0 \text{ g}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates required moles ($0.375 \text{ mol}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates Molar Mass ($261.32 \text{ g/mol}$).</li>
+                            <li><strong>3 Marks:</strong> Correct final mass calculated ($98.0 \text{ g}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-molar-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-molar-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('molar-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-molar-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-molar-4">
+                <div class="question-header">
+                    <h4>Question 4: Ion Concentration Mixture (Extension)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A chemist mixes $150 \text{ mL}$ of $0.20 \text{ M}$ Aluminium Sulfate, $Al_2(SO_4)_3$, with $350 \text{ mL}$ of $0.10 \text{ M}$ Sodium Sulfate, $Na_2SO_4$. Assuming the volumes are perfectly additive, calculate the final concentration of Sulfate ions ($[SO_4^{2-}]$) in the new mixture.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-molar-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-molar-4')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-molar-4" style="display: none;">
+                    <p><strong>Hint:</strong> 
+                    1. Find total volume.<br>
+                    2. Find moles of Sulfate from Al₂(SO₄)₃ (Multiply moles of the compound by 3!).<br>
+                    3. Find moles of Sulfate from Na₂SO₄ (Multiply by 1).<br>
+                    4. Add moles together and divide by total volume.</p>
+                </div>
+                <div class="hidden-solution" id="sol-molar-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Total Volume:</strong><br>
+                        $V = 0.150 + 0.350 = 0.500 \text{ L}$</p>
+                        
+                        <p><strong>2. Sulfate from $Al_2(SO_4)_3$:</strong><br>
+                        $n(compound) = 0.20 \times 0.150 = 0.030 \text{ mol}$<br>
+                        Because of the subscript 3, $n(SO_4^{2-}) = 0.030 \times 3 = 0.090 \text{ mol}$</p>
+
+                        <p><strong>3. Sulfate from $Na_2SO_4$:</strong><br>
+                        $n(compound) = 0.10 \times 0.350 = 0.035 \text{ mol}$<br>
+                        Because subscript is 1, $n(SO_4^{2-}) = 0.035 \text{ mol}$</p>
+
+                        <p><strong>4. Total and Concentration:</strong><br>
+                        $n_{total} = 0.090 + 0.035 = 0.125 \text{ mol}$<br>
+                        $[SO_4^{2-}] = \frac{0.125}{0.500} = \mathbf{0.25 \text{ M}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct total volume ($0.500 \text{ L}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly identifies that Al₂(SO₄)₃ provides 3 moles of sulfate per mole of compound ($0.090 \text{ mol}$ total).</li>
+                            <li><strong>3 Marks:</strong> Correctly finds total moles of sulfate ($0.125 \text{ mol}$).</li>
+                            <li><strong>4 Marks:</strong> Correct final concentration ($0.25 \text{ M}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-molar-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-molar-4" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('molar-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-molar-4"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="dilutions.html" class="btn-next">Proceed to Lesson 18: Dilutions ($C_1V_1 = C_2V_2$) &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            ['molar-1', 'molar-2', 'molar-3', 'molar-4'].forEach(checkIfQuestionAnswered);
+            
+            // Init interactives
+            updateSynthesiser();
+        });
+
+        /**
+         * SELF-MARKING ENGINE
+         */
+        function toggleHint(hintId) {
+            const el = document.getElementById(hintId);
+            el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const el = document.getElementById(solutionId);
+            if (el.style.display === "none" || el.style.display === "") {
+                el.style.display = "block";
+                if (window.MathJax) { MathJax.typesetPromise([el]); }
+            } else {
+                el.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#10b981"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * INTERACTIVITY 1: SYNTHESISER LOGIC
+         */
+        function updateSynthesiser() {
+            const mass = parseFloat(document.getElementById('slide-mass').value);
+            const volML = parseFloat(document.getElementById('slide-vol').value);
+            const volL = volML / 1000;
+            const MM = 159.61; // CuSO4
+
+            // Math
+            const moles = mass / MM;
+            const molarity = moles / volL;
+
+            // Update Labels
+            document.getElementById('lbl-mass').innerText = mass.toFixed(2) + " g";
+            document.getElementById('lbl-vol').innerText = `${volML} mL (${volL.toFixed(2)} L)`;
+            document.getElementById('lbl-molarity').innerText = molarity.toFixed(3) + " M";
+
+            // Visual Updates (Flask)
+            const liquid = document.getElementById('synth-liquid');
+            
+            // Height logic (map 100-1000mL to 20px - 150px height)
+            // Linear mapping: y = mx + c. (100, 20) to (1000, 150). range = 130px for 900mL.
+            const h = 20 + ((volML - 100) / 900) * 130;
+            liquid.style.height = h + "px";
+
+            // Color logic based on molarity (Copper sulfate is blue)
+            // Saturation typically limits around 1.4M at room temp, let's map alpha up to 1.5
+            const alpha = Math.min(molarity / 1.0, 1); // Max out opacity at 1.0M
+            liquid.style.background = `rgba(0, 150, 255, ${alpha})`;
+
+            // Particles logic
+            const particleLayer = document.getElementById('synth-particles');
+            particleLayer.innerHTML = ''; // clear
+            
+            // visual number of particles based on moles (scaled)
+            let particleCount = Math.floor(moles * 150); 
+            for(let i=0; i<particleCount; i++) {
+                let dot = document.createElement('div');
+                dot.className = 'solute-spec';
+                // Random position within the liquid bounding box
+                dot.style.left = (Math.random() * 80 + 10) + '%';
+                dot.style.bottom = (Math.random() * 90) + '%';
+                // Randomise animation slightly
+                dot.style.animationDuration = (2 + Math.random() * 2) + 's';
+                dot.style.animationDelay = (Math.random() * 2) + 's';
+                particleLayer.appendChild(dot);
+            }
+        }
+
+        /**
+         * INTERACTIVITY 2: MAGIC TRIANGLE LOGIC
+         */
+        function activateTriangle(variable) {
+            // Reset all
+            document.getElementById('tri-n').classList.remove('active');
+            document.getElementById('tri-c').classList.remove('active');
+            document.getElementById('tri-v').classList.remove('active');
+            
+            const display = document.getElementById('tri-formula-display');
+
+            // Activate and display
+            if (variable === 'n') {
+                document.getElementById('tri-n').classList.add('active');
+                display.innerHTML = '$$ n = c \\times V $$';
+            } else if (variable === 'c') {
+                document.getElementById('tri-c').classList.add('active');
+                display.innerHTML = '$$ c = \\frac{n}{V} $$';
+            } else if (variable === 'V') {
+                document.getElementById('tri-v').classList.add('active');
+                display.innerHTML = '$$ V = \\frac{n}{c} $$';
+            }
+
+            // Force MathJax to render the new math
+            if (window.MathJax) {
+                MathJax.typesetPromise([display]);
+            }
+        }
+
+        /**
+         * INTERACTIVITY 3: ION DISSOCIATION LOGIC
+         */
+        function triggerDissociation() {
+            const lattice = document.getElementById('solid-lattice');
+            const cl1 = document.getElementById('cl-1');
+            const cl2 = document.getElementById('cl-2');
+            const mg = document.getElementById('mg-center');
+
+            // Drop into pool
+            lattice.style.top = '120px';
+
+            // Wait for it to "hit" the water, then separate
+            setTimeout(() => {
+                // Break relative positioning by applying transforms to move them apart
+                cl1.style.transform = 'translate(-60px, -40px)';
+                cl2.style.transform = 'translate(60px, -20px)';
+                mg.style.transform = 'translate(0px, 20px)';
+                
+                // Make them float a bit via CSS
+                cl1.style.animation = 'drift 4s infinite alternate ease-in-out';
+                cl2.style.animation = 'drift 3s infinite alternate ease-in-out';
+                mg.style.animation = 'drift 5s infinite alternate ease-in-out';
+                
+            }, 600); // Wait for the drop transition
+
+            // Reset button to allow replay
+            const btn = document.querySelector('.btn-dissolve');
+            btn.innerText = "Reset";
+            btn.onclick = resetDissociation;
+        }
+
+        function resetDissociation() {
+            const lattice = document.getElementById('solid-lattice');
+            const cl1 = document.getElementById('cl-1');
+            const cl2 = document.getElementById('cl-2');
+            const mg = document.getElementById('mg-center');
+
+            // Remove animations
+            cl1.style.animation = 'none';
+            cl2.style.animation = 'none';
+            mg.style.animation = 'none';
+
+            // Reset positions
+            cl1.style.transform = 'none';
+            cl2.style.transform = 'none';
+            mg.style.transform = 'none';
+            lattice.style.top = '10px';
+
+            // Restore button
+            const btn = document.querySelector('.btn-dissolve');
+            btn.innerText = "Dissolve Molecule";
+            btn.onclick = triggerDissociation;
+        }
+    </script>
+</body>
+</html>

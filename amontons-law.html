@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 23: Amontons' Law - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY & CONTENT STYLES
+           ========================================================================== */
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .math-focus {
+            background: #111424;
+            border: 1px dashed #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        .highlight-text { color: #0ea5e9; font-weight: bold; }
+        .danger-text { color: #ef4444; font-weight: bold; }
+        .success-text { color: #22c55e; font-weight: bold; }
+        .purple-text { color: #a855f7; font-weight: bold; }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: RIGID CHAMBER SIMULATOR
+           -------------------------------------------------------------------------- */
+        .simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .chamber-assembly {
+            width: 200px;
+            height: 250px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            border: 8px solid #475569; /* Thick, rigid walls */
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .gas-cavity {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(245, 158, 11, 0.1);
+            z-index: 1;
+            overflow: hidden;
+            transition: background 0.2s ease-out;
+            border-radius: 6px;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #f59e0b;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #f59e0b;
+        }
+
+        .flame-container {
+            position: absolute;
+            bottom: -45px;
+            width: 80px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 2rem;
+            text-shadow: 0 -5px 10px rgba(239, 68, 68, 0.8);
+        }
+
+        .ice-container {
+            position: absolute;
+            bottom: -25px;
+            width: 150px;
+            height: 20px;
+            background: rgba(0, 242, 255, 0.5);
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.8);
+        }
+
+        .pressure-gauge-visual {
+            position: absolute;
+            top: -40px;
+            width: 60px;
+            height: 60px;
+            background: #0f172a;
+            border: 4px solid #94a3b8;
+            border-radius: 50%;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            width: 2px;
+            height: 25px;
+            background: #ef4444;
+            bottom: 50%;
+            transform-origin: bottom center;
+            transform: rotate(-45deg);
+            transition: transform 0.2s ease-out;
+        }
+
+        .gauge-center {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 11;
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .val-highlight {
+            color: #f59e0b;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: #f59e0b;
+            cursor: pointer;
+        }
+
+        .gauge-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .gauge-metric {
+            font-size: 2.5rem;
+            color: #ef4444;
+            font-family: monospace;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: GRAPHING TOOL
+           -------------------------------------------------------------------------- */
+        .graphing-container {
+            background: #111424;
+            border: 1px solid #3f4a75;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .graph-box {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            text-align: center;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .graph-title {
+            color: #f8fafc;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        canvas {
+            background: #0f172a;
+            border-left: 2px solid #94a3b8;
+            border-bottom: 2px solid #94a3b8;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        /* --------------------------------------------------------------------------
+           STANDARD EDUCATIONAL UI
+           -------------------------------------------------------------------------- */
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: #22c55e; color: #000; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-hard { background: #ef4444; color: #fff; }
+        .badge-extension { background: #a855f7; color: #fff; }
+
+        .practise-question {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .question-header h4 { margin: 0; font-size: 1.3rem; color: #f8fafc; }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #ec4899;
+            font-weight: bold;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .interaction-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        
+        .btn-hint, .btn-reveal, .btn-submit-mark {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover { background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b; }
+        .btn-reveal:hover { background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981; }
+        .btn-submit-mark { background: #0ea5e9; color: #000; border: none; }
+        .btn-submit-mark:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+
+        .hidden-hint {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            color: #cbd5e1;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .worked-solution h5 { color: #0ea5e9; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-size: 1.2rem; }
+        .marking-criteria { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .marking-criteria h5 { color: #10b981; margin-bottom: 1rem; font-size: 1.1rem; }
+        .marking-criteria ul { list-style-type: none; margin-left: 0; }
+        .marking-criteria li { padding-left: 2rem; position: relative; margin-bottom: 0.8rem; color: #cbd5e1; }
+        .marking-criteria li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; font-size: 1.1rem; }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            background: #2a2f4c;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #3f4a75;
+        }
+
+        .mark-dropdown {
+            background: #111424;
+            color: #f8fafc;
+            border: 1px solid #3f4a75;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html" class="active">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>23. Amontons' Law</h1>
+            <p class="subtitle">The Mathematical Relationship Between Pressure and Temperature (Gay-Lussac's Law)</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Rigid Chamber</h2>
+            <p>We have explored what happens when Volume is manipulated (Boyle's Law) and when it is allowed to expand freely (Charles' Law). Now, we will investigate a system where the <strong>Volume is strictly locked</strong>. Imagine a sealed, rigid metal canister—like a scuba tank or an aerosol can.</p>
+            <p>This relationship is historically attributed to Guillaume Amontons, though it was later quantified precisely by Joseph Louis Gay-Lussac. In modern HSC Chemistry, you will hear it referred to by both names.</p>
+
+            <div class="theory-box">
+                <h3>Amontons' Law (Gay Lussac's Law) Definition</h3>
+                <p>For a fixed mass of gas (constant moles, $n$) held at a strictly <strong>constant volume</strong> ($V$), the pressure ($P$) of the gas is <strong>directly proportional</strong> to its absolute temperature ($T$) in Kelvin.</p>
+                <p>According to the Kinetic Molecular Theory (KMT), heating a gas increases the kinetic energy of its particles. Because the walls of the container are rigid and cannot expand to absorb this energy, the faster-moving particles strike the walls much more frequently and with significantly greater force. The result is a sharp increase in internal pressure.</p>
+            </div>
+            
+            
+
+            <div class="math-focus">
+                <h3 style="color: #f8fafc; margin-top: 0;">Mathematical Derivation</h3>
+                <p>Since Pressure ($P$) is directly proportional to Temperature ($T$), we write:</p>
+                <p style="font-size: 1.5rem; margin: 15px 0;">$$ P \propto T $$</p>
+                <p>Introducing a constant of proportionality ($k$):</p>
+                <p style="font-size: 1.5rem; margin: 15px 0; color: #f59e0b;">$$ P = k \times T \quad \implies \quad \frac{P}{T} = k $$</p>
+                <p>This means that dividing the Pressure of a rigid system by its absolute Temperature always yields the same constant. Thus, comparing two states of the same gas system gives us the working formula for Amontons' Law:</p>
+                <p style="font-size: 2.2rem; font-weight: bold; color: #0ea5e9; background: #0f172a; padding: 20px; border-radius: 8px; display: inline-block; border: 1px solid #334155;">
+                    $$ \frac{P_1}{T_1} = \frac{P_2}{T_2} $$
+                </p>
+                <p style="color: #ef4444; font-weight: bold; margin-top: 10px;">CRITICAL: Temperature must ALWAYS be converted to Kelvin ($K$) before using this formula.</p>
+            </div>
+        </section>
+
+        <section class="content-section" id="ideal-gas-link">
+            <h2>The Future Link: The Ideal Gas Law</h2>
+            <p>You may recall from our previous lessons that we are systematically unpacking the variables that make up the master <strong>Ideal Gas Law</strong> equation: $PV = nRT$.</p>
+            
+            <p>Let's prove Amontons' Law using this master equation. If we rearrange $PV = nRT$ to group our variables ($P$ and $T$) on one side, and our constants on the other, we get:</p>
+            <p style="font-size: 1.5rem; text-align: center; margin: 10px 0;">$$ \frac{P}{T} = \frac{nR}{V} $$</p>
+            <ul>
+                <li><strong>$n$</strong> is the fixed amount of gas (constant).</li>
+                <li><strong>$V$</strong> is the rigid volume of the container (constant).</li>
+                <li><strong>$R$</strong> is the Universal Gas Constant, provided on your NESA data sheet as <span class="purple-text">$8.314 \text{ J K}^{-1} \text{ mol}^{-1}$</span>.</li>
+            </ul>
+            <p>Because $n$, $R$, and $V$ are all constant in this scenario, the entire right side of the equation ($\frac{nR}{V}$) evaluates to a single constant number ($k$). Therefore, $\frac{P}{T} = k$. This proves that the relationship between pressure and temperature is perfectly linear when volume is locked!</p>
+        </section>
+
+        <section class="content-section" id="interactive-chamber">
+            <h2>Interactive: Rigid Chamber Simulator</h2>
+            <p>Drag the slider to alter the temperature of the fixed-volume metal canister. Notice that the walls do not move. Instead, observe the velocity of the gas particles and the resulting force registered on the pressure gauge.</p>
+            
+            <div class="simulator-container">
+                <div class="chamber-assembly">
+                    <div class="pressure-gauge-visual">
+                        <div class="gauge-needle" id="sim-needle"></div>
+                        <div class="gauge-center"></div>
+                    </div>
+                    <div class="gas-cavity" id="sim-cavity">
+                        </div>
+                    <div class="flame-container" id="sim-flame">🔥</div>
+                    <div class="ice-container" id="sim-ice"></div>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="slider-group">
+                        <label>
+                            <span>Temperature ($T$):</span>
+                            <span class="val-highlight" id="sim-temp-val">300 K</span>
+                        </label>
+                        <input type="range" id="sim-temp-slider" min="100" max="900" value="300" step="10" oninput="updateAmontonsSim()">
+                    </div>
+
+                    <div class="gauge-panel">
+                        <span style="color: #94a3b8; text-transform: uppercase; font-size: 0.9rem;">Internal Pressure ($P$)</span>
+                        <div class="gauge-metric" id="sim-pres-val">1.00 atm</div>
+                    </div>
+                    
+                    <p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 10px;">
+                        $\frac{P}{T} = \text{Constant } (0.0033)$<br>
+                        Volume ($V$) and Moles ($n$) are locked rigidly.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-graphs">
+            <h2>Interactive: Graphing Amontons' Law</h2>
+            <p>In the HSC, you may be asked to sketch the relationship between Pressure and Temperature. Adjust the temperature below to trace the exact linear relationship. Notice how extrapolating the Celsius graph backwards points directly to Absolute Zero.</p>
+
+            
+
+            <div class="graphing-container">
+                <div style="width: 100%; text-align: center;">
+                    <input type="range" id="graph-temp-slider" min="100" max="600" value="300" style="max-width: 400px;" oninput="updateAmontonsGraphs()">
+                    <div style="color: #ef4444; font-family: monospace; margin-top: 10px;">Temperature: <span id="graph-temp-text">300</span> K (<span id="graph-temp-c-text">26.85</span> °C) | Pressure: <span id="graph-pres-text">1.00</span> atm</div>
+                </div>
+
+                <div class="graph-box">
+                    <div class="graph-title">Pressure vs. Temperature (K)</div>
+                    <canvas id="canvas-pt-k" width="300" height="200"></canvas>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">A direct straight line originating from (0,0)</p>
+                </div>
+
+                <div class="graph-box">
+                    <div class="graph-title">Pressure vs. Temperature (°C)</div>
+                    <canvas id="canvas-pt-c" width="300" height="200"></canvas>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">A straight line intercepting the x-axis at -273.15 °C</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Review the mathematical methodology used to solve these problems. Always ensure your temperatures are converted to Kelvin before attempting to cross-multiply fractions.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Example 1: Direct Substitution</h4>
+                </div>
+                <div class="question-body">
+                    <p>A sealed aerosol can contains gas at a pressure of $105 \text{ kPa}$ at a temperature of $300 \text{ K}$. If the can is left in direct sunlight and heats up to $350 \text{ K}$, calculate the new pressure inside the can.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-amontons-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-amontons-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Extract the data</strong><br>
+                        $P_1 = 105 \text{ kPa}$<br>
+                        $T_1 = 300 \text{ K}$<br>
+                        $P_2 = \text{ ?}$<br>
+                        $T_2 = 350 \text{ K}$</p>
+
+                        <p><strong>Step 2: Apply Amontons' Law</strong><br>
+                        $$ \frac{P_1}{T_1} = \frac{P_2}{T_2} $$
+                        $$ \frac{105}{300} = \frac{P_2}{350} $$</p>
+
+                        <p><strong>Step 3: Rearrange and solve</strong><br>
+                        Multiply both sides by $350$ to isolate $P_2$:<br>
+                        $$ P_2 = \left(\frac{105}{300}\right) \times 350 $$
+                        $$ P_2 = 0.350 \times 350 $$
+                        $$ P_2 = 122.5 \text{ kPa} $$</p>
+
+                        <p><strong>Final Answer:</strong> The new pressure inside the can is $\mathbf{123 \text{ kPa}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Example 2: The Celsius Trap</h4>
+                </div>
+                <div class="question-body">
+                    <p>A rigid scuba tank is filled with air at $20.0 \ ^\circ\text{C}$ to a pressure of $200 \text{ atm}$. During a deep dive in cold water, the temperature of the tank drops to $5.00 \ ^\circ\text{C}$. Calculate the new pressure of the air inside the tank.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-amontons-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-amontons-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert Temperatures to Kelvin!</strong><br>
+                        $T_1 = 20.0 + 273.15 = 293.15 \text{ K}$<br>
+                        $T_2 = 5.00 + 273.15 = 278.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Extract the pressure data</strong><br>
+                        $P_1 = 200 \text{ atm}$<br>
+                        $P_2 = \text{ ?}$</p>
+
+                        <p><strong>Step 3: Apply the Formula</strong><br>
+                        $$ \frac{200}{293.15} = \frac{P_2}{278.15} $$</p>
+
+                        <p><strong>Step 4: Solve for $P_2$</strong><br>
+                        $$ P_2 = \left(\frac{200}{293.15}\right) \times 278.15 $$
+                        $$ P_2 = 189.76... \text{ atm} $$</p>
+
+                        <p><strong>Final Answer:</strong> The pressure drops to $\mathbf{190 \text{ atm}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Example 3: Double Conversion (Finding Celsius)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A sealed glass bulb contains a gas at $101.3 \text{ kPa}$ and $25.0 \ ^\circ\text{C}$. The bulb has a maximum pressure rating of $150.0 \text{ kPa}$ before it will shatter. Calculate the maximum temperature the bulb can withstand in degrees Celsius before it breaks.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-amontons-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-amontons-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert initial temperature to Kelvin</strong><br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Setup the Equation</strong><br>
+                        $P_1 = 101.3 \text{ kPa}$<br>
+                        $P_2 = 150.0 \text{ kPa}$ (The breaking point)<br>
+                        $$ \frac{101.3}{298.15} = \frac{150.0}{T_2} $$</p>
+
+                        <p><strong>Step 3: Solve algebraically for $T_2$ (in denominator)</strong><br>
+                        Cross-multiply:<br>
+                        $101.3 \times T_2 = 150.0 \times 298.15$<br>
+                        $101.3 \times T_2 = 44722.5$<br>
+                        $T_2 = \frac{44722.5}{101.3} = 441.485... \text{ K}$</p>
+
+                        <p><strong>Step 4: Convert back to Celsius</strong><br>
+                        $$ T_2(^\circ\text{C}) = 441.485 - 273.15 = 168.335 \ ^\circ\text{C} $$</p>
+
+                        <p><strong>Final Answer:</strong> The bulb will shatter if the temperature exceeds $\mathbf{168 \ ^\circ\text{C}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Example 4: Proportional Changes</h4>
+                </div>
+                <div class="question-body">
+                    <p>A chemist wishes to increase the pressure of a rigid reaction vessel by exactly $35.0\%$. If the initial temperature of the vessel was $10.0 \ ^\circ\text{C}$, what must the final temperature be (in Celsius) to achieve this pressure increase?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-amontons-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-amontons-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert $T_1$ to Kelvin</strong><br>
+                        $T_1 = 10.0 + 273.15 = 283.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Express $P_2$ in terms of $P_1$</strong><br>
+                        A $35.0\%$ increase means the final pressure is $135.0\%$ of the original.<br>
+                        $P_2 = 1.35 \times P_1$</p>
+
+                        <p><strong>Step 3: Apply Amontons' Law</strong><br>
+                        $$ \frac{P_1}{T_1} = \frac{P_2}{T_2} $$
+                        $$ \frac{P_1}{283.15} = \frac{1.35 \times P_1}{T_2} $$</p>
+
+                        <p><strong>Step 4: Solve for $T_2$</strong><br>
+                        Divide both sides by $P_1$ to cancel the pressure variable:<br>
+                        $$ \frac{1}{283.15} = \frac{1.35}{T_2} $$
+                        $$ T_2 = 1.35 \times 283.15 = 382.2525 \text{ K} $$</p>
+
+                        <p><strong>Step 5: Convert to Celsius</strong><br>
+                        $$ T(^\circ\text{C}) = 382.2525 - 273.15 = \mathbf{109.10 \ ^\circ\text{C}} $$</p>
+                        
+                        <p><em>(Notice that while the absolute temperature increased by 35%, the Celsius temperature jumped from 10 to 109—a nearly 1000% increase! This perfectly highlights why using Kelvin is mandatory).</em></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply your understanding of Amontons' Law. Use scrap paper for your working out, then reveal the solution and evaluate yourself using the marking criteria provided.</p>
+
+            <div class="practise-question" id="q-amon-1">
+                <div class="question-header">
+                    <h4>Question 1: Direct Kelvin Calculation (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A fixed mass of gas in a rigid container exerts a pressure of $1.50 \text{ atm}$ at a temperature of $300 \text{ K}$. If the container is cooled to $200 \text{ K}$, calculate the new pressure of the gas.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-amon-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-amon-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-amon-1">
+                    <p><strong>Hint:</strong> The temperature is already given in Kelvin, so no conversions are needed! Just plug the values into $\frac{P_1}{T_1} = \frac{P_2}{T_2}$ and solve for $P_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-amon-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$ \frac{P_1}{T_1} = \frac{P_2}{T_2} $$</p>
+                        <p>$$ \frac{1.50}{300} = \frac{P_2}{200} $$</p>
+                        <p>$$ P_2 = \left(\frac{1.50}{300}\right) \times 200 $$</p>
+                        <p>$$ P_2 = 0.005 \times 200 = \mathbf{1.00 \text{ atm}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly substitutes variables into Amontons' Law.</li>
+                            <li><strong>2 Marks:</strong> Correct final pressure of $1.00 \text{ atm}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-amon-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-amon-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('amon-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-amon-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-amon-2">
+                <div class="question-header">
+                    <h4>Question 2: The Celsius Pitfall (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>The pressure inside an oxygen tank is $12.0 \text{ atm}$ when left in a room at $20.0 \ ^\circ\text{C}$. A fire breaks out, heating the tank to $400 \ ^\circ\text{C}$. Calculate the new pressure inside the tank.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-amon-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-amon-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-amon-2">
+                    <p><strong>Hint:</strong> Step 1: Add $273.15$ to both temperatures to convert them to Kelvin. Step 2: Use the formula to find the final pressure.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-amon-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Convert Temperatures:</strong><br>
+                        $T_1 = 20.0 + 273.15 = 293.15 \text{ K}$<br>
+                        $T_2 = 400 + 273.15 = 673.15 \text{ K}$</p>
+                        
+                        <p><strong>2. Apply Formula:</strong><br>
+                        $$ \frac{12.0}{293.15} = \frac{P_2}{673.15} $$</p>
+
+                        <p><strong>3. Solve for $P_2$:</strong><br>
+                        $$ P_2 = \frac{12.0 \times 673.15}{293.15} $$
+                        $$ P_2 = \mathbf{27.55... \text{ atm}} $$
+                        Rounded to 3 sig figs: $\mathbf{27.6 \text{ atm}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts BOTH temperatures to Kelvin.</li>
+                            <li><strong>2 Marks:</strong> Correctly sets up the algebraic fraction to solve for $P_2$.</li>
+                            <li><strong>3 Marks:</strong> Correct final pressure ($27.6 \text{ atm}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-amon-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-amon-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('amon-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-amon-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-amon-3">
+                <div class="question-header">
+                    <h4>Question 3: Car Tyre Real World Scenario (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>On a cold morning at $10.0 \ ^\circ\text{C}$, a car's tyre pressure is measured at $220 \text{ kPa}$. After driving at high speeds on the highway, friction heats the air inside the rigid tyre, and the pressure rises to $245 \text{ kPa}$. Calculate the temperature of the air inside the tyre in degrees Celsius.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-amon-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-amon-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-amon-3">
+                    <p><strong>Hint:</strong> Use $\frac{P_1}{T_1} = \frac{P_2}{T_2}$. Make sure $T_1$ is in Kelvin! Solve for $T_2$ (which is in the denominator, so be careful with the algebra). Finally, convert your answer back to Celsius.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-amon-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Convert $T_1$ to Kelvin:</strong><br>
+                        $T_1 = 10.0 + 273.15 = 283.15 \text{ K}$</p>
+                        
+                        <p><strong>2. Set up Equation:</strong><br>
+                        $$ \frac{220}{283.15} = \frac{245}{T_2} $$</p>
+
+                        <p><strong>3. Cross-multiply and solve for $T_2$:</strong><br>
+                        $$ 220 \times T_2 = 245 \times 283.15 $$
+                        $$ 220 \times T_2 = 69371.75 $$
+                        $$ T_2 = 315.326... \text{ K} $$</p>
+
+                        <p><strong>4. Convert back to Celsius:</strong><br>
+                        $$ T(^\circ\text{C}) = 315.326 - 273.15 = \mathbf{42.176... \ ^\circ\text{C}} $$
+                        Rounding to 3 sig figs: $\mathbf{42.2 \ ^\circ\text{C}}$.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Converts $10.0 \ ^\circ\text{C}$ to $283.15 \text{ K}$.</li>
+                            <li><strong>2 Marks:</strong> Substitutes correctly into the formula.</li>
+                            <li><strong>3 Marks:</strong> Algebraically isolates $T_2$ correctly to find $\approx 315 \text{ K}$.</li>
+                            <li><strong>4 Marks:</strong> Correctly converts the final answer back to Celsius ($42.2 \ ^\circ\text{C}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-amon-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-amon-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('amon-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-amon-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-amon-4">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Question 4: Maximum Pressure Limits (Extension)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A steel cylinder contains an ideal gas at $25.0 \ ^\circ\text{C}$ and $101.3 \text{ kPa}$. The engineering specifications state that the cylinder will rupture if the internal pressure exceeds exactly double its current pressure.</p>
+                    <p>Without using the actual pressure numbers in your primary calculation, prove mathematically at what temperature (in Celsius) the cylinder will rupture.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-amon-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-amon-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-amon-4">
+                    <p><strong>Hint:</strong> If the pressure doubles, then $P_2 = 2 P_1$. Substitute this ratio into the formula $\frac{P_1}{T_1} = \frac{P_2}{T_2}$ and cancel out $P_1$. Then solve for $T_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-amon-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Define the relationship:</strong><br>
+                        The rupture pressure $P_2 = 2 \times P_1$.<br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$.</p>
+                        
+                        <p><strong>2. Substitute into Amontons' Law:</strong><br>
+                        $$ \frac{P_1}{T_1} = \frac{P_2}{T_2} $$
+                        $$ \frac{P_1}{298.15} = \frac{2P_1}{T_2} $$</p>
+
+                        <p><strong>3. Simplify and solve:</strong><br>
+                        Divide both sides by $P_1$ to eliminate it entirely:<br>
+                        $$ \frac{1}{298.15} = \frac{2}{T_2} $$
+                        $$ T_2 = 2 \times 298.15 = 596.30 \text{ K} $$</p>
+
+                        <p><strong>4. Convert to Celsius:</strong><br>
+                        $$ T(^\circ\text{C}) = 596.30 - 273.15 = \mathbf{323.15 \ ^\circ\text{C}} $$</p>
+                        <p><em>(Notice that to double the pressure, the ABSOLUTE temperature must double. $298.15 \times 2 = 596.3$. The Celsius value goes from $25$ to $323$!)</em></p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts $T_1$ to Kelvin ($298.15 \text{ K}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly sets up the mathematical proof using $P_2 = 2P_1$.</li>
+                            <li><strong>3 Marks:</strong> Concludes that $T_2$ must be exactly double $T_1$ ($596.30 \text{ K}$).</li>
+                            <li><strong>4 Marks:</strong> Correctly converts the final temperature to Celsius ($\approx 323 \ ^\circ\text{C}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-amon-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-amon-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('amon-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-amon-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="avogadros-gas-law.html" class="btn-next">Proceed to Lesson 24: Avogadro's Gas Law &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION & CORE SYSTEM LOGIC
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('amon-1');
+            checkIfQuestionAnswered('amon-2');
+            checkIfQuestionAnswered('amon-3');
+            checkIfQuestionAnswered('amon-4');
+
+            initAmontonsSim();
+            initAmontonsGraphSim();
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: RIGID CHAMBER SIMULATOR
+         * ==========================================
+         */
+        let amonParticles = [];
+        const AMON_CONSTANT = 1.00 / 300; // P/T = k. Base: 1.00 atm / 300K = 0.00333
+        
+        class AmonParticle {
+            constructor() {
+                // Chamber is fixed. Inner dims roughly 180w x 230h.
+                this.x = 20 + Math.random() * 140; 
+                this.y = 20 + Math.random() * 190; 
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.r = 3;
+                this.el = document.createElement('div');
+                this.el.className = 'particle';
+                document.getElementById('sim-cavity').appendChild(this.el);
+            }
+
+            update(tempMod) {
+                this.x += this.vx * tempMod;
+                this.y += this.vy * tempMod;
+
+                // Bounce X (container width approx 184)
+                if (this.x <= 0 || this.x >= 178) {
+                    this.vx *= -1;
+                    this.x = this.x <= 0 ? 0 : 178;
+                }
+                
+                // Bounce Y (container height approx 234)
+                if (this.y <= 0 || this.y >= 228) {
+                    this.vy *= -1;
+                    this.y = this.y <= 0 ? 0 : 228;
+                }
+
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + 'px';
+            }
+        }
+
+        function initAmontonsSim() {
+            // Fixed particle count
+            for(let i=0; i<40; i++) {
+                amonParticles.push(new AmonParticle());
+            }
+            updateAmontonsSim();
+            requestAnimationFrame(animateAmontonsSim);
+        }
+
+        function updateAmontonsSim() {
+            const tempK = parseInt(document.getElementById('sim-temp-slider').value);
+            document.getElementById('sim-temp-val').innerText = tempK + " K";
+
+            // Math: P / T = k. P = k * T
+            const pres = AMON_CONSTANT * tempK;
+            document.getElementById('sim-pres-val').innerText = pres.toFixed(2) + " atm";
+
+            // Visual updates
+            const cavityEl = document.getElementById('sim-cavity');
+            
+            // Background Color changes based on temp
+            if (tempK < 300) {
+                let intensity = (300 - tempK) / 200; 
+                cavityEl.style.background = `rgba(0, 242, 255, ${intensity * 0.3})`;
+            } else {
+                let intensity = (tempK - 300) / 600; 
+                cavityEl.style.background = `rgba(245, 158, 11, ${intensity * 0.5 + 0.1})`;
+            }
+
+            // Update Pressure Needle
+            // P goes from 0.33 to 3.0 atm. Let's map 0 atm to -135deg, 3.0 atm to +135deg.
+            // Map: angle = -135 + (P/3.0)*270
+            let angle = -135 + (pres / 3.0) * 270;
+            if (angle > 135) angle = 135;
+            document.getElementById('sim-needle').style.transform = `rotate(${angle}deg)`;
+
+            // Visual flame / ice
+            const flame = document.getElementById('sim-flame');
+            const ice = document.getElementById('sim-ice');
+            if (tempK > 350) {
+                flame.style.opacity = (tempK - 350) / 550; // max opacity at 900
+                ice.style.opacity = 0;
+            } else if (tempK < 250) {
+                ice.style.opacity = (250 - tempK) / 150;
+                flame.style.opacity = 0;
+            } else {
+                flame.style.opacity = 0;
+                ice.style.opacity = 0;
+            }
+        }
+
+        function animateAmontonsSim() {
+            const tempK = parseInt(document.getElementById('sim-temp-slider').value);
+            // Velocity modifier based on temperature (v prop to sqrt(T))
+            const tempMod = Math.sqrt(tempK / 300);
+
+            amonParticles.forEach(p => p.update(tempMod));
+            requestAnimationFrame(animateAmontonsSim);
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 2: GRAPHING TOOL LOGIC
+         * ==========================================
+         */
+        const cvsPTk = document.getElementById('canvas-pt-k');
+        const ctxPTk = cvsPTk.getContext('2d');
+        const cvsPTc = document.getElementById('canvas-pt-c');
+        const ctxPTc = cvsPTc.getContext('2d');
+
+        function initAmontonsGraphSim() {
+            updateAmontonsGraphs();
+        }
+
+        function updateAmontonsGraphs() {
+            const tempK = parseInt(document.getElementById('graph-temp-slider').value);
+            const pres = AMON_CONSTANT * tempK;
+            const tempC = tempK - 273.15;
+            
+            document.getElementById('graph-temp-text').innerText = tempK;
+            document.getElementById('graph-temp-c-text').innerText = tempC.toFixed(2);
+            document.getElementById('graph-pres-text').innerText = pres.toFixed(2);
+
+            drawPTkGraph(tempK, pres);
+            drawPTcGraph(tempC, pres);
+        }
+
+        function drawPTkGraph(t, p) {
+            ctxPTk.clearRect(0, 0, cvsPTk.width, cvsPTk.height);
+            
+            // Axes
+            ctxPTk.strokeStyle = '#334155';
+            ctxPTk.lineWidth = 1;
+            
+            // P vs T(K) line (y = kx)
+            // Scale: T (x-axis) 0-600 -> 0-300px (x * 0.5)
+            // Scale: P (y-axis) 0-3 atm -> 200-0px (200 - P * 66.6)
+            ctxPTk.beginPath();
+            ctxPTk.strokeStyle = '#0ea5e9';
+            ctxPTk.lineWidth = 3;
+            ctxPTk.moveTo(0, 200); // Origin (0,0)
+            ctxPTk.lineTo(600 * 0.5, 200 - (2.0 * 66.6)); // 600K -> 2 atm
+            ctxPTk.stroke();
+
+            // Draw current point
+            let currentX = t * 0.5;
+            let currentY = 200 - (p * 66.6);
+            ctxPTk.beginPath();
+            ctxPTk.arc(currentX, currentY, 6, 0, Math.PI * 2);
+            ctxPTk.fillStyle = '#ef4444';
+            ctxPTk.fill();
+            ctxPTk.strokeStyle = '#fff';
+            ctxPTk.lineWidth = 2;
+            ctxPTk.stroke();
+        }
+
+        function drawPTcGraph(tc, p) {
+            ctxPTc.clearRect(0, 0, cvsPTc.width, cvsPTc.height);
+            
+            // X-axis: -300 C to +300 C. Width 300px.
+            // Center X = 150px (which is 0 C).
+            // So X_px = 150 + (tc * 0.5)
+            // P (y-axis) 0-3 atm -> 200-0px (200 - p * 66.6)
+            
+            // Draw Y axis at 0 C (X=150px)
+            ctxPTc.beginPath();
+            ctxPTc.strokeStyle = '#334155';
+            ctxPTc.lineWidth = 1;
+            ctxPTc.moveTo(150, 0);
+            ctxPTc.lineTo(150, 200);
+            ctxPTc.stroke();
+            
+            // Draw X axis
+            ctxPTc.beginPath();
+            ctxPTc.moveTo(0, 199);
+            ctxPTc.lineTo(300, 199);
+            ctxPTc.stroke();
+
+            // P vs T(C) line
+            ctxPTc.beginPath();
+            ctxPTc.strokeStyle = '#a855f7';
+            ctxPTc.lineWidth = 3;
+            
+            // Point 1: Abs Zero (-273.15 C, 0 P)
+            let x1 = 150 + (-273.15 * 0.5);
+            ctxPTc.moveTo(x1, 200);
+            
+            // Point 2: (326.85 C, 2.0 P) (which corresponds to 600K)
+            let x2 = 150 + (326.85 * 0.5);
+            ctxPTc.lineTo(x2, 200 - (2.0 * 66.6));
+            ctxPTc.stroke();
+
+            // Draw current point
+            let currentX = 150 + (tc * 0.5);
+            let currentY = 200 - (p * 66.6);
+            ctxPTc.beginPath();
+            ctxPTc.arc(currentX, currentY, 6, 0, Math.PI * 2);
+            ctxPTc.fillStyle = '#ef4444';
+            ctxPTc.fill();
+            ctxPTc.strokeStyle = '#fff';
+            ctxPTc.lineWidth = 2;
+            ctxPTc.stroke();
+            
+            // Label Absolute Zero
+            ctxPTc.fillStyle = '#94a3b8';
+            ctxPTc.font = '10px Arial';
+            ctxPTc.fillText('-273°C', x1 - 15, 195);
+        }
+    </script>
+</body>
+</html>

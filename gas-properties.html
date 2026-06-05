@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 20: Gas Properties & KMT - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY STYLES
+           ========================================================================== */
+        
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+        }
+
+        .highlight-text {
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+
+        .danger-text {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .success-text {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: KMT IDEAL GAS CHAMBER
+           -------------------------------------------------------------------------- */
+        .gas-simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background: #0f172a;
+            border: 3px solid #0ea5e9;
+            border-radius: 8px;
+            box-shadow: inset 0 0 30px rgba(14, 165, 233, 0.2);
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #gasCanvas {
+            background-color: transparent;
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .val-highlight {
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: #38bdf8;
+            cursor: pointer;
+        }
+
+        .dashboard-panel {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #475569;
+            text-align: center;
+        }
+
+        .dashboard-panel span {
+            display: block;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-panel .metric {
+            font-size: 2rem;
+            color: #22c55e;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: IDEAL VS REAL GAS COMPARATOR
+           -------------------------------------------------------------------------- */
+        .comparator-container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .comparator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .gas-mode-card {
+            background: rgba(255,255,255,0.02);
+            border: 2px solid #475569;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gas-mode-card.active-ideal {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .gas-mode-card.active-real {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+
+        .gas-mode-card h4 {
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .active-ideal h4 { color: #38bdf8; }
+        .active-real h4 { color: #f59e0b; }
+
+        .comparator-view {
+            margin-top: 20px;
+            height: 200px;
+            background: #000;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        #comparatorCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --------------------------------------------------------------------------
+           UNITS TABLE STYLING
+           -------------------------------------------------------------------------- */
+        .units-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .units-table th, .units-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .units-table th {
+            background: rgba(14, 165, 233, 0.1);
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .units-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .callout-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .callout-box h4 {
+            color: #f59e0b;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html" class="active">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>20. Gas Properties & KMT</h1>
+            <p class="subtitle">Kinetic Molecular Theory and the Behaviour of Ideal Gases</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Invisible World of Gases</h2>
+            <p>Unlike solids, which maintain a rigid shape, or liquids, which maintain a set volume, gases are entirely free to expand, compress, and fill whatever container they are placed in. Before we can perform mathematical calculations regarding gases (Phase E), we must thoroughly understand the physical rules that govern their behaviour.</p>
+            
+            <p>Chemists use a theoretical model called the <strong>Kinetic Molecular Theory (KMT)</strong> to explain why gases behave the way they do. This theory provides a set of "rules" that describe an imaginary, perfect gas known as an <strong>Ideal Gas</strong>.</p>
+
+            <div class="theory-box">
+                <h3>The 5 Postulates of Kinetic Molecular Theory</h3>
+                <ol style="line-height: 1.8; margin-top: 15px;">
+                    <li><strong>Continuous Random Motion:</strong> Gas particles (atoms or molecules) are in constant, rapid, straight-line motion. They only change direction when they collide with something.</li>
+                    <li><strong>Negligible Volume:</strong> The actual volume of the individual gas particles is considered effectively zero compared to the vast empty space between them in the container.</li>
+                    <li><strong>Elastic Collisions:</strong> When particles collide with each other or the walls of the container, no kinetic energy is lost to friction or heat. The collisions are perfectly elastic.</li>
+                    <li><strong>No Intermolecular Forces:</strong> Gas particles exert absolutely zero attractive or repulsive forces on one another. They behave entirely independently.</li>
+                    <li><strong>Temperature is Kinetic Energy:</strong> The average kinetic energy of the gas particles is directly proportional to the absolute temperature (measured in Kelvin). Hotter gases move faster.</li>
+                </ol>
+            </div>
+            
+            
+
+            <div class="callout-box">
+                <h4>🎯 The Ultimate Destination</h4>
+                <p>Why do we care about KMT? Because all of these "ideal" assumptions lead us mathematically to the most important equation in gas chemistry: <strong>The Ideal Gas Law ($PV = nRT$)</strong>. By establishing these ground rules, we can predict exactly how a gas will respond if we heat it, compress it, or add more moles to the container. We will explore $PV=nRT$ in depth in Lesson 26.</p>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-1">
+            <h2>Interactive: The Kinetic Molecular Theory Chamber</h2>
+            <p>Experiment with the fundamental variables of a gas. According to KMT, heating the gas increases particle velocity, and squeezing the gas into a smaller volume increases the rate of collisions against the walls. Notice how the <strong>Pressure</strong> (the force of collisions per unit area) reacts to your changes!</p>
+
+            <div class="gas-simulator-container">
+                <div class="canvas-wrapper" id="canvasBox">
+                    <canvas id="gasCanvas" width="300" height="300"></canvas>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="slider-group">
+                        <label>
+                            <span>Temperature ($T$):</span>
+                            <span class="val-highlight" id="sim1-temp-val">300 K</span>
+                        </label>
+                        <input type="range" id="sim1-temp" min="50" max="1000" step="10" value="300" oninput="updateKMT()">
+                    </div>
+
+                    <div class="slider-group" style="margin-top: 15px;">
+                        <label>
+                            <span>Container Volume ($V$):</span>
+                            <span class="val-highlight" id="sim1-vol-val">100 %</span>
+                        </label>
+                        <input type="range" id="sim1-vol" min="40" max="100" step="1" value="100" oninput="updateKMT()">
+                    </div>
+
+                    <div class="slider-group" style="margin-top: 15px;">
+                        <label>
+                            <span>Number of Particles ($n$):</span>
+                            <span class="val-highlight" id="sim1-moles-val">50</span>
+                        </label>
+                        <input type="range" id="sim1-moles" min="10" max="150" step="5" value="50" oninput="updateParticles()">
+                    </div>
+
+                    <div class="dashboard-panel" style="margin-top: 20px;">
+                        <span>Relative Pressure ($P$)</span>
+                        <div class="metric" id="sim1-pressure-val">1.00 atm</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="units">
+            <h2>The Language of Gas Variables</h2>
+            <p>To mathematically manipulate gas laws, you must be absolutely fluent in converting between different units of measurement. In chemistry, failing to convert Celsius to Kelvin is the most frequent cause of lost marks.</p>
+
+            <table class="units-table">
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Standard Chemistry Unit</th>
+                        <th>Common Conversions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Temperature ($T$)</strong></td>
+                        <td>Kelvin ($K$)</td>
+                        <td>
+                            $K = \text{°C} + 273.15$ <br>
+                            <em>(Note: You can never have a negative Kelvin value. $0\text{ K}$ is Absolute Zero).</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pressure ($P$)</strong></td>
+                        <td>Kilopascals ($kPa$) or Atmospheres ($atm$)</td>
+                        <td>
+                            $1 \text{ atm} = 101.3 \text{ kPa}$ <br>
+                            $1 \text{ atm} = 760 \text{ mmHg}$
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Volume ($V$)</strong></td>
+                        <td>Litres ($L$)</td>
+                        <td>
+                            $1 \text{ L} = 1000 \text{ mL}$ <br>
+                            $1 \text{ m}^3 = 1000 \text{ L}$
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="content-section" id="interactive-2">
+            <h2>Interactive: Ideal vs. Real Gases</h2>
+            <p>KMT assumes that gas particles have zero volume and zero attractive forces (an <strong>Ideal Gas</strong>). In reality, all gases are <strong>Real Gases</strong>—their particles do take up a tiny amount of space and they do slightly attract each other.</p>
+            <p>Most of the time, real gases behave ideally. However, under conditions of <strong>very high pressure</strong> (particles squished together) or <strong>very low temperature</strong> (particles moving too slowly to escape attraction), the ideal gas rules break down, and the gas condenses into a liquid.</p>
+            
+            [Image comparing ideal gas vs real gas behavior at low temperatures]
+
+            <div class="comparator-container">
+                <div class="comparator-grid">
+                    <div class="gas-mode-card active-ideal" id="btn-ideal" onclick="setGasMode('ideal')">
+                        <h4>Ideal Gas Mode</h4>
+                        <p>High Temperature, Low Pressure. Particles ignore each other.</p>
+                    </div>
+                    <div class="gas-mode-card" id="btn-real" onclick="setGasMode('real')">
+                        <h4>Real Gas Mode</h4>
+                        <p>Low Temp, High Pressure. Particles attract and clump (liquefy).</p>
+                    </div>
+                </div>
+
+                <div class="comparator-view">
+                    <canvas id="comparatorCanvas" width="800" height="200"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Study these examples to understand how to apply KMT concepts and unit conversions to solve problems.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: The Absolute Temperature Conversion (Easy)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A gas cylinder is stored in a freezer at $-45.0 \text{ °C}$. Calculate the absolute temperature of the gas in Kelvin, and explain why Kelvin must be used in gas law calculations according to KMT.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-sol-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-sol-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert to Kelvin</strong><br>
+                        $$T(K) = T(°C) + 273.15$$
+                        $$T(K) = -45.0 + 273.15 = 228.15 \text{ K}$$</p>
+
+                        <p><strong>Step 2: Explanation</strong><br>
+                        According to the Kinetic Molecular Theory, the average kinetic energy of gas particles is <em>directly proportional</em> to absolute temperature. If we used Celsius, a temperature of $0 \text{ °C}$ or a negative value would imply zero or negative kinetic energy (and negative volumes/pressures in calculations), which is physically impossible. The Kelvin scale starts at Absolute Zero ($0 \text{ K}$), where all particle motion theoretically stops.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Pressure Unit Conversions (Medium)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A car tyre is inflated to a pressure of $245 \text{ kPa}$. Convert this pressure into atmospheres ($atm$) and millimetres of mercury ($mmHg$).</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-sol-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-sol-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Part A: Converting to atm</strong><br>
+                        Conversion factor: $1 \text{ atm} = 101.3 \text{ kPa}$<br>
+                        $$P(atm) = \frac{245 \text{ kPa}}{101.3 \text{ kPa/atm}} = \mathbf{2.42 \text{ atm}}$$</p>
+
+                        <p><strong>Part B: Converting to mmHg</strong><br>
+                        Conversion factor: $1 \text{ atm} = 760 \text{ mmHg}$<br>
+                        $$P(mmHg) = 2.418... \text{ atm} \times 760 \text{ mmHg/atm} = \mathbf{1840 \text{ mmHg}}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Explaining Macroscopic Properties using KMT (Hard)</h4>
+                </div>
+                <div class="question-body">
+                    <p>Using the postulates of the Kinetic Molecular Theory, explain why increasing the temperature of a gas inside a rigid, sealed container causes the pressure of the gas to increase.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-sol-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-sol-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Relate Temperature to Kinetic Energy</strong><br>
+                        According to KMT, temperature is a measure of the average kinetic energy of the particles. Increasing the temperature causes the gas particles to move with a higher average velocity.</p>
+
+                        <p><strong>Step 2: Relate Velocity to Collisions</strong><br>
+                        Because the container is rigid (volume is constant), the faster-moving particles will strike the walls of the container more frequently (higher collision rate) and with greater force.</p>
+
+                        <p><strong>Step 3: Define Pressure</strong><br>
+                        Pressure is defined as the force exerted by particles colliding per unit area of the container walls. Since the collisions are more frequent and more forceful, the overall pressure of the gas increases.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Deviations from Ideal Behaviour (Extension)</h4>
+                </div>
+                <div class="question-body">
+                    <p>Ammonia gas ($NH_3$) and Helium gas ($He$) are placed in separate containers under extremely high pressure and low temperature. Explain which gas will deviate most significantly from ideal gas behaviour, referencing specific KMT postulates.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-sol-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-sol-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Answer:</strong> Ammonia ($NH_3$) will deviate most significantly from ideal behaviour.</p>
+                        <p><strong>Justification:</strong><br>
+                        The Kinetic Molecular Theory postulates that ideal gas particles experience <em>negligible intermolecular forces</em> of attraction. <br><br>
+                        At high pressures, particles are forced very close together. At low temperatures, they possess low kinetic energy, meaning they cannot easily overcome attractive forces when they pass each other. <br><br>
+                        Ammonia is a highly polar molecule capable of forming strong hydrogen bonds with other ammonia molecules. Helium, conversely, is a noble gas and exhibits only extremely weak dispersion forces. Therefore, under conditions that favour condensation (high $P$, low $T$), the strong intermolecular forces between $NH_3$ molecules will cause them to attract and clump together, severely violating the KMT assumption of zero attractive forces. Helium will behave much closer to an ideal gas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply your understanding of KMT and gas variables. Check your solutions and assign yourself a mark based on the HSC-style criteria.</p>
+
+            <div class="practise-question" id="question-gas-1">
+                <div class="question-header">
+                    <h4>Question 1: Essential Unit Conversions (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A chemistry experiment requires data to be in standard SI/gas law units. Convert a temperature of $25.0 \text{ °C}$ to Kelvin, and a volume of $450 \text{ mL}$ to Litres.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gas-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gas-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gas-1" style="display: none;">
+                    <p><strong>Hint:</strong> Add $273.15$ to Celsius to get Kelvin. Divide millilitres by $1000$ to get Litres.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gas-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Temperature:</strong> $T(K) = 25.0 + 273.15 = \mathbf{298.15 \text{ K}}$</p>
+                        <p><strong>Volume:</strong> $V(L) = \frac{450}{1000} = \mathbf{0.450 \text{ L}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts temperature to $298.15 \text{ K}$ (or $298 \text{ K}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly converts volume to $0.450 \text{ L}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gas-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-gas-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gas-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gas-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="question-gas-2">
+                <div class="question-header">
+                    <h4>Question 2: Analysing Pressure Data (Medium)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>During a reaction, a pressure sensor records a reading of $0.850 \text{ atm}$. Convert this reading into kilopascals ($kPa$). Provide your answer to 3 significant figures.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gas-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gas-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gas-2" style="display: none;">
+                    <p><strong>Hint:</strong> The conversion factor is $1 \text{ atm} = 101.3 \text{ kPa}$. Multiply your atm value by this factor.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gas-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$P(kPa) = 0.850 \text{ atm} \times 101.3 \text{ kPa/atm}$$</p>
+                        <p>$$P(kPa) = 86.105 \text{ kPa}$$</p>
+                        <p>Rounding to 3 sig figs: $\mathbf{86.1 \text{ kPa}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly sets up the mathematical conversion using $101.3$.</li>
+                            <li><strong>2 Marks:</strong> Correct final answer of $86.1 \text{ kPa}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gas-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-gas-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gas-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gas-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="question-gas-3">
+                <div class="question-header">
+                    <h4>Question 3: KMT and Compressibility (Hard)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Unlike liquids, gases are highly compressible. Outline the specific postulate(s) of the Kinetic Molecular Theory that account for this macroscopic property.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gas-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gas-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gas-3" style="display: none;">
+                    <p><strong>Hint:</strong> Think about the distance between particles. What does KMT say about the actual volume of the gas molecules compared to the space they occupy?</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gas-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>According to the Kinetic Molecular Theory, the actual physical volume of the individual gas particles is deemed negligible (essentially zero) compared to the vast amount of empty space between them in the container.</p>
+                        <p>Because there is a large amount of empty space between particles, an external force can easily push the particles closer together, reducing the overall volume of the container. This explains why gases are highly compressible.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies that gas particles are separated by large distances / empty space.</li>
+                            <li><strong>2 Marks:</strong> Explicitly references the KMT postulate stating that the volume of the particles themselves is negligible.</li>
+                            <li><strong>3 Marks:</strong> Logically connects this empty space to the ability for external force to push particles closer together (compressibility).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gas-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-gas-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gas-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gas-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="question-gas-4">
+                <div class="question-header">
+                    <h4>Question 4: Real Gas Breakdown (Extension)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A researcher is studying the behaviour of Water Vapour ($H_2O$) inside a sealed piston. As the researcher drastically decreases the volume of the piston and cools the system, the measured pressure drops significantly below the value predicted by ideal gas calculations, and eventually droplets form on the glass.</p>
+                    <p>Explain this phenomenon by detailing exactly how the assumptions of an "Ideal Gas" fail under these specific conditions.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gas-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gas-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gas-4" style="display: none;">
+                    <p><strong>Hint:</strong> Ideal gases assume NO intermolecular forces and NO volume. What happens to water vapour when it gets cold and compressed? Relate this back to the specific assumptions.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gas-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>The KMT defines an Ideal Gas as having particles with zero intermolecular forces and zero physical volume. Water vapour under standard conditions behaves somewhat ideally, but fails under these extreme conditions for two reasons:</p>
+                        <p><strong>1. Intermolecular Forces:</strong> As temperature decreases, the kinetic energy of the $H_2O$ molecules decreases. They move slower and are less able to overcome attractive forces. Furthermore, compressing the volume forces the molecules physically closer together. Water is highly polar and forms strong hydrogen bonds. These attractive forces pull the molecules together, causing them to collide with the walls with less force, which explains the unexpected drop in measured pressure.</p>
+                        <p><strong>2. Condensation:</strong> The combination of high pressure (proximity) and low temperature (low kinetic energy) allows the hydrogen bonds to fully lock the molecules together, transitioning the state from a gas to a liquid (condensation). The assumption that particles act independently has completely failed.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies that KMT assumes zero intermolecular forces.</li>
+                            <li><strong>2 Marks:</strong> Explains that low temperature (low KE) prevents particles from overcoming attractive forces.</li>
+                            <li><strong>3 Marks:</strong> Explains that decreased volume forces particles closer together, exacerbating the effect of polarity/hydrogen bonding in water.</li>
+                            <li><strong>4 Marks:</strong> Concludes that the attractive forces reduce wall collision impact (lowering pressure) and eventually cause the gas to condense.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gas-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-gas-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gas-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gas-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="boyles-law.html" class="btn-next">Proceed to Lesson 21: Boyle's Law &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION & CORE SYSTEM LOGIC
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('gas-1');
+            checkIfQuestionAnswered('gas-2');
+            checkIfQuestionAnswered('gas-3');
+            checkIfQuestionAnswered('gas-4');
+
+            initKMTCanvas();
+            initComparatorCanvas();
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: KMT GAS CHAMBER SIMULATOR
+         * ==========================================
+         */
+        const canvas = document.getElementById('gasCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasBox = document.getElementById('canvasBox');
+        
+        let kmtParticles = [];
+        let numParticles = 50;
+        let simTemp = 300; 
+        let simVol = 100; // Percentage of box 40-100
+        let baseVelocity = 2; // base speed modifier
+        
+        class KMTParticle {
+            constructor() {
+                // Ensure they spawn inside the current volume bounds
+                const bounds = getBounds();
+                this.x = bounds.minX + Math.random() * (bounds.maxX - bounds.minX);
+                this.y = bounds.minY + Math.random() * (bounds.maxY - bounds.minY);
+                this.r = 3;
+                // Random direction vector
+                const angle = Math.random() * Math.PI * 2;
+                this.dx = Math.cos(angle);
+                this.dy = Math.sin(angle);
+                this.color = '#38bdf8';
+            }
+
+            update(speedMod, bounds) {
+                this.x += this.dx * speedMod;
+                this.y += this.dy * speedMod;
+
+                // Wall collisions (Elastic)
+                if (this.x - this.r < bounds.minX) {
+                    this.x = bounds.minX + this.r;
+                    this.dx *= -1;
+                } else if (this.x + this.r > bounds.maxX) {
+                    this.x = bounds.maxX - this.r;
+                    this.dx *= -1;
+                }
+
+                if (this.y - this.r < bounds.minY) {
+                    this.y = bounds.minY + this.r;
+                    this.dy *= -1;
+                } else if (this.y + this.r > bounds.maxY) {
+                    this.y = bounds.maxY - this.r;
+                    this.dy *= -1;
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function getBounds() {
+            // Box is 300x300. Volume slider controls how "squished" it is from the top/right.
+            // 100% = 300x300. 50% = 212x212 (area). Let's just scale width/height uniformly.
+            const size = 300 * (simVol / 100);
+            // Center the dynamic box in the canvas
+            const offset = (300 - size) / 2;
+            return {
+                minX: offset,
+                maxX: offset + size,
+                minY: offset,
+                maxY: offset + size
+            };
+        }
+
+        function initKMTCanvas() {
+            kmtParticles = [];
+            for(let i=0; i<numParticles; i++) {
+                kmtParticles.push(new KMTParticle());
+            }
+            requestAnimationFrame(animateKMT);
+        }
+
+        function updateKMT() {
+            simTemp = parseInt(document.getElementById('sim1-temp').value);
+            simVol = parseInt(document.getElementById('sim1-vol').value);
+            
+            document.getElementById('sim1-temp-val').innerText = simTemp + " K";
+            document.getElementById('sim1-vol-val').innerText = simVol + " %";
+
+            calculatePressure();
+        }
+
+        function updateParticles() {
+            numParticles = parseInt(document.getElementById('sim1-moles').value);
+            document.getElementById('sim1-moles-val').innerText = numParticles;
+            
+            // Rebuild array while maintaining current ones if possible
+            if (numParticles > kmtParticles.length) {
+                const toAdd = numParticles - kmtParticles.length;
+                for(let i=0; i<toAdd; i++) kmtParticles.push(new KMTParticle());
+            } else if (numParticles < kmtParticles.length) {
+                kmtParticles.splice(numParticles);
+            }
+            calculatePressure();
+        }
+
+        function calculatePressure() {
+            // P proportional to n * T / V (Ideal Gas Law concept)
+            // Base state: n=50, T=300, V=100 -> P=1.0 atm
+            const base_n = 50;
+            const base_T = 300;
+            const base_V = 100;
+
+            const pressure = (numParticles / base_n) * (simTemp / base_T) / (simVol / base_V);
+            document.getElementById('sim1-pressure-val').innerText = pressure.toFixed(2) + " atm";
+        }
+
+        function animateKMT() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const bounds = getBounds();
+            // Draw container walls
+            ctx.strokeStyle = '#0ea5e9';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
+
+            // Speed modifier based on Temperature (sqrt(T) relates to velocity)
+            const speedMod = baseVelocity * Math.sqrt(simTemp / 300);
+
+            kmtParticles.forEach(p => {
+                p.update(speedMod, bounds);
+                p.draw(ctx);
+            });
+
+            requestAnimationFrame(animateKMT);
+        }
+
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 2: IDEAL VS REAL COMPARATOR
+         * ==========================================
+         */
+        const compCanvas = document.getElementById('comparatorCanvas');
+        const cCtx = compCanvas.getContext('2d');
+        let compMode = 'ideal'; // 'ideal' or 'real'
+        let compParticles = [];
+        
+        class CompParticle {
+            constructor() {
+                this.x = Math.random() * compCanvas.width;
+                this.y = Math.random() * compCanvas.height;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.r = 4;
+            }
+
+            update() {
+                // In real mode, particles experience slight attractive forces if close
+                if (compMode === 'real') {
+                    // Slow them down to simulate low temp
+                    this.x += this.vx * 0.4;
+                    this.y += this.vy * 0.4;
+
+                    for(let other of compParticles) {
+                        if (other !== this) {
+                            let dx = other.x - this.x;
+                            let dy = other.y - this.y;
+                            let distSq = dx*dx + dy*dy;
+                            
+                            // Attractive force
+                            if (distSq < 2000 && distSq > 10) { 
+                                this.vx += dx * 0.0005;
+                                this.vy += dy * 0.0005;
+                            }
+                        }
+                    }
+                } else {
+                    // Ideal mode: normal speed, no interaction
+                    this.x += this.vx;
+                    this.y += this.vy;
+                }
+
+                // Walls
+                if(this.x < 0) { this.x = 0; this.vx *= -1; }
+                if(this.x > compCanvas.width) { this.x = compCanvas.width; this.vx *= -1; }
+                if(this.y < 0) { this.y = 0; this.vy *= -1; }
+                if(this.y > compCanvas.height) { this.y = compCanvas.height; this.vy *= -1; }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = compMode === 'ideal' ? '#38bdf8' : '#f59e0b';
+                ctx.fill();
+            }
+        }
+
+        function setGasMode(mode) {
+            compMode = mode;
+            document.getElementById('btn-ideal').className = 'gas-mode-card' + (mode === 'ideal' ? ' active-ideal' : '');
+            document.getElementById('btn-real').className = 'gas-mode-card' + (mode === 'real' ? ' active-real' : '');
+            
+            // Randomise velocities slightly on switch to break clumps
+            if (mode === 'ideal') {
+                compParticles.forEach(p => {
+                    p.vx = (Math.random() - 0.5) * 4;
+                    p.vy = (Math.random() - 0.5) * 4;
+                });
+            }
+        }
+
+        function initComparatorCanvas() {
+            compParticles = [];
+            for(let i=0; i<80; i++) {
+                compParticles.push(new CompParticle());
+            }
+            requestAnimationFrame(animateComparator);
+        }
+
+        function animateComparator() {
+            cCtx.clearRect(0, 0, compCanvas.width, compCanvas.height);
+            
+            // Faint background tint based on mode
+            if (compMode === 'real') {
+                cCtx.fillStyle = 'rgba(245, 158, 11, 0.05)';
+                cCtx.fillRect(0, 0, compCanvas.width, compCanvas.height);
+            }
+
+            compParticles.forEach(p => {
+                p.update();
+                p.draw(cCtx);
+            });
+            requestAnimationFrame(animateComparator);
+        }
+
+    </script>
+</body>
+</html>

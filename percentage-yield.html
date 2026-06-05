@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 15: Percentage Yield | Module 2</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           GLOBAL VARIABLES & THEME SETUP
+           ========================================================================== */
+        :root {
+            --bg-dark: #020617;
+            --bg-panel: #0f172a;
+            --bg-panel-light: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-cyan: #00f2ff;
+            --accent-pink: #ff2d55;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --border-subtle: #334155;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        /* ==========================================================================
+           RESET & BASE TYPOGRAPHY
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        strong {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        em {
+            color: var(--accent-cyan);
+            font-style: italic;
+        }
+
+        ul, ol {
+            margin-bottom: 1.2rem;
+            margin-left: 2rem;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-pink);
+        }
+
+        /* ==========================================================================
+           LAYOUT & CONTAINERS
+           ========================================================================== */
+        #main-content {
+            margin-left: 280px; /* Offset for the fixed sidebar */
+            padding: 3rem 4rem;
+            flex-grow: 1;
+            max-width: 1200px;
+            width: calc(100% - 280px);
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+            border-bottom: 2px solid var(--border-subtle);
+            padding-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            color: var(--accent-cyan);
+            text-shadow: var(--shadow-glow);
+            letter-spacing: -0.5px;
+        }
+
+        .page-header .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .content-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-divider {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
+            margin: 3rem 0;
+        }
+
+        /* ==========================================================================
+   SIDEBAR NAVIGATION (ETHEREAL GLASSMORPHISM - PURPLE TINGE UPDATE)
+   ========================================================================== */
+#sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* CHANGED: Switched from var(--glass-bg) to a deep purple tint (rgba(45, 27, 78, 0.2)) */
+    /* This ensures the sidebar feels like an extension of your --bg-color-3 */
+    background: rgba(45, 27, 78, 0.2); 
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    /* CHANGED: Border now has a slight purple hint to avoid the grey 'metal' look */
+    border-right: 1px solid rgba(176, 38, 255, 0.15); 
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: var(--glass-shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-header {
+    padding: 2.5rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    /* CHANGED: Integrated a purple tint into the header background */
+    background: rgba(22, 22, 56, 0.7); 
+    backdrop-filter: blur(10px);
+    z-index: 2;
+}
+
+.nav-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+    border: none;
+    padding: 0;
+    color: #ffffff;
+    /* ADDED: Subtle glow to the header text */
+    text-shadow: 0 0 15px rgba(176, 38, 255, 0.4);
+}
+
+.nav-header p {
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#global-score-display {
+    background: rgba(0, 230, 118, 0.1);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    color: var(--success-green);
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.1);
+}
+
+#total-marks {
+    font-size: 1.1rem;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 1.5rem 0;
+    margin: 0;
+}
+
+.nav-section-title {
+    padding: 1.5rem 2rem 0.5rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    /* CHANGED: Muted purple-grey instead of pure grey */
+    color: #8a8ab0; 
+    font-weight: 700;
+}
+
+.nav-list li a {
+    display: block;
+    padding: 0.8rem 2rem;
+    /* CHANGED: Slightly lighter text for better contrast against purple */
+    color: #cbd5e0; 
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: var(--transition-smooth);
+    border-left: 3px solid transparent;
+}
+
+.nav-list li a:hover {
+    /* CHANGED: Hover now uses a purple glow instead of white */
+    background: rgba(176, 38, 255, 0.1); 
+    color: #fff;
+    border-left-color: var(--accent-purple);
+    padding-left: 2.5rem;
+}
+
+.nav-list li a.active {
+    background: linear-gradient(90deg, rgba(176, 38, 255, 0.2), transparent);
+    color: #fff;
+    border-left-color: var(--accent-cyan);
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.highlight-link {
+    color: #ffd700 !important;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+        /* ==========================================================================
+           EDUCATIONAL UI COMPONENTS
+           ========================================================================== */
+        .protocol-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--accent-cyan);
+            border-radius: 0 8px 8px 0;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .protocol-box::before {
+            content: "THE PROTOCOL";
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: var(--accent-cyan);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 10px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+        }
+
+        .math-box {
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px dashed var(--border-subtle);
+            text-align: center;
+            font-size: 1.3rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: var(--accent-green); color: #000; }
+        .badge-medium { background: var(--accent-yellow); color: #000; }
+        .badge-hard { background: var(--accent-red); color: #fff; }
+        .badge-extension { background: var(--accent-purple); color: #fff; }
+
+        .callout {
+            display: flex;
+            gap: 1rem;
+            background: rgba(255, 45, 85, 0.1);
+            border: 1px solid rgba(255, 45, 85, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .callout-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        /* ==========================================================================
+           INTERACTIVITY 1: PARTICLE SIMULATOR (THE YIELD FACTORY)
+           ========================================================================== */
+        #simulator-container {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 2px solid var(--border-subtle);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #canvas-area {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* The physical beaker visualization in the canvas area */
+        .beaker-graphic {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 250px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .beaker-rim {
+            position: absolute;
+            top: -4px;
+            left: -10px;
+            width: 220px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Control panel for the simulator */
+        #sim-controls {
+            padding: 1.5rem;
+            background: var(--bg-panel);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sim-btn {
+            background: var(--bg-panel-light);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .sim-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: var(--shadow-glow);
+            border-color: var(--accent-cyan);
+        }
+
+        .sim-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--bg-panel-light) !important;
+            color: var(--text-muted) !important;
+            border-color: var(--border-subtle) !important;
+            box-shadow: none !important;
+        }
+
+        #sim-stats {
+            width: 100%;
+            text-align: center;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            padding: 0.5rem;
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px;
+        }
+
+        /* Particle styles for the DOM-based physics engine */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 10px;
+            color: #fff;
+            user-select: none;
+            z-index: 2;
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.5);
+        }
+
+        .particle-reactant-a {
+            width: 24px; height: 24px;
+            background: radial-gradient(circle at 30% 30%, #38bdf8, #0284c7);
+        }
+        
+        .particle-reactant-b {
+            width: 24px; height: 24px;
+            background: radial-gradient(circle at 30% 30%, #f472b6, #be185d);
+        }
+
+        .particle-product {
+            width: 34px; height: 34px;
+            background: radial-gradient(circle at 30% 30%, #a3e635, #4d7c0f);
+            border-radius: 8px; /* Distinct shape */
+        }
+
+        .particle-impurity {
+            width: 20px; height: 20px;
+            background: radial-gradient(circle at 30% 30%, #a8a29e, #44403c);
+        }
+
+        /* ==========================================================================
+           INTERACTIVITY 2: THE YIELD GAUGE & CALCULATOR
+           ========================================================================== */
+        .calculator-panel {
+            background: var(--bg-panel-light);
+            border-radius: 12px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .slider-val {
+            color: var(--accent-cyan);
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: var(--border-subtle);
+            border-radius: 2px;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        /* Circular Progress Gauge */
+        .gauge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .circular-chart {
+            display: block;
+            margin: 10px auto;
+            max-width: 80%;
+            max-height: 250px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: var(--border-subtle);
+            stroke-width: 3.8;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease-out, stroke 0.5s ease;
+        }
+
+        .percentage-text {
+            fill: var(--text-main);
+            font-family: sans-serif;
+            font-size: 0.5em;
+            text-anchor: middle;
+            font-weight: bold;
+        }
+
+        .gauge-label {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* ==========================================================================
+           PRACTISE QUESTIONS & WORKED SOLUTIONS (SELF-MARKING ENGINE)
+           ========================================================================== */
+        .practise-question {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: border-color 0.3s;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(0, 242, 255, 0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .question-header h4 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--accent-pink);
+            font-weight: bold;
+            background: rgba(255, 45, 85, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .question-body {
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .interaction-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .btn-hint, .btn-reveal {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-hint:hover {
+            background: rgba(234, 179, 8, 0.1);
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        .btn-reveal:hover {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .hidden-hint {
+            background: rgba(234, 179, 8, 0.05);
+            border-left: 3px solid var(--accent-yellow);
+            padding: 1rem 1.5rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .worked-solution {
+            margin-bottom: 2rem;
+        }
+
+        .worked-solution h5 {
+            color: var(--accent-cyan);
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .marking-criteria {
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .marking-criteria h5 {
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .marking-criteria ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        .marking-criteria li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.8rem;
+        }
+
+        .marking-criteria li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--bg-panel-light);
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            flex-wrap: wrap;
+        }
+
+        .self-assessment label {
+            font-weight: 600;
+        }
+
+        .mark-dropdown {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .mark-dropdown:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-submit-mark {
+            background: var(--accent-cyan);
+            color: #000;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit-mark:hover {
+            background: #00c4cc;
+        }
+
+        .mark-feedback {
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* ==========================================================================
+           FOOTER NAV
+           ========================================================================== */
+        .page-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-next {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--accent-cyan);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-next:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: var(--shadow-glow);
+            transform: translateX(5px);
+        }
+
+        /* ==========================================================================
+           ANIMATIONS & MEDIA QUERIES
+           ========================================================================== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            #main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 2rem;
+            }
+            #sidebar {
+                transform: translateX(-100%); /* Hide sidebar by default on mobile */
+                /* In a fully developed app, a hamburger menu would toggle this class */
+            }
+            .calculator-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html" class="active">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        
+        <header class="page-header">
+            <h1>15. Percentage Yield</h1>
+            <p class="subtitle">Theoretical Expectations vs. Harsh Chemical Reality</p>
+        </header>
+
+        <section class="content-section" id="theory">
+            <h2>The Myth of 100% Efficiency</h2>
+            <p>Up until this point in the course, we have assumed that chemical reactions are perfect. We assumed that if you mix exactly $2.0 \text{ mol}$ of Hydrogen and $1.0 \text{ mol}$ of Oxygen, you will get <em>exactly</em> $2.0 \text{ mol}$ of Water. In the sterile world of mathematics, this is called the <strong>Theoretical Yield</strong>.</p>
+            
+            <p>However, if you step into a laboratory and actually perform the reaction, you will quickly discover that reality is disorganised, messy, and imperfect. The mass of the product you <em>actually</em> collect, dry, and weigh on the electronic balance is called the <strong>Actual Yield</strong>.</p>
+
+            <div class="math-box">
+                $$ \text{Percentage Yield} = \frac{\text{Actual Yield}}{\text{Theoretical Yield}} \times 100 $$
+            </div>
+
+            
+
+            <h3>Why is the Actual Yield almost always lower than the Theoretical Yield?</h3>
+            <p>There are several physical and chemical reasons why you rarely obtain 100% of your expected product. The NSW HSC syllabus expects you to be able to identify and explain these factors:</p>
+            <ul>
+                <li><strong>Loss during transfer:</strong> When pouring liquids from a beaker to a conical flask, droplets remain stuck to the glass walls.</li>
+                <li><strong>Incomplete precipitation/crystallisation:</strong> Some solid product may remain dissolved in the solvent and pass through the filter paper.</li>
+                <li><strong>Side reactions:</strong> The reactants might undergo unintended secondary reactions with impurities, oxygen in the air, or the solvent itself, forming products you didn't want.</li>
+                <li><strong>Equilibrium:</strong> Some reactions are reversible ($ \rightleftharpoons $). They do not proceed entirely to completion, but rather establish a balance where reactants and products exist simultaneously.</li>
+                <li><strong>Impure Reactants:</strong> If you weigh out $10 \text{ g}$ of a reactant, but $1 \text{ g}$ of it is dirt/impurities, you only actually reacted $9 \text{ g}$ of the active chemical.</li>
+            </ul>
+
+            <div class="callout">
+                <div class="callout-icon">⚠️</div>
+                <div>
+                    <strong>Common Pitfall: Units Matter!</strong><br>
+                    You can calculate percentage yield using either <em>moles</em> or <em>mass (grams)</em>. However, you <strong>must not mix them</strong>. You cannot divide an actual yield in grams by a theoretical yield in moles. Always ensure both numerator and denominator share the exact same units before multiplying by 100.
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactivity-1">
+            <h2>Interactive Lab: The Yield Simulator</h2>
+            <p>Let's visualise why yield decreases. Below is a simulated reaction vessel. We will attempt to synthesise <strong>Green Product</strong> from <strong>Blue (A)</strong> and <strong>Pink (B)</strong> reactants.</p>
+            <p>In a perfect world, 10 Blue + 10 Pink = 10 Green. But watch what happens when you introduce real-world conditions like <em>Spillage</em> or <em>Side Reactions</em>.</p>
+
+            <div id="simulator-container">
+                <div id="canvas-area">
+                    <div class="beaker-graphic">
+                        <div class="beaker-rim"></div>
+                    </div>
+                </div>
+                <div id="sim-controls">
+                    <button class="sim-btn" id="btn-add-reactants" onclick="simAddReactants()">1. Add 10 A & 10 B</button>
+                    <button class="sim-btn" id="btn-react-perfect" onclick="simReact(true)" disabled>2. Perfect Reaction</button>
+                    <button class="sim-btn" id="btn-react-real" onclick="simReact(false)" disabled>2. Realistic Reaction</button>
+                    <button class="sim-btn" id="btn-reset" onclick="simReset()">Reset Beaker</button>
+                </div>
+                <div id="sim-stats">Status: Beaker is empty.</div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactivity-2">
+            <h2>Interactive Calculator: The Yield Gauge</h2>
+            <p>Adjust the sliders below to see how changes in your theoretical expectations versus your actual laboratory results impact the final percentage yield. Notice what happens if the Actual Yield exceeds the Theoretical Yield (a common indicator that your product is still wet or impure!).</p>
+
+            <div class="calculator-panel">
+                <div class="slider-group">
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label for="calc-theo">Theoretical Yield (g)</label>
+                            <span class="slider-val" id="val-theo">50.0</span>
+                        </div>
+                        <input type="range" id="calc-theo" min="1" max="100" step="0.5" value="50" oninput="updateGauge()">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label for="calc-act">Actual Yield (g)</label>
+                            <span class="slider-val" id="val-act">38.0</span>
+                        </div>
+                        <input type="range" id="calc-act" min="0" max="110" step="0.5" value="38" oninput="updateGauge()">
+                    </div>
+                </div>
+
+                <div class="gauge-container">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                        <path class="circle-bg"
+                            d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <path class="circle" id="gauge-path"
+                            stroke-dasharray="76, 100"
+                            stroke="#22c55e"
+                            d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <text x="18" y="20.35" class="percentage-text" id="gauge-text">76.0%</text>
+                    </svg>
+                    <div class="gauge-label" id="gauge-feedback">Acceptable Yield</div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-examples">
+            <h2>Worked Solutions</h2>
+            <p>Review these guided examples before attempting the practise questions. Click "View Solution" to reveal the step-by-step mathematical working.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Direct Substitution</h4>
+                </div>
+                <div class="question-body">
+                    <p>A chemist calculates that $15.5 \text{ g}$ of Aspirin should form during an esterification reaction. However, after filtration and drying, she places the product on a scale and records a mass of $11.2 \text{ g}$. Calculate the percentage yield.</p>
+                </div>
+                <button class="btn-reveal" onclick="toggleSolution('sol-we-1')">View Solution</button>
+                <div id="sol-we-1" class="hidden-solution">
+                    <p><strong>Step 1: Identify given values.</strong><br>
+                    Theoretical Yield = $15.5 \text{ g}$ (What <em>should</em> form)<br>
+                    Actual Yield = $11.2 \text{ g}$ (What <em>actually</em> formed)</p>
+                    
+                    <p><strong>Step 2: Apply the formula.</strong><br>
+                    $$ \% \text{ Yield} = \frac{\text{Actual}}{\text{Theoretical}} \times 100 $$
+                    $$ \% \text{ Yield} = \frac{11.2}{15.5} \times 100 $$
+                    $$ \% \text{ Yield} = 72.258... $$</p>
+
+                    <p><strong>Step 3: Final answer with sig figs.</strong><br>
+                    Given values are to 3 significant figures.<br>
+                    <strong>Answer: $72.3\%$</strong></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Stoichiometry to Yield</h4>
+                </div>
+                <div class="question-body">
+                    <p>When $50.0 \text{ g}$ of Silicon Dioxide ($SiO_2$) is heated with excess carbon, $27.9 \text{ g}$ of Silicon Carbide ($SiC$) is produced according to the following equation: <br>
+                    $$ SiO_2(s) + 3C(s) \rightarrow SiC(s) + 2CO(g) $$<br>
+                    Calculate the percentage yield of Silicon Carbide.</p>
+                </div>
+                <button class="btn-reveal" onclick="toggleSolution('sol-we-2')">View Solution</button>
+                <div id="sol-we-2" class="hidden-solution">
+                    <p><em>To find the % yield, we first need to calculate the Theoretical Yield of SiC using standard mass-to-mass stoichiometry.</em></p>
+                    
+                    <p><strong>Step 1: Moles of known reactant ($SiO_2$).</strong><br>
+                    $MM(SiO_2) = 28.09 + (2 \times 16.00) = 60.09 \text{ g/mol}$<br>
+                    $n(SiO_2) = \frac{m}{MM} = \frac{50.0}{60.09} = 0.832 \text{ mol}$</p>
+
+                    <p><strong>Step 2: Mole ratio.</strong><br>
+                    Ratio of $SiO_2 : SiC$ is $1:1$.<br>
+                    Therefore, theoretically, $n(SiC) = 0.832 \text{ mol}$.</p>
+
+                    <p><strong>Step 3: Calculate Theoretical Mass of $SiC$.</strong><br>
+                    $MM(SiC) = 28.09 + 12.01 = 40.10 \text{ g/mol}$<br>
+                    $m(SiC) = n \times MM = 0.832 \times 40.10 = 33.36 \text{ g}$ (Theoretical Yield)</p>
+
+                    <p><strong>Step 4: Calculate Percentage Yield.</strong><br>
+                    Actual Yield (given) = $27.9 \text{ g}$<br>
+                    $$ \% \text{ Yield} = \frac{27.9}{33.36} \times 100 = \mathbf{83.6\%} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Deducing Products & Limiting Reagents</h4>
+                </div>
+                <div class="question-body">
+                    <p>$10.0 \text{ g}$ of Lead (II) Nitrate is added to a beaker containing $5.00 \text{ g}$ of Potassium Iodide. A brilliant yellow precipitate forms. The student filters the precipitate, dries it, and weighs it, recording a mass of $6.20 \text{ g}$.</p>
+                    <p>Deduce the balanced chemical equation (with states), determine the theoretical yield of the precipitate, and calculate the percentage yield.</p>
+                </div>
+                <button class="btn-reveal" onclick="toggleSolution('sol-we-3')">View Solution</button>
+                <div id="sol-we-3" class="hidden-solution">
+                    <p><strong>Step 1: Equation & Products.</strong><br>
+                    This is a double displacement precipitation reaction. Lead Iodide is insoluble.<br>
+                    $Pb(NO_3)_2(aq) + 2KI(aq) \rightarrow PbI_2(s) + 2KNO_3(aq)$</p>
+
+                    <p><strong>Step 2: Find Limiting Reagent.</strong><br>
+                    $n(Pb(NO_3)_2) = \frac{10.0}{331.2} = 0.0302 \text{ mol}$. Test: $0.0302 / 1 = 0.0302$<br>
+                    $n(KI) = \frac{5.00}{166.0} = 0.0301 \text{ mol}$. Test: $0.0301 / 2 = 0.01505$<br>
+                    <strong>KI is the Limiting Reagent.</strong></p>
+
+                    <p><strong>Step 3: Theoretical Moles of Precipitate ($PbI_2$).</strong><br>
+                    Ratio of $KI : PbI_2$ is $2:1$.<br>
+                    $n(PbI_2) = 0.0301 \times \frac{1}{2} = 0.01505 \text{ mol}$.</p>
+
+                    <p><strong>Step 4: Theoretical Mass of Precipitate.</strong><br>
+                    $MM(PbI_2) = 207.2 + (2 \times 126.9) = 461.0 \text{ g/mol}$.<br>
+                    Theoretical Mass = $0.01505 \times 461.0 = 6.94 \text{ g}$.</p>
+
+                    <p><strong>Step 5: Percentage Yield.</strong><br>
+                    $$ \% = \frac{6.20}{6.94} \times 100 = \mathbf{89.3\%} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Reverse Calculations (The Factory Dilemma)</h4>
+                </div>
+                <div class="question-body">
+                    <p>An industrial plant needs to synthesise exactly $500 \text{ kg}$ of Ammonia gas ($NH_3$) per day via the Haber process: $N_2(g) + 3H_2(g) \rightleftharpoons 2NH_3(g)$. Due to the reversible nature of the reaction, the plant historically operates at a $42.0\%$ yield.</p>
+                    <p>Calculate the minimum mass of Nitrogen gas ($N_2$) that must be supplied to the reactor to achieve the <em>actual</em> desired yield of $500 \text{ kg}$.</p>
+                </div>
+                <button class="btn-reveal" onclick="toggleSolution('sol-we-4')">View Solution</button>
+                <div id="sol-we-4" class="hidden-solution">
+                    <p><em>This is a backwards calculation. We have the Actual Yield ($500 \text{ kg}$) and the $\%$, so we must first find the Theoretical Yield.</em></p>
+
+                    <p><strong>Step 1: Calculate Theoretical Yield of $NH_3$.</strong><br>
+                    $42.0\% = \frac{500 \text{ kg}}{\text{Theoretical}} \times 100$<br>
+                    $0.420 = \frac{500}{\text{Theoretical}}$<br>
+                    $\text{Theoretical Mass of } NH_3 = \frac{500}{0.420} = 1190.47 \text{ kg} = 1,190,470 \text{ g}$.</p>
+
+                    <p><strong>Step 2: Moles of $NH_3$ (Theoretical).</strong><br>
+                    $n(NH_3) = \frac{1,190,470}{17.034} = 69,887.8 \text{ mol}$.</p>
+
+                    <p><strong>Step 3: Mole Ratio to find Nitrogen ($N_2$).</strong><br>
+                    Ratio of $NH_3 : N_2$ is $2:1$.<br>
+                    $n(N_2) = \frac{69,887.8}{2} = 34,943.9 \text{ mol}$.</p>
+
+                    <p><strong>Step 4: Convert back to Mass.</strong><br>
+                    $MM(N_2) = 28.02 \text{ g/mol}$.<br>
+                    $m(N_2) = 34,943.9 \times 28.02 = 979,128 \text{ g}$.<br>
+                    Converting to kg gives $\mathbf{979 \text{ kg}}$ (to 3 sig figs).</p>
+                </div>
+            </div>
+
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practice-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply what you've learned. Write your working out on a piece of paper, check the solution, and use the marking criteria to assign yourself a score. Your total score will be recorded securely in your browser.</p>
+
+            <div class="practise-question" id="q-15-1">
+                <div class="question-header">
+                    <h4>Question 1: The Decomposition Yield</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calcium Carbonate decomposes upon heating: $CaCO_3(s) \rightarrow CaO(s) + CO_2(g)$. <br>
+                    A student heats $25.0 \text{ g}$ of $CaCO_3$ and calculates that $14.0 \text{ g}$ of solid Calcium Oxide ($CaO$) should form. After the experiment, the student weighs the remaining solid and finds it is $11.5 \text{ g}$.</p>
+                    <p>Calculate the percentage yield of $CaO$.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-15-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-15-1')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="h-15-1">
+                    <strong>Hint:</strong> Read the question carefully. The theoretical yield is already given to you! You do not need to calculate molar masses for this question, just apply the yield formula.
+                </div>
+                <div class="hidden-solution" id="s-15-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$\text{Theoretical Yield} = 14.0 \text{ g}$ (given in question)<br>
+                        $\text{Actual Yield} = 11.5 \text{ g}$ (experimental result)</p>
+                        <p>$\% \text{ Yield} = \frac{\text{Actual}}{\text{Theoretical}} \times 100$<br>
+                        $\% \text{ Yield} = \frac{11.5}{14.0} \times 100$<br>
+                        $\% \text{ Yield} = 82.142...$</p>
+                        <p><strong>Answer: $82.1\%$</strong></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly identifies $14.0\text{g}$ as Theoretical and $11.5\text{g}$ as Actual.</li>
+                            <li><strong>2 Marks:</strong> Correctly sets up the division ($\frac{11.5}{14.0}$).</li>
+                            <li><strong>3 Marks:</strong> Calculates final answer correctly ($82.1\%$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-15-1">Assign your mark:</label>
+                        <select id="mark-15-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-15-2">
+                <div class="question-header">
+                    <h4>Question 2: Combustion of Magnesium</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Magnesium burns in oxygen to form Magnesium Oxide: $2Mg(s) + O_2(g) \rightarrow 2MgO(s)$. <br>
+                    If $4.50 \text{ g}$ of Magnesium ribbon is completely burned in excess oxygen, and $6.85 \text{ g}$ of Magnesium Oxide powder is collected, calculate the percentage yield.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-15-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-15-2')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="h-15-2">
+                    <strong>Hint:</strong> Convert $4.50 \text{ g}$ of Mg to moles. Use the ratio $2:2$ (which simplifies to $1:1$) to find the theoretical moles of MgO. Convert that back to grams to find your Theoretical Yield, then divide $6.85$ by it.
+                </div>
+                <div class="hidden-solution" id="s-15-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Moles of Mg:</strong><br>
+                        $n(Mg) = \frac{4.50}{24.31} = 0.1851 \text{ mol}$.</p>
+                        <p><strong>2. Theoretical Moles of MgO:</strong><br>
+                        Ratio $Mg : MgO$ is $2:2$ (or $1:1$).<br>
+                        $n(MgO) = 0.1851 \text{ mol}$.</p>
+                        <p><strong>3. Theoretical Mass of MgO:</strong><br>
+                        $MM(MgO) = 24.31 + 16.00 = 40.31 \text{ g/mol}$.<br>
+                        $m(MgO) = 0.1851 \times 40.31 = 7.46 \text{ g}$ (Theoretical).</p>
+                        <p><strong>4. Percentage Yield:</strong><br>
+                        $\% = \frac{6.85}{7.46} \times 100 = \mathbf{91.8\%}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates moles of Magnesium ($0.185 \text{ mol}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly applies mole ratio to find moles of MgO.</li>
+                            <li><strong>3 Marks:</strong> Calculates Theoretical mass of MgO ($7.46 \text{ g}$).</li>
+                            <li><strong>4 Marks:</strong> Correct final percentage calculation ($91.8\%$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-15-2">Assign your mark:</label>
+                        <select id="mark-15-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-15-3">
+                <div class="question-header">
+                    <h4>Question 3: Synthesis & Deduction</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A chemist reacts $15.0 \text{ g}$ of pure Aluminium metal with excess Chlorine gas to synthesise Aluminium Chloride. The chemist manages to collect $60.5 \text{ g}$ of product.</p>
+                    <p>Deduce the balanced chemical equation (with state symbols), determine the theoretical yield, and calculate the percentage yield.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-15-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-15-3')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="h-15-3">
+                    <strong>Hint:</strong> Chlorine gas is diatomic ($Cl_2$). Aluminium has a valency of +3, so Aluminium Chloride is $AlCl_3$. Balance the equation $Al(s) + Cl_2(g) \rightarrow AlCl_3(s)$ before doing any maths.
+                </div>
+                <div class="hidden-solution" id="s-15-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Equation:</strong><br>
+                        $2Al(s) + 3Cl_2(g) \rightarrow 2AlCl_3(s)$</p>
+                        <p><strong>2. Moles of Al:</strong><br>
+                        $n(Al) = \frac{15.0}{26.98} = 0.5560 \text{ mol}$.</p>
+                        <p><strong>3. Theoretical Moles of $AlCl_3$:</strong><br>
+                        Ratio $Al : AlCl_3$ is $2:2$ (or $1:1$).<br>
+                        $n(AlCl_3) = 0.5560 \text{ mol}$.</p>
+                        <p><strong>4. Theoretical Mass of $AlCl_3$:</strong><br>
+                        $MM(AlCl_3) = 26.98 + (3 \times 35.45) = 133.33 \text{ g/mol}$.<br>
+                        $m(AlCl_3) = 0.5560 \times 133.33 = 74.13 \text{ g}$ (Theoretical).</p>
+                        <p><strong>5. Percentage Yield:</strong><br>
+                        $\% = \frac{60.5}{74.13} \times 100 = \mathbf{81.6\%}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct balanced equation.</li>
+                            <li><strong>2 Marks:</strong> Correct state symbols $(s)$ and $(g)$ included.</li>
+                            <li><strong>3 Marks:</strong> Correct moles of Al calculated ($0.556 \text{ mol}$).</li>
+                            <li><strong>4 Marks:</strong> Correct theoretical mass of $AlCl_3$ ($74.13 \text{ g}$).</li>
+                            <li><strong>5 Marks:</strong> Correct final percentage calculation ($81.6\%$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-15-3">Assign your mark:</label>
+                        <select id="mark-15-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-15-4">
+                <div class="question-header">
+                    <h4>Question 4: The Impure Limiting Reagent</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $20.0 \text{ g}$ sample of Sodium Carbonate is known to be only $85.0\%$ pure (the rest is unreactive dirt). This sample is reacted with $15.0 \text{ g}$ of Hydrochloric acid to produce Sodium Chloride, Water, and Carbon Dioxide gas.</p>
+                    <p>If the experimental setup captures exactly $3.50 \text{ g}$ of $CO_2$ gas, write the balanced equation with states, determine the Limiting Reagent, and calculate the percentage yield of the gas.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-15-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-15-4')">Reveal Solution & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="h-15-4">
+                    <strong>Hint:</strong> Step 1 is to find the <em>actual</em> mass of active $Na_2CO_3$ by calculating $85\%$ of $20.0 \text{ g}$. Then proceed as a standard Limiting Reagent question.
+                </div>
+                <div class="hidden-solution" id="s-15-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Equation:</strong><br>
+                        $Na_2CO_3(s) + 2HCl(aq) \rightarrow 2NaCl(aq) + H_2O(l) + CO_2(g)$</p>
+                        
+                        <p><strong>2. Pure Mass & Moles:</strong><br>
+                        Pure $Na_2CO_3 = 0.85 \times 20.0 = 17.0 \text{ g}$.<br>
+                        $n(Na_2CO_3) = \frac{17.0}{105.99} = 0.160 \text{ mol}$.<br>
+                        $n(HCl) = \frac{15.0}{36.46} = 0.411 \text{ mol}$.</p>
+                        
+                        <p><strong>3. Limiting Reagent Test:</strong><br>
+                        Test $Na_2CO_3: 0.160 / 1 = 0.160$<br>
+                        Test $HCl: 0.411 / 2 = 0.205$<br>
+                        <strong>$Na_2CO_3$ is the Limiting Reagent.</strong></p>
+
+                        <p><strong>4. Theoretical Moles & Mass of $CO_2$:</strong><br>
+                        Ratio $Na_2CO_3 : CO_2$ is $1:1$.<br>
+                        $n(CO_2) = 0.160 \text{ mol}$.<br>
+                        $m(CO_2) = 0.160 \times 44.01 = 7.04 \text{ g}$ (Theoretical Yield).</p>
+
+                        <p><strong>5. Percentage Yield:</strong><br>
+                        $\% = \frac{3.50}{7.04} \times 100 = \mathbf{49.7\%}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Balanced equation with correct states.</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates mass of pure reactant ($17.0 \text{ g}$).</li>
+                            <li><strong>3 Marks:</strong> Calculates correct moles for both reactants.</li>
+                            <li><strong>4 Marks:</strong> Correctly identifies $Na_2CO_3$ as the Limiting Reagent.</li>
+                            <li><strong>5 Marks:</strong> Calculates theoretical mass of $CO_2$ ($7.04 \text{ g}$).</li>
+                            <li><strong>6 Marks:</strong> Correct final percentage calculation ($49.7\%$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-15-4">Assign your mark:</label>
+                        <select id="mark-15-4" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="intro-concentration.html" class="btn-next">Proceed to Lesson 16: Intro to Concentration &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * ------------------------------------------------------------------------
+         * INITIALISATION
+         * ------------------------------------------------------------------------
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            // Restore saved marks
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('15-1');
+            checkIfQuestionAnswered('15-2');
+            checkIfQuestionAnswered('15-3');
+            checkIfQuestionAnswered('15-4');
+            
+            // Initialise Gauge
+            updateGauge();
+        });
+
+        /**
+         * ------------------------------------------------------------------------
+         * SELF-MARKING ENGINE (EXACT MATCH LOGIC)
+         * ------------------------------------------------------------------------
+         */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = hintElement.style.display === "none" || hintElement.style.display === "" ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "var(--accent-green)";
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                    feedbackSpan.style.color = "var(--text-muted)";
+                }
+            }
+        }
+
+        /**
+         * ------------------------------------------------------------------------
+         * INTERACTIVITY 2: YIELD GAUGE CALCULATOR
+         * ------------------------------------------------------------------------
+         */
+        function updateGauge() {
+            const theoVal = parseFloat(document.getElementById('calc-theo').value);
+            const actVal = parseFloat(document.getElementById('calc-act').value);
+            
+            // Update numeric displays
+            document.getElementById('val-theo').innerText = theoVal.toFixed(1) + " g";
+            document.getElementById('val-act').innerText = actVal.toFixed(1) + " g";
+
+            // Calculate percentage
+            let percentage = (actVal / theoVal) * 100;
+            
+            // Get DOM elements
+            const gaugePath = document.getElementById('gauge-path');
+            const gaugeText = document.getElementById('gauge-text');
+            const gaugeFeedback = document.getElementById('gauge-feedback');
+
+            // Format text
+            gaugeText.textContent = percentage.toFixed(1) + "%";
+
+            // Cap the visual arc at 100, but allow number to go higher
+            let visualPercentage = percentage > 100 ? 100 : percentage;
+            gaugePath.setAttribute('stroke-dasharray', `${visualPercentage}, 100`);
+
+            // Color and Feedback logic
+            if (percentage > 100) {
+                gaugePath.setAttribute('stroke', 'var(--accent-red)');
+                gaugeText.setAttribute('fill', 'var(--accent-red)');
+                gaugeFeedback.textContent = "Error: Yield > 100%. Product is likely wet or impure!";
+                gaugeFeedback.style.color = "var(--accent-red)";
+            } else if (percentage >= 85) {
+                gaugePath.setAttribute('stroke', 'var(--accent-green)');
+                gaugeText.setAttribute('fill', 'var(--accent-green)');
+                gaugeFeedback.textContent = "Excellent Yield. Highly efficient reaction.";
+                gaugeFeedback.style.color = "var(--accent-green)";
+            } else if (percentage >= 50) {
+                gaugePath.setAttribute('stroke', 'var(--accent-yellow)');
+                gaugeText.setAttribute('fill', 'var(--accent-yellow)');
+                gaugeFeedback.textContent = "Moderate Yield. Typical for complex organic synthesis.";
+                gaugeFeedback.style.color = "var(--accent-yellow)";
+            } else {
+                gaugePath.setAttribute('stroke', 'var(--accent-pink)');
+                gaugeText.setAttribute('fill', 'var(--accent-pink)');
+                gaugeFeedback.textContent = "Poor Yield. Significant loss or side-reactions occurred.";
+                gaugeFeedback.style.color = "var(--accent-pink)";
+            }
+        }
+
+        /**
+         * ------------------------------------------------------------------------
+         * INTERACTIVITY 1: PARTICLE PHYSICS ENGINE (THE YIELD FACTORY)
+         * ------------------------------------------------------------------------
+         */
+        const canvasArea = document.getElementById('canvas-area');
+        const simStats = document.getElementById('sim-stats');
+        let particles = [];
+        let animationFrameId;
+        let simState = 'empty'; // empty, loaded, reacted
+        
+        // Physics constraints based on CSS layout
+        const BEAKER_WIDTH = 190;
+        const BEAKER_HEIGHT = 240;
+        let beakerLeft = 0;
+        let beakerRight = 0;
+        let beakerBottom = 0;
+
+        function updateBeakerBounds() {
+            const canvasRect = canvasArea.getBoundingClientRect();
+            // Assuming beaker is centered as per CSS
+            const centerX = canvasRect.width / 2;
+            beakerLeft = centerX - (BEAKER_WIDTH / 2);
+            beakerRight = centerX + (BEAKER_WIDTH / 2);
+            beakerBottom = canvasRect.height - 25; // 20px bottom + 5px border
+        }
+
+        class Particle {
+            constructor(type, x, y) {
+                this.type = type; // 'A', 'B', 'P' (Product), 'I' (Impurity)
+                this.element = document.createElement('div');
+                this.element.classList.add('particle');
+                
+                // Styling based on type
+                if(type === 'A') { this.element.classList.add('particle-reactant-a'); this.element.innerText = 'A'; }
+                else if(type === 'B') { this.element.classList.add('particle-reactant-b'); this.element.innerText = 'B'; }
+                else if(type === 'P') { this.element.classList.add('particle-product'); this.element.innerText = 'AB'; }
+                else if(type === 'I') { this.element.classList.add('particle-impurity'); this.element.innerText = 'X'; }
+                
+                canvasArea.appendChild(this.element);
+
+                // Physical properties
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 4; // Velocity X
+                this.vy = Math.random() * 2;         // Velocity Y
+                this.radius = type === 'P' ? 17 : (type === 'I' ? 10 : 12);
+                this.mass = type === 'P' ? 2 : 1;
+                this.isLost = false; // Flag for particles that "escape"
+            }
+
+            update() {
+                if(this.isLost) return;
+
+                // Apply gravity
+                this.vy += 0.2;
+                
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Floor collision (Bottom of beaker)
+                if (this.y + this.radius > beakerBottom) {
+                    this.y = beakerBottom - this.radius;
+                    this.vy *= -0.6; // Bounce and lose energy
+                    this.vx *= 0.9;  // Friction
+                }
+
+                // Wall collisions (Sides of beaker)
+                if (this.x - this.radius < beakerLeft) {
+                    this.x = beakerLeft + this.radius;
+                    this.vx *= -0.8;
+                } else if (this.x + this.radius > beakerRight) {
+                    this.x = beakerRight - this.radius;
+                    this.vx *= -0.8;
+                }
+
+                // Render DOM
+                this.element.style.left = (this.x - this.radius) + 'px';
+                this.element.style.top = (this.y - this.radius) + 'px';
+            }
+            
+            destroy() {
+                if(this.element.parentNode) {
+                    this.element.parentNode.removeChild(this.element);
+                }
+            }
+        }
+
+        function simLoop() {
+            updateBeakerBounds();
+            
+            // Simple N^2 collision detection for bouncing off each other
+            for (let i = 0; i < particles.length; i++) {
+                let p1 = particles[i];
+                if(p1.isLost) continue;
+                
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    if(p2.isLost) continue;
+                    
+                    let dx = p2.x - p1.x;
+                    let dy = p2.y - p1.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    let minDist = p1.radius + p2.radius;
+
+                    if (dist < minDist) {
+                        // Resolve overlap
+                        let overlap = minDist - dist;
+                        let nx = dx / dist;
+                        let ny = dy / dist;
+                        p1.x -= nx * overlap / 2;
+                        p1.y -= ny * overlap / 2;
+                        p2.x += nx * overlap / 2;
+                        p2.y += ny * overlap / 2;
+
+                        // Simple momentum transfer
+                        let dvx = p2.vx - p1.vx;
+                        let dvy = p2.vy - p1.vy;
+                        p1.vx += dvx * 0.1;
+                        p1.vy += dvy * 0.1;
+                        p2.vx -= dvx * 0.1;
+                        p2.vy -= dvy * 0.1;
+                    }
+                }
+                p1.update();
+            }
+            animationFrameId = requestAnimationFrame(simLoop);
+        }
+
+        function simAddReactants() {
+            simReset(); // Clear first
+            updateBeakerBounds();
+            
+            // Spawn 10 A and 10 B from the top middle
+            const centerX = canvasArea.getBoundingClientRect().width / 2;
+            
+            let spawnCount = 0;
+            let spawnInterval = setInterval(() => {
+                if(spawnCount >= 10) {
+                    clearInterval(spawnInterval);
+                    simState = 'loaded';
+                    document.getElementById('btn-add-reactants').disabled = true;
+                    document.getElementById('btn-react-perfect').disabled = false;
+                    document.getElementById('btn-react-real').disabled = false;
+                    simStats.innerText = "Status: 10 A and 10 B added. Awaiting reaction.";
+                    return;
+                }
+                
+                // Spawn slightly offset to prevent perfect stacking
+                particles.push(new Particle('A', centerX - 20 + Math.random()*10, 20));
+                particles.push(new Particle('B', centerX + 20 - Math.random()*10, 20));
+                spawnCount++;
+            }, 100);
+            
+            if(!animationFrameId) simLoop();
+        }
+
+        function simReact(isPerfect) {
+            document.getElementById('btn-react-perfect').disabled = true;
+            document.getElementById('btn-react-real').disabled = true;
+            
+            let productsFormed = 0;
+            let productsLost = 0;
+            let sideProducts = 0;
+            
+            simStats.innerText = "Status: Reaction occurring...";
+            
+            // Visual "Flash" to indicate reaction
+            const oldBg = canvasArea.style.background;
+            canvasArea.style.background = "#ffffff";
+            setTimeout(() => { canvasArea.style.background = oldBg; }, 100);
+
+            // Logic: Convert A+B pairs into P
+            // In a perfect reaction, we get 10 P.
+            // In a realistic reaction, maybe 7 P form, 1 P "spills", and 2 turn into Impurities (I)
+            
+            setTimeout(() => {
+                // Clear all reactants visually
+                particles.forEach(p => p.destroy());
+                particles = [];
+                
+                const centerX = canvasArea.getBoundingClientRect().width / 2;
+                
+                if (isPerfect) {
+                    // Spawn 10 Products
+                    for(let i=0; i<10; i++) {
+                        setTimeout(() => {
+                            particles.push(new Particle('P', centerX + (Math.random()*40 - 20), 50));
+                        }, i * 50);
+                    }
+                    productsFormed = 10;
+                    setTimeout(() => {
+                        simStats.innerText = `Status: Perfect Reaction. Theoretical Yield = 100%. (10/10 Products)`;
+                        simStats.style.color = "var(--accent-green)";
+                    }, 600);
+                } else {
+                    // Realistic: 6 perfect products, 2 impurities, 2 "lost/spilled"
+                    for(let i=0; i<6; i++) {
+                        setTimeout(() => { particles.push(new Particle('P', centerX + (Math.random()*40 - 20), 50)); }, i * 50);
+                    }
+                    // Impurities
+                    for(let i=0; i<2; i++) {
+                        setTimeout(() => { particles.push(new Particle('I', centerX + (Math.random()*40 - 20), 50)); }, 300 + (i * 50));
+                    }
+                    // Visualise "Lost" particles flying out of the beaker
+                    for(let i=0; i<2; i++) {
+                        setTimeout(() => { 
+                            let lostP = new Particle('P', centerX, 100);
+                            lostP.vy = -15; // Shoot straight up
+                            lostP.vx = (Math.random() > 0.5 ? 5 : -5);
+                            particles.push(lostP);
+                            // Flag to ignore bounds
+                            setTimeout(() => { lostP.isLost = true; }, 50); 
+                        }, 400 + (i * 50));
+                    }
+                    
+                    setTimeout(() => {
+                        simStats.innerText = `Status: Realistic Reaction. Actual Yield = 60%. (6 collected, 2 side-reacted, 2 lost)`;
+                        simStats.style.color = "var(--accent-yellow)";
+                    }, 800);
+                }
+            }, 200);
+        }
+
+        function simReset() {
+            // Stop animation loop
+            if(animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            
+            // Destroy all DOM elements
+            particles.forEach(p => p.destroy());
+            particles = [];
+            
+            // Reset state & buttons
+            simState = 'empty';
+            document.getElementById('btn-add-reactants').disabled = false;
+            document.getElementById('btn-react-perfect').disabled = true;
+            document.getElementById('btn-react-real').disabled = true;
+            
+            simStats.innerText = "Status: Beaker is empty.";
+            simStats.style.color = "var(--accent-cyan)";
+        }
+    </script>
+</body>
+</html>

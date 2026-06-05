@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 10: Mole Ratios - The Stoichiometric Bridge</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* Specific Styles for Lesson 10 */
+
+        /* The Core Formula Box */
+        .stoich-box {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, rgba(176, 38, 255, 0.05) 100%);
+            border: 2px solid var(--accent-cyan);
+            border-left: 8px solid var(--accent-purple);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stoich-box::after {
+            content: 'BRIDGE';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.02);
+            font-weight: 900;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .stoich-box h3 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Interactivity 1: The Molar Bridge */
+        .bridge-container {
+            background: #11111e;
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .bridge-equation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 2rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .coefficient { color: var(--accent-cyan); font-size: 2.5rem; }
+        .molecule-text { color: #aaa; }
+
+        .bridge-visuals {
+            display: grid;
+            grid-template-columns: 1fr 50px 1fr 50px 1fr;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bridge-node {
+            background: rgba(0,0,0,0.5);
+            border: 2px dashed var(--accent-purple);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .bridge-node.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .node-value {
+            font-size: 3rem;
+            color: var(--accent-cyan);
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .node-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bridge-operator {
+            font-size: 2rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .slider-wrapper {
+            margin-top: 30px;
+            text-align: center;
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .slider-wrapper label {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: var(--accent-purple);
+        }
+
+        input[type=range].molar-slider {
+            -webkit-appearance: none;
+            width: 80%;
+            background: transparent;
+        }
+        input[type=range].molar-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 0 15px var(--accent-cyan);
+        }
+        input[type=range].molar-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 5px;
+        }
+
+        /* Interactivity 2: The Stoichiometry Factory */
+        .factory-container {
+            background: #0a0a10;
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 3rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .factory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111;
+            padding: 15px;
+            border-radius: 10px;
+            border-bottom: 2px solid var(--accent-purple);
+        }
+
+        .factory-belt-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr;
+            gap: 20px;
+            align-items: end;
+            height: 250px;
+            padding: 20px;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.02),
+                rgba(255, 255, 255, 0.02) 10px,
+                rgba(0, 0, 0, 0) 10px,
+                rgba(0, 0, 0, 0) 20px
+            );
+            border-radius: 10px;
+        }
+
+        .hopper {
+            background: linear-gradient(180deg, rgba(50,50,70,0.8), rgba(20,20,30,0.9));
+            border: 2px solid #555;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+            padding: 20px 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .hopper-title { font-weight: bold; color: var(--accent-cyan); font-size: 1.2rem;}
+        
+        .hopper-input {
+            background: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            font-family: monospace;
+            font-size: 1.5rem;
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        .hopper-display {
+            background: #000;
+            color: #fff;
+            border: 1px solid #555;
+            font-family: monospace;
+            font-size: 1.5rem;
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .conveyor {
+            height: 20px;
+            background: #333;
+            width: 100%;
+            border-top: 2px solid #555;
+            border-bottom: 2px solid #111;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .conveyor::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 20px, #222 20px, #222 40px);
+            animation: moveBelt 2s linear infinite;
+        }
+
+        @keyframes moveBelt {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-40px); }
+        }
+
+        .factory-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn-factory {
+            background: var(--accent-purple);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-factory:hover { background: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan); color: #000; }
+
+        .factory-output {
+            position: absolute;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            color: var(--success-green);
+            opacity: 0;
+            transition: opacity 0.5s;
+            font-family: monospace;
+            text-shadow: 0 0 20px var(--success-green);
+        }
+
+        .factory-error {
+            color: #ff3366;
+            text-align: center;
+            font-weight: bold;
+            min-height: 20px;
+            margin-top: 10px;
+        }
+
+        /* Particle effects for factory */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html" class="active">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>10. Mole Ratios</h1>
+            <p class="subtitle">The Heart of Stoichiometry: Bridging the Gap Between Chemicals</p>
+        </header>
+
+        <section class="content-section">
+            <h2>The Chemical Recipe</h2>
+            <p>Welcome to <strong>Phase C: Stoichiometry</strong>. If you only remember one thing from Module 2, let it be this lesson. Stoichiometry is the mathematics of chemistry. It allows us to predict exactly how much product we will make, or how much reactant we need.</p>
+            
+            
+
+            <p>Think of a balanced chemical equation like a recipe for baking. If a recipe calls for $2 \text{ eggs}$ and $1 \text{ cup of flour}$ to make $5 \text{ pancakes}$, the ratio is $2:1:5$. If you have $4 \text{ eggs}$, you know instantly you need $2 \text{ cups of flour}$ to make $10 \text{ pancakes}$.</p>
+            <p>In chemistry, the big numbers at the front of a balanced equation (the <strong>coefficients</strong>) are your recipe. They tell you the ratio of <strong>moles</strong>.</p>
+
+            <div class="stoich-box">
+                <p style="color: var(--text-secondary); text-transform: uppercase; font-weight: bold; margin-bottom: 10px;">The Ultimate Stoichiometry Formula</p>
+                <h3>$$ n(\text{want}) = n(\text{have}) \times \frac{\text{Coefficient of Want}}{\text{Coefficient of Have}} $$</h3>
+                <p>Where "Want" is the substance you are trying to find, and "Have" is the substance you already know the moles of.</p>
+            </div>
+            
+            <p>We often call this the <strong>"Want over Have"</strong> rule. It is the bridge that allows you to cross from one chemical to another in an equation.</p>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Molar Bridge</h2>
+            <p>Let's synthesise some water! The balanced equation is $2H_2 + O_2 \rightarrow 2H_2O$. Use the slider to change the moles of Oxygen ($O_2$) you have, and watch the bridge automatically calculate how much Hydrogen ($H_2$) you need, and how much Water ($H_2O$) you will produce.</p>
+            
+            <div class="bridge-container">
+                <div class="bridge-equation">
+                    <span><span class="coefficient">2</span><span class="molecule-text">H₂</span></span>
+                    <span>+</span>
+                    <span><span class="coefficient">1</span><span class="molecule-text">O₂</span></span>
+                    <span>&#8594;</span>
+                    <span><span class="coefficient">2</span><span class="molecule-text">H₂O</span></span>
+                </div>
+
+                <div class="bridge-visuals">
+                    <div class="bridge-node" id="node-h2">
+                        <div class="node-value" id="val-h2">2.0</div>
+                        <div class="node-label">Moles of H₂ Needed</div>
+                        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">Ratio: 2/1</div>
+                    </div>
+                    <div class="bridge-operator">+</div>
+                    <div class="bridge-node active" id="node-o2">
+                        <div class="node-value" id="val-o2">1.0</div>
+                        <div class="node-label">Moles of O₂ (Have)</div>
+                    </div>
+                    <div class="bridge-operator">&#8594;</div>
+                    <div class="bridge-node" id="node-h2o">
+                        <div class="node-value" id="val-h2o">2.0</div>
+                        <div class="node-label">Moles of H₂O Made</div>
+                        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">Ratio: 2/1</div>
+                    </div>
+                </div>
+
+                <div class="slider-wrapper">
+                    <label>Adjust Moles of O₂: <strong id="slider-label" style="color:#fff;">1.0 mol</strong></label>
+                    <input type="range" class="molar-slider" id="o2-slider" min="0.5" max="10" step="0.5" value="1.0" oninput="updateBridge()">
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Ammonia Factory</h2>
+            <p>You are the foreman of the Haber Process plant. The equation is: <strong>$N_2 + 3H_2 \rightarrow 2NH_3$</strong>.</p>
+            <p>The system will randomly supply you with a set amount of $N_2$ (Nitrogen). You must calculate the exact moles of $H_2$ to input, and predict the exact moles of $NH_3$ produced. Get it wrong, and the factory line will jam!</p>
+
+            <div class="factory-container" id="factory">
+                <div class="factory-header">
+                    <span style="color:var(--accent-cyan); font-weight:bold; font-size:1.2rem;">Reaction: $N_2 + 3H_2 \rightarrow 2NH_3$</span>
+                    <span id="factory-score" style="color:var(--success-green); font-family:monospace; font-size:1.2rem;">Batches Made: 0</span>
+                </div>
+                
+                <div class="factory-belt-area">
+                    <div class="hopper">
+                        <div class="hopper-title">Nitrogen (N₂)</div>
+                        <div style="font-size: 2rem; margin: 10px 0;">🔵🔵</div>
+                        <div class="hopper-display" id="fac-n2">5.0</div>
+                        <div style="font-size:0.8rem; color:#aaa; margin-top:5px;">Moles Available</div>
+                        <div class="conveyor" style="margin-top: 15px;"></div>
+                    </div>
+
+                    <div class="hopper">
+                        <div class="hopper-title">Hydrogen (H₂)</div>
+                        <div style="font-size: 2rem; margin: 10px 0;">⚪⚪</div>
+                        <input type="number" class="hopper-input" id="fac-h2-input" placeholder="??" step="0.5">
+                        <div style="font-size:0.8rem; color:#aaa; margin-top:5px;">Input Moles</div>
+                        <div class="conveyor" style="margin-top: 15px;"></div>
+                    </div>
+
+                    <div class="hopper" style="border-color: var(--accent-cyan);">
+                        <div class="hopper-title" style="color:#fff;">Ammonia (NH₃) Expected</div>
+                        <div style="font-size: 2rem; margin: 10px 0;">🔵⚪⚪⚪</div>
+                        <input type="number" class="hopper-input" id="fac-nh3-input" placeholder="??" step="0.5" style="border-color:var(--accent-cyan);">
+                        <div style="font-size:0.8rem; color:#aaa; margin-top:5px;">Expected Output</div>
+                        <div class="conveyor" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+                <div class="factory-error" id="factory-error"></div>
+
+                <div class="factory-controls">
+                    <button class="btn-factory" onclick="generateFactoryProblem()">New Batch</button>
+                    <button class="btn-factory" onclick="runFactory()" style="background:var(--success-green); color:#000;">Run Reactor!</button>
+                </div>
+                
+                <div class="factory-output" id="factory-success">SUCCESS!</div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Worked Examples</h2>
+            
+            
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: The 1:1 Ratio (Easy)</h4>
+                </div>
+                <p>Consider the reaction: $HCl + NaOH \rightarrow NaCl + H_2O$. If you have $0.25 \text{ mol}$ of $HCl$, how many moles of $NaCl$ will be produced?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Identify Known and Unknown.</strong></p>
+                    <p>Known (Have) = $HCl$ ($0.25 \text{ mol}$). Unknown (Want) = $NaCl$.</p>
+                    
+                    <p><strong>Step 2: Check coefficients from the balanced equation.</strong></p>
+                    <p>Coefficient of $NaCl$ = $1$. Coefficient of $HCl$ = $1$.</p>
+                    
+                    <p><strong>Step 3: Apply the bridge formula.</strong></p>
+                    <p>$$ n(NaCl) = n(HCl) \times \frac{1}{1} $$</p>
+                    <p>$$ n(NaCl) = 0.25 \times 1 = \mathbf{0.25 \text{ mol}} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Fractional Ratios (Medium)</h4>
+                </div>
+                <p>Aluminium reacts with chlorine gas: $2Al + 3Cl_2 \rightarrow 2AlCl_3$. If you want to synthesise $4.50 \text{ mol}$ of $AlCl_3$, how many moles of $Cl_2$ do you need?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Identify Known and Unknown.</strong></p>
+                    <p>Known = $AlCl_3$ ($4.50 \text{ mol}$). Unknown = $Cl_2$.</p>
+                    
+                    <p><strong>Step 2: Find the ratio (Want / Have).</strong></p>
+                    <p>Want ($Cl_2$) coefficient = $3$. Have ($AlCl_3$) coefficient = $2$. Ratio = $\frac{3}{2}$.</p>
+                    
+                    <p><strong>Step 3: Calculate.</strong></p>
+                    <p>$$ n(Cl_2) = n(AlCl_3) \times \frac{3}{2} $$</p>
+                    <p>$$ n(Cl_2) = 4.50 \times 1.5 = \mathbf{6.75 \text{ mol}} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Working Backwards (Hard)</h4>
+                </div>
+                <p>Potassium chlorate decomposes upon heating: $2KClO_3 \rightarrow 2KCl + 3O_2$. An experiment produces $0.186 \text{ mol}$ of Oxygen gas ($O_2$). How many moles of $KClO_3$ were decomposed to produce this?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                <div id="ws-3" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Known vs Unknown.</strong></p>
+                    <p>Have: $O_2$ ($0.186 \text{ mol}$). Want: $KClO_3$.</p>
+                    
+                    <p><strong>Step 2: Ratio (Want/Have).</strong></p>
+                    <p>Want ($KClO_3$) = $2$. Have ($O_2$) = $3$. Ratio = $\frac{2}{3}$.</p>
+                    
+                    <p><strong>Step 3: Calculate.</strong></p>
+                    <p>$$ n(KClO_3) = n(O_2) \times \frac{2}{3} $$</p>
+                    <p>$$ n(KClO_3) = 0.186 \times \frac{2}{3} = \mathbf{0.124 \text{ mol}} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Large Coefficients (Extension)</h4>
+                </div>
+                <p>The combustion of octane: $2C_8H_{18} + 25O_2 \rightarrow 16CO_2 + 18H_2O$. If $12.5 \text{ mol}$ of octane undergoes complete combustion, calculate the total moles of gas produced (assuming water is a liquid, not a gas, at room temp).</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                <div id="ws-4" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Identify the "gas produced".</strong></p>
+                    <p>The only gas produced (if water is liquid) is $CO_2$. So we want moles of $CO_2$.</p>
+                    <p>Have: $C_8H_{18}$ ($12.5 \text{ mol}$).</p>
+
+                    <p><strong>Step 2: Ratio.</strong></p>
+                    <p>Want ($CO_2$) = $16$. Have ($C_8H_{18}$) = $2$. Ratio = $\frac{16}{2} = 8$.</p>
+                    
+                    <p><strong>Step 3: Calculate.</strong></p>
+                    <p>$$ n(CO_2) = 12.5 \times 8 = \mathbf{100 \text{ mol}} $$</p>
+                    <p><em>(Note: If the question asked for total moles of ALL products, you would do a separate calculation for water and add them up!)</em></p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Practice Questions</h2>
+
+            <div class="practise-question" id="q-stoich-1">
+                <div class="question-header">
+                    <h4>Question 1: Easy</h4>
+                    <span class="marks-allocated">[1 Mark]</span>
+                </div>
+                <div class="question-body">
+                    <p>Given the equation: $N_2 + 3H_2 \rightarrow 2NH_3$. If you react $4.0 \text{ mol}$ of Nitrogen ($N_2$) completely, how many moles of Ammonia ($NH_3$) will form?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stoich-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-stoich-1')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-stoich-1" style="display: none;">
+                    <p><strong>Hint:</strong> Use $\frac{\text{Want}}{\text{Have}}$. You want $NH_3$ (coeff 2), you have $N_2$ (coeff 1).</p>
+                </div>
+                <div class="hidden-solution" id="sol-stoich-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$n(NH_3) = n(N_2) \times \frac{2}{1}$</p>
+                        <p>$n(NH_3) = 4.0 \times 2 = \mathbf{8.0 \text{ mol}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct final answer of $8.0 \text{ mol}$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-stoich-1" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stoich-1')">Submit</button>
+                        <span class="mark-feedback" id="feedback-stoich-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-stoich-2">
+                <div class="question-header">
+                    <h4>Question 2: Medium</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Consider the reaction: $4P + 5O_2 \rightarrow 2P_2O_5$. How many moles of Oxygen gas ($O_2$) are required to fully react with $0.60 \text{ mol}$ of Phosphorus ($P$)?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stoich-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-stoich-2')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-stoich-2" style="display: none;">
+                    <p><strong>Hint:</strong> The fraction is $\frac{5}{4}$. Multiply $0.60$ by this fraction.</p>
+                </div>
+                <div class="hidden-solution" id="sol-stoich-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$n(O_2) = n(P) \times \frac{5}{4}$</p>
+                        <p>$n(O_2) = 0.60 \times 1.25 = \mathbf{0.75 \text{ mol}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly establishes the molar ratio as $5/4$.</li>
+                            <li><strong>1 Mark:</strong> Correct final calculation of $0.75 \text{ mol}$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-stoich-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stoich-2')">Submit</button>
+                        <span class="mark-feedback" id="feedback-stoich-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-stoich-3">
+                <div class="question-header">
+                    <h4>Question 3: Hard</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A blast furnace reduces iron ore: $Fe_2O_3 + 3CO \rightarrow 2Fe + 3CO_2$. If $450 \text{ mol}$ of Iron ($Fe$) is collected, how many moles of Carbon Monoxide ($CO$) were consumed in the process?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stoich-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-stoich-3')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-stoich-3" style="display: none;">
+                    <p><strong>Hint:</strong> You are starting from the product side and working backwards to the reactant. Have = $Fe$, Want = $CO$.</p>
+                </div>
+                <div class="hidden-solution" id="sol-stoich-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>Want: $CO$ (coeff 3). Have: $Fe$ (coeff 2). Ratio: $\frac{3}{2}$.</p>
+                        <p>$n(CO) = n(Fe) \times \frac{3}{2}$</p>
+                        <p>$n(CO) = 450 \times 1.5 = \mathbf{675 \text{ mol}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Uses the inverted ratio correctly ($\frac{3}{2}$).</li>
+                            <li><strong>1 Mark:</strong> Correct final answer of $675 \text{ mol}$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-stoich-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stoich-3')">Submit</button>
+                        <span class="mark-feedback" id="feedback-stoich-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-stoich-4">
+                <div class="question-header">
+                    <h4>Question 4: Extension</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Baking soda decomposes under heat: $2NaHCO_3 \rightarrow Na_2CO_3 + H_2O + CO_2$. In a secondary process, the $CO_2$ produced is immediately reacted with calcium hydroxide: $CO_2 + Ca(OH)_2 \rightarrow CaCO_3 + H_2O$. If you start with $5.0 \text{ mol}$ of $NaHCO_3$, how many moles of $CaCO_3$ will eventually be produced?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stoich-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-stoich-4')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-stoich-4" style="display: none;">
+                    <p><strong>Hint:</strong> This is a two-step bridge. First, find moles of $CO_2$ produced from the $NaHCO_3$. Then use that mole value as the "Have" for the second equation.</p>
+                </div>
+                <div class="hidden-solution" id="sol-stoich-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Moles of $CO_2$ generated.</strong></p>
+                        <p>$n(CO_2) = n(NaHCO_3) \times \frac{1}{2} = 5.0 \times 0.5 = 2.5 \text{ mol}$</p>
+                        
+                        <p><strong>Step 2: Moles of $CaCO_3$ produced.</strong></p>
+                        <p>From the second equation, ratio of $CaCO_3$ to $CO_2$ is $1:1$.</p>
+                        <p>$n(CaCO_3) = n(CO_2) \times \frac{1}{1} = 2.5 \times 1 = \mathbf{2.5 \text{ mol}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Recognises the two-step stoichiometric process.</li>
+                            <li><strong>1 Mark:</strong> Correctly calculates $2.5 \text{ mol}$ of intermediate $CO_2$.</li>
+                            <li><strong>1 Mark:</strong> Correctly bridges $1:1$ in the second equation for the final answer.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-stoich-4" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stoich-4')">Submit</button>
+                        <span class="mark-feedback" id="feedback-stoich-4"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="stoichiometry-mass-mass.html" class="btn-next">Proceed to Lesson 11: Mass-Mass Conversions &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // ==========================================
+        // UI & SCORING LOGIC
+        // ==========================================
+        function toggleHint(hintId) {
+            const h = document.getElementById(hintId);
+            h.style.display = h.style.display === "none" ? "block" : "none";
+        }
+
+        function toggleSolution(solId) {
+            const s = document.getElementById(solId);
+            s.style.display = s.style.display === "none" ? "block" : "none";
+            if (window.MathJax) {
+                MathJax.typesetPromise([s]);
+            }
+        }
+
+        function submitMark(id) {
+            const val = parseInt(document.getElementById('mark-selector-' + id).value, 10);
+            localStorage.setItem('chem_mod2_q_' + id, val);
+            const fb = document.getElementById('feedback-' + id);
+            fb.innerHTML = `<strong> Saved: ${val} mark(s)</strong>`;
+            fb.style.color = "var(--success-green)";
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            let total = 0;
+            for(let i=0; i<localStorage.length; i++){
+                let key = localStorage.key(i);
+                if(key.startsWith('chem_mod2_q_')) {
+                    total += parseInt(localStorage.getItem(key));
+                }
+            }
+            document.getElementById('total-marks').innerText = total;
+        }
+
+        window.addEventListener('load', () => {
+            updateTotalMarksDisplay();
+            ['stoich-1', 'stoich-2', 'stoich-3', 'stoich-4'].forEach(id => {
+                const saved = localStorage.getItem('chem_mod2_q_' + id);
+                if(saved !== null) {
+                    document.getElementById('mark-selector-' + id).value = saved;
+                    document.getElementById('feedback-' + id).innerHTML = `<em> Saved: ${saved} mark(s)</em>`;
+                }
+            });
+            
+            // Init interactives
+            updateBridge();
+            generateFactoryProblem();
+        });
+
+        // ==========================================
+        // INTERACTIVITY 1: The Molar Bridge
+        // Equation: 2H2 + 1O2 -> 2H2O
+        // ==========================================
+        function updateBridge() {
+            const o2Moles = parseFloat(document.getElementById('o2-slider').value);
+            document.getElementById('slider-label').innerText = o2Moles.toFixed(1) + " mol";
+            
+            // Equation ratios
+            const h2Moles = (o2Moles * 2).toFixed(1);
+            const h2oMoles = (o2Moles * 2).toFixed(1);
+            
+            document.getElementById('val-o2').innerText = o2Moles.toFixed(1);
+            document.getElementById('val-h2').innerText = h2Moles;
+            document.getElementById('val-h2o').innerText = h2oMoles;
+            
+            // Brief animation effect
+            document.getElementById('node-h2').style.transform = "scale(1.05)";
+            document.getElementById('node-h2o').style.transform = "scale(1.05)";
+            setTimeout(() => {
+                document.getElementById('node-h2').style.transform = "scale(1)";
+                document.getElementById('node-h2o').style.transform = "scale(1)";
+            }, 150);
+        }
+
+        // ==========================================
+        // INTERACTIVITY 2: The Ammonia Factory
+        // Equation: 1N2 + 3H2 -> 2NH3
+        // ==========================================
+        let currentN2 = 0;
+        let batchesMade = 0;
+
+        function generateFactoryProblem() {
+            // Generate a random multiple of 0.5 between 1.0 and 10.0
+            currentN2 = (Math.floor(Math.random() * 19) + 2) / 2;
+            document.getElementById('fac-n2').innerText = currentN2.toFixed(1);
+            
+            // Reset inputs
+            document.getElementById('fac-h2-input').value = "";
+            document.getElementById('fac-nh3-input').value = "";
+            document.getElementById('factory-error').innerText = "";
+            
+            // Hide success text
+            document.getElementById('factory-success').style.opacity = "0";
+            document.getElementById('factory-success').style.transform = "translateY(-50%) scale(0.5)";
+            
+            // Reset colors
+            document.getElementById('fac-h2-input').style.borderColor = "#0f0";
+            document.getElementById('fac-nh3-input').style.borderColor = "var(--accent-cyan)";
+        }
+
+        function runFactory() {
+            const h2InputStr = document.getElementById('fac-h2-input').value;
+            const nh3InputStr = document.getElementById('fac-nh3-input').value;
+            const errorDiv = document.getElementById('factory-error');
+            const successDiv = document.getElementById('factory-success');
+
+            if(h2InputStr === "" || nh3InputStr === "") {
+                errorDiv.innerText = "Error: Hoppers cannot be empty. Enter values!";
+                return;
+            }
+
+            const h2Input = parseFloat(h2InputStr);
+            const nh3Input = parseFloat(nh3InputStr);
+
+            // Calculate correct values
+            // Ratio N2 : H2 : NH3 = 1 : 3 : 2
+            const correctH2 = currentN2 * 3;
+            const correctNH3 = currentN2 * 2;
+
+            let isError = false;
+            errorDiv.innerText = "";
+
+            if(Math.abs(h2Input - correctH2) > 0.01) {
+                document.getElementById('fac-h2-input').style.borderColor = "#ff3366";
+                errorDiv.innerText += `Incorrect H₂. (Hint: N₂ × 3 = ${correctH2})\n`;
+                isError = true;
+            } else {
+                document.getElementById('fac-h2-input').style.borderColor = "#0f0";
+            }
+
+            if(Math.abs(nh3Input - correctNH3) > 0.01) {
+                document.getElementById('fac-nh3-input').style.borderColor = "#ff3366";
+                errorDiv.innerText += `Incorrect NH₃. (Hint: N₂ × 2 = ${correctNH3})`;
+                isError = true;
+            } else {
+                document.getElementById('fac-nh3-input').style.borderColor = "var(--accent-cyan)";
+            }
+
+            if(!isError) {
+                // Success animation
+                successDiv.style.opacity = "1";
+                successDiv.style.transform = "translateY(-50%) scale(1.2)";
+                successDiv.style.transition = "all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+                
+                batchesMade++;
+                document.getElementById('factory-score').innerText = `Batches Made: ${batchesMade}`;
+                
+                createParticles();
+                
+                setTimeout(() => {
+                    successDiv.style.transform = "translateY(-50%) scale(1)";
+                }, 500);
+            }
+        }
+
+        function createParticles() {
+            const container = document.getElementById('factory');
+            const colors = ['#00f0ff', '#b026ff', '#00ff00'];
+            
+            for(let i=0; i<30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 10 + 5;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = '80%';
+                p.style.top = '50%';
+                p.style.boxShadow = `0 0 10px ${p.style.background}`;
+                
+                // Random velocities
+                const vx = (Math.random() - 0.5) * 200;
+                const vy = (Math.random() - 0.5) * 200;
+                
+                container.appendChild(p);
+                
+                // Animate
+                const animation = p.animate([
+                    { transform: 'translate(0, 0)', opacity: 1 },
+                    { transform: `translate(${vx}px, ${vy}px)`, opacity: 0 }
+                ], {
+                    duration: 1000 + Math.random() * 1000,
+                    easing: 'cubic-bezier(0, .9, .57, 1)'
+                });
+                
+                animation.onfinish = () => p.remove();
+            }
+        }
+    </script>
+</body>
+</html>

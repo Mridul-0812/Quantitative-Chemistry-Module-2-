@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 5: What is a Mole? (The Pile)</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* Specific Styles for the Mole Visualiser */
+        .mole-sandbox {
+            background: #0a0a12;
+            border: 2px solid var(--accent-purple);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #particle-canvas {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+            border-radius: 10px;
+            cursor: crosshair;
+            width: 100%;
+            height: 350px;
+        }
+
+        .stat-card {
+            background: rgba(176, 38, 255, 0.1);
+            border: 1px solid var(--accent-purple);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .counter-big {
+            font-size: 2.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .comp-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .comp-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+        }
+
+        .scientific-notation {
+            font-weight: bold;
+            color: var(--accent-purple);
+        }
+
+        .btn-spawn {
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(176, 38, 255, 0.4);
+        }
+
+        .btn-spawn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html" class="active">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>5. What is a Mole?</h1>
+            <p class="subtitle">The Giant "Pile" of Tiny Things</p>
+        </header>
+
+        <section class="content-section">
+            <h2>It's Just a Number</h2>
+            <p>If you go to a bakery and ask for a <strong>dozen</strong> donuts, you get 12. If you ask for a <strong>pair</strong> of socks, you get 2. If you ask for a <strong>gross</strong> of pencils, you get 144.</p>
+            <p>The <strong>mole</strong> is exactly like a dozen, but it's used by chemists because atoms are so incredibly small that counting them in "dozens" would be like trying to measure the distance to the moon in millimetres.</p>
+            
+            <blockquote>
+                <strong>Definition:</strong> A mole is the amount of substance that contains exactly <span class="scientific-notation">$6.02214076 \times 10^{23}$</span> elementary entities (atoms, molecules, or ions).
+            </blockquote>
+
+            <p>This massive number is known as <strong>Avogadro's Constant</strong>, denoted as $N_A$.</p>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Atom Fountain</h2>
+            <p>Click the button to spawn atoms. See how long it takes to reach a fraction of a mole. <strong>Hint:</strong> You might be here for a while...</p>
+            
+            <div class="mole-sandbox">
+                <canvas id="particle-canvas"></canvas>
+                
+                <button class="btn-spawn" id="spawn-trigger">Release 1 Trillion Atoms! (10<sup>12</sup>)</button>
+                
+                <div class="stat-card">
+                    <p>Total Atoms Spawned:</p>
+                    <div id="atom-counter" class="counter-big">0</div>
+                    <p style="margin-top:0.5rem; color: var(--text-secondary);">
+                        Percentage of a Mole: <span id="mole-percent">0.000000000000</span>%
+                    </p>
+                </div>
+
+                <div id="sandbox-commentary" style="margin-top: 1rem; font-style: italic; color: var(--accent-cyan);">
+                    Click the canvas to manually place individual "shy" atoms.
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>The Mind-Blowing Scale of $N_A$</h2>
+            <p>The number $602,200,000,000,000,000,000,000$ is hard to wrap your head around. To help visualise "The Pile," let's look at what a mole of "everyday" items would look like:</p>
+
+            <div class="comparison-grid">
+                <div class="comp-item">
+                    <h4>Basketballs</h4>
+                    <p>A mole of basketballs would create a new planet the size of <strong>the Earth</strong>.</p>
+                </div>
+                <div class="comp-item">
+                    <h4>Marshmallows</h4>
+                    <p>A mole of marshmallows would cover the USA in a layer <strong>100km deep</strong>.</p>
+                </div>
+                <div class="comp-item">
+                    <h4>Water Molecules</h4>
+                    <p>A mole of water fits into roughly <strong>18ml</strong> (about one tablespoon).</p>
+                </div>
+            </div>
+
+            
+
+            <h3>Why $6.022 \times 10^{23}$?</h3>
+            <p>Why this specific, weird number? It was originally defined as the number of atoms in exactly 12 grams of <strong>Carbon-12</strong>. By using this number, we create a bridge between the <em>atomic world</em> (Atomic Mass Units) and the <em>human world</em> (Grams).</p>
+            <p>If one atom of Carbon weighs 12 amu, then 1 mole of Carbon atoms weighs exactly <strong>12 grams</strong>.</p>
+        </section>
+
+        <section class="content-section">
+            <h2>Worked Examples</h2>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: Basic Counting</h4>
+                </div>
+                <p>How many atoms of Hydrogen are in 1 mole of Methane ($CH_4$)?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Analyise the molecule.</strong> Each molecule of $CH_4$ contains 4 Hydrogen atoms.</p>
+                    <p><strong>Step 2: Scale to a mole.</strong> If 1 molecule has 4 atoms, then 1 mole of molecules has 4 moles of atoms.</p>
+                    <p><strong>Step 3: Calculate the total.</strong> 
+                        $$4 \times (6.022 \times 10^{23}) = 2.409 \times 10^{24} \text{ atoms of H}$$
+                    </p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Reverse Counting</h4>
+                </div>
+                <p>If you have $3.011 \times 10^{23}$ atoms of Gold, how many moles do you have?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Identify the relationship.</strong> 1 mole = $6.022 \times 10^{23}$ atoms.</p>
+                    <p><strong>Step 2: Set up the division.</strong>
+                        $$\text{Moles} = \frac{\text{Actual Particles}}{N_A}$$
+                        $$\text{Moles} = \frac{3.011 \times 10^{23}}{6.022 \times 10^{23}} = 0.5 \text{ moles}$$
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Practice Your "Mole-Sense"</h2>
+
+            <div class="practise-question" id="q-mole-1">
+                <div class="question-header">
+                    <h4>Question 1</h4>
+                    <span class="marks-allocated">[1 Mark]</span>
+                </div>
+                <div class="question-body">
+                    <p>Which of the following contains the <strong>largest</strong> number of atoms?</p>
+                    <ol type="A" style="color: var(--text-secondary); margin-left: 1.5rem;">
+                        <li>1 mole of $He$ (Helium)</li>
+                        <li>1 mole of $O_2$ (Oxygen gas)</li>
+                        <li>1 mole of $H_2O$ (Water)</li>
+                        <li>1 mole of $NH_3$ (Ammonia)</li>
+                    </ol>
+                </div>
+                <button class="btn-reveal" onclick="toggleSolution('sol-mole-1')">Reveal Answer</button>
+                <div class="hidden-solution" id="sol-mole-1" style="display: none;">
+                    <p><strong>Correct Answer: D</strong></p>
+                    <p>Every "1 mole" of a substance has $6.022 \times 10^{23}$ <em>particles</em>. However, Ammonia ($NH_3$) has 4 atoms per particle (1N + 3H). Helium only has 1, $O_2$ has 2, and $H_2O$ has 3.</p>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mole-1" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mole-1')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mole-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mole-2">
+                <div class="question-header">
+                    <h4>Question 2</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the total number of <strong>ions</strong> in 2.0 moles of Sodium Chloride ($NaCl$).</p>
+                </div>
+                <button class="btn-reveal" onclick="toggleSolution('sol-mole-2')">Reveal Answer</button>
+                <div class="hidden-solution" id="sol-mole-2" style="display: none;">
+                    <p><strong>Answer: $2.409 \times 10^{24}$ ions</strong></p>
+                    <p>Reasoning: 1 mole of $NaCl$ contains 2 moles of ions ($1 Na^+ + 1 Cl^-$). Therefore, 2.0 moles of $NaCl$ contains 4.0 moles of ions total. 
+                        $$4.0 \times 6.022 \times 10^{23} = 2.4088 \times 10^{24}$$
+                    </p>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mole-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mole-2')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mole-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mole-3">
+                <div class="question-header">
+                    <h4>Question 3</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A chemist has a sample containing $1.806 \times 10^{24}$ atoms of Oxygen. How many moles of Carbon Dioxide ($CO_2$) would this amount of oxygen be enough to create?</p>
+                </div>
+                <button class="btn-hint" onclick="toggleHint('hint-mole-3')">Need a hint?</button>
+                <button class="btn-reveal" onclick="toggleSolution('sol-mole-3')">Reveal Answer</button>
+                <div class="hidden-hint" id="hint-mole-3" style="display: none;">
+                    <p>First, find out how many moles of Oxygen atoms you have. Then, remember that each $CO_2$ molecule requires 2 Oxygen atoms.</p>
+                </div>
+                <div class="hidden-solution" id="sol-mole-3" style="display: none;">
+                    <p><strong>Answer: 1.5 moles of $CO_2$</strong></p>
+                    <ol>
+                        <li>Moles of Oxygen atoms = $(1.806 \times 10^{24}) / (6.022 \times 10^{23}) = 3.0$ moles of O atoms.</li>
+                        <li>$CO_2$ formula shows 2 O atoms per molecule.</li>
+                        <li>Moles of $CO_2 = 3.0 / 2 = 1.5$ moles.</li>
+                    </ol>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mole-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mole-3')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mole-3"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="mole-formula-mass.html" class="btn-next">Lesson 6: The Mole Formula &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /* CANVAS ANIMATION LOGIC (Atom Fountain) */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        const spawnBtn = document.getElementById('spawn-trigger');
+        const counterEl = document.getElementById('atom-counter');
+        const percentEl = document.getElementById('mole-percent');
+        const commentaryEl = document.getElementById('sandbox-commentary');
+
+        let particles = [];
+        let totalAtoms = BigInt(0);
+        const AVOGADRO = 6.02214076e23;
+
+        // Resize canvas to container
+        function resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y, isManual = false) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || canvas.height + 10;
+                this.radius = Math.random() * 3 + 1;
+                this.color = isManual ? '#00f0ff' : '#b026ff';
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = isManual ? (Math.random() - 0.5) * 2 : -(Math.random() * 5 + 5);
+                this.life = 100;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.1; // Gravity
+                this.life -= 0.8;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life / 100;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        spawnBtn.addEventListener('click', () => {
+            // Spawn visual representation
+            for(let i=0; i<50; i++) {
+                particles.push(new Particle());
+            }
+            
+            // Add to logical count (1 Trillion per click)
+            totalAtoms += BigInt(1000000000000);
+            updateDisplay();
+            
+            checkMilestones();
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            particles.push(new Particle(e.clientX - rect.left, e.clientY - rect.top, true));
+            totalAtoms += BigInt(1);
+            updateDisplay();
+        });
+
+        function updateDisplay() {
+            counterEl.innerText = totalAtoms.toLocaleString();
+            let percent = (Number(totalAtoms) / AVOGADRO) * 100;
+            percentEl.innerText = percent.toFixed(15);
+        }
+
+        function checkMilestones() {
+            if (totalAtoms > BigInt(10000000000000)) {
+                commentaryEl.innerText = "You've clicked 10 trillion atoms. Only 60 billion more clicks to reach a mole!";
+            }
+            if (totalAtoms > BigInt(50000000000000)) {
+                commentaryEl.innerText = "Keep going! At this rate, your grandchildren's grandchildren might reach 1% of a mole.";
+                commentaryEl.style.color = "#ff5252";
+            }
+        }
+
+        /* UI CONTROLS */
+        function toggleSolution(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            if (window.MathJax) MathJax.typesetPromise([el]);
+        }
+
+        function toggleHint(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        /* SCORE TRACKING ENGINE */
+        function submitMark(id) {
+            const val = parseInt(document.getElementById('mark-selector-' + id).value);
+            const key = 'chem_mod2_q_' + id;
+            const prev = parseInt(localStorage.getItem(key)) || 0;
+            localStorage.setItem(key, val);
+            
+            let total = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            total = total - prev + val;
+            localStorage.setItem('chem_mod2_total_score', total);
+            
+            document.getElementById('feedback-' + id).innerHTML = " Saved!";
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const total = localStorage.getItem('chem_mod2_total_score') || 0;
+            document.getElementById('total-marks').innerText = total;
+        }
+
+        function checkIfQuestionAnswered(id) {
+            const saved = localStorage.getItem('chem_mod2_q_' + id);
+            if (saved !== null) {
+                document.getElementById('mark-selector-' + id).value = saved;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateTotalMarksDisplay();
+            ['mole-1', 'mole-2', 'mole-3'].forEach(id => checkIfQuestionAnswered(id));
+        });
+    </script>
+</body>
+</html>

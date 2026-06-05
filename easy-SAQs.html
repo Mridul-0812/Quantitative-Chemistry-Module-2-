@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Quantitative Chemistry - Section II (Easy)</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+    :root {
+        --bg-dark: #0f172a;
+        --card-bg: #1e293b;
+        --accent-blue: #0ea5e9;
+        --text-light: #f8fafc;
+        --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Layout & Sidebar Consistency */
+    body { background-color: var(--bg-dark); color: var(--text-light); }
+    
+    .saq-container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 40px;
+    }
+
+    .sub-question { margin-top: 20px; padding-left: 15px; border-left: 2px solid var(--accent-blue); }
+    
+    /* Marking & Selection UI */
+    .marking-zone {
+        background: rgba(14, 165, 233, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    select {
+        padding: 8px;
+        border-radius: 4px;
+        background: #334155;
+        color: white;
+        border: 1px solid var(--accent-blue);
+    }
+
+    .criteria-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 0.9rem;
+    }
+    .criteria-table th, .criteria-table td {
+        border: 1px solid #475569;
+        padding: 10px;
+        text-align: left;
+    }
+    .criteria-table th { background: #334155; }
+
+    /* Graphing Tool Styles */
+    #graph-canvas {
+        background: white;
+        cursor: crosshair;
+        border-radius: 4px;
+        display: block;
+        margin: 0 auto;
+    }
+    .canvas-controls {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .btn-action {
+        background: var(--accent-blue);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+    };
+
+    // Global Mark Tracker
+    function submitMark(qId, maxMarks) {
+        const select = document.getElementById(`mark-select-${qId}`);
+        const selectedValue = parseInt(select.value);
+        let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+        
+        // Subtract previous if updated (simplified for this demo)
+        totalScore += selectedValue;
+        localStorage.setItem('chem_mod2_total_score', totalScore);
+        document.getElementById('total-marks').innerText = totalScore;
+        
+        alert(`Recorded ${selectedValue}/${maxMarks} marks.`);
+        select.disabled = true;
+    }
+
+    function toggleSolution(id) {
+        const div = document.getElementById(id);
+        div.style.display = div.style.display === "none" ? "block" : "none";
+    }
+
+    // Graphing Logic
+    let points = [];
+    function setupCanvas() {
+        const canvas = document.getElementById('graph-canvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            points.push({x, y});
+            drawGraph();
+        });
+    }
+
+    function drawGraph() {
+        const canvas = document.getElementById('graph-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw Grid lines
+        ctx.strokeStyle = "#ddd";
+        for(let i=0; i<canvas.width; i+=40) {
+            ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke();
+        }
+
+        ctx.fillStyle = "red";
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2;
+
+        points.forEach((p, i) => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            if (i > 0) {
+                ctx.beginPath();
+                ctx.moveTo(points[i-1].x, points[i-1].y);
+                ctx.lineTo(p.x, p.y);
+                ctx.stroke();
+            }
+        });
+    }
+
+    function clearCanvas() {
+        points = [];
+        drawGraph();
+    }
+
+    window.onload = setupCanvas;
+</script>
+</head>
+<body>
+
+<nav id="sidebar" class="navigation-bar">
+    <div class="nav-header">
+        <h2>Module 2</h2>
+        <p>Quantitative Chemistry</p>
+        <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+    </div>
+    <ul class="nav-list">
+        <li class="nav-section-title">Assessment</li>
+        <li><a href="final-exam.html">Section I: MCQs</a></li>
+        <li><a href="easy-SAQs.html" class="active">Section II: Easy SAQs</a></li>
+        <li><a href="medium-SAQs.html">Section III: Medium SAQs</a></li>
+        <li><a href="hard-SAQs.html">Section IV: Hard SAQs</a></li>
+    </ul>
+</nav>
+
+<main id="main-content">
+    <header class="page-header">
+        <h1>Section II: Short Answer (Easy)</h1>
+        <p class="subtitle">Foundational Calculations and Data Analysis</p>
+    </header>
+
+    <div class="saq-container">
+        <h3>Question 1: The Mole & Molar Mass [4 Marks]</h3>
+        <p>Consider a 15.0 g sample of Calcium Carbonate ($CaCO_3$).</p>
+        
+        <div class="sub-question">
+            <p><strong>a)</strong> Calculate the molar mass of $CaCO_3$. [1 Mark]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Determine the number of moles in the 15.0 g sample. [1 Mark]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Calculate the total number of Oxygen atoms in this sample. [2 Marks]</p>
+        </div>
+
+        <button class="btn-hint" onclick="toggleSolution('hint-1')">View Hint</button>
+        <button class="btn-submit-mark" onclick="toggleSolution('sol-1')">Reveal Solution & Criteria</button>
+
+        <div id="hint-1" class="hidden-hint" style="display:none;">
+            <p>Hint: Use $n = \frac{m}{MM}$. For part (c), remember there are 3 moles of Oxygen atoms for every 1 mole of $CaCO_3$.</p>
+        </div>
+
+        <div id="sol-1" class="hidden-solution" style="display:none;">
+            <h4>Marking Criteria</h4>
+            <table class="criteria-table">
+                <tr><th>Marks</th><th>Description</th></tr>
+                <tr><td>4</td><td>Correct molar mass, correct moles (3 sig figs), and correct total atoms using Avogadro's constant.</td></tr>
+                <tr><td>2-3</td><td>Minor calculation error in one part; correct process followed.</td></tr>
+            </table>
+            <h4>Worked Solution</h4>
+            <p><strong>a)</strong> $MM = 40.08 + 12.01 + (3 \times 16.00) = 100.09 \text{ g/mol}$</p>
+            <p><strong>b)</strong> $n = \frac{15.0}{100.09} = 0.1498... \approx 0.150 \text{ mol}$</p>
+            <p><strong>c)</strong> $n(O) = 3 \times 0.1498 = 0.449 \text{ mol}$.<br>
+               Atoms $= 0.449 \times 6.022 \times 10^{23} = 2.71 \times 10^{23} \text{ atoms}$.</p>
+        </div>
+
+        <div class="marking-zone">
+            <label>Select Your Mark:</label>
+            <select id="mark-select-1">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+            </select>
+            <button class="btn-action" onclick="submitMark('1', 4)">Submit Mark</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3>Question 2: Boyle's Law & Graphing [5 Marks]</h3>
+        <p>A gas occupies 2.0 L at 100 kPa. If temperature is constant, plot the following data points (P, V): (100, 2.0), (200, 1.0), (400, 0.5).</p>
+        
+        <canvas id="graph-canvas" width="400" height="300"></canvas>
+        <div class="canvas-controls">
+            <button class="btn-action" onclick="clearCanvas()">Clear Drawing</button>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Draw the curve connecting these points. [2 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> State the relationship between Pressure and Volume shown. [1 Mark]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Predict the volume at 800 kPa. [2 Marks]</p>
+        </div>
+
+        <button class="btn-submit-mark" onclick="toggleSolution('sol-2')">Reveal Solution</button>
+        
+        <div id="sol-2" class="hidden-solution" style="display:none;">
+            <h4>Worked Solution</h4>
+            <p><strong>a)</strong> </p>
+            <p><strong>b)</strong> Pressure is inversely proportional to Volume ($P \propto \frac{1}{V}$).</p>
+            <p><strong>c)</strong> $P_1V_1 = P_2V_2 \rightarrow (100)(2.0) = (800)(V_2) \rightarrow V_2 = 0.25 \text{ L}$.</p>
+        </div>
+
+        <div class="marking-zone">
+            <label>Select Your Mark:</label>
+            <select id="mark-select-2">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+            </select>
+            <button class="btn-action" onclick="submitMark('2', 5)">Submit Mark</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3>Question 3: Percentage Composition [3 Marks]</h3>
+        <p>Calculate the percentage by mass of Nitrogen in Ammonium Nitrate ($NH_4NO_3$).</p>
+        <button class="btn-submit-mark" onclick="toggleSolution('sol-3')">Reveal Solution</button>
+        <div id="sol-3" class="hidden-solution" style="display:none;">
+            <p>$MM(NH_4NO_3) = (2 \times 14.01) + (4 \times 1.008) + (3 \times 16.00) = 80.05 \text{ g/mol}$</p>
+            <p>$\%N = \frac{28.02}{80.05} \times 100 = 35.0\%$</p>
+        </div>
+        <div class="marking-zone">
+            <select id="mark-select-3">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            </select>
+            <button class="btn-action" onclick="submitMark('3', 3)">Submit Mark</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3>Question 4: Molarity [3 Marks]</h3>
+        <p>A solution is made by dissolving 5.85 g of $NaCl$ in 250 mL of water. Calculate the molarity.</p>
+        <button class="btn-submit-mark" onclick="toggleSolution('sol-4')">Reveal Solution</button>
+        <div id="sol-4" class="hidden-solution" style="display:none;">
+            <p>$n = \frac{5.85}{58.44} = 0.1 \text{ mol}$. $V = 0.25 \text{ L}$. $C = \frac{0.1}{0.25} = 0.4 \text{ M}$.</p>
+        </div>
+        <div class="marking-zone">
+            <select id="mark-select-4">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            </select>
+            <button class="btn-action" onclick="submitMark('4', 3)">Submit Mark</button>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <h3>Question 5: Dilution [2 Marks]</h3>
+        <p>How much water must be added to 100 mL of 1.0 M $HCl$ to make it 0.1 M?</p>
+        <button class="btn-submit-mark" onclick="toggleSolution('sol-5')">Reveal Solution</button>
+        <div id="sol-5" class="hidden-solution" style="display:none;">
+            <p>$C_1V_1 = C_2V_2 \rightarrow (1.0)(100) = (0.1)(V_2) \rightarrow V_2 = 1000 \text{ mL}$.</p>
+            <p>Water added $= 1000 - 100 = 900 \text{ mL}$.</p>
+        </div>
+        <div class="marking-zone">
+            <select id="mark-select-5">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            </select>
+            <button class="btn-action" onclick="submitMark('5', 2)">Submit Mark</button>
+        </div>
+    </div>
+
+    <footer style="text-align: center; margin: 50px 0;">
+        <button class="btn-action" style="padding: 20px 40px; font-size: 1.2rem;" onclick="window.location.href='medium-SAQs.html'">
+            MOVE TO MEDIUM SAQs →
+        </button>
+    </footer>
+</main>
+
+</body>
+</html>

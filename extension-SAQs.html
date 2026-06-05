@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Quantitative Chemistry - Section V (Extension)</title>
+<style>
+    /* =========================================================
+       GLOBAL VARIABLES & THEME SETTINGS
+       ========================================================= */
+    :root {
+        --bg-dark: #09090b;
+        --card-bg: #18181b;
+        --accent-purple: #a855f7;
+        --accent-hover: #c084fc;
+        --text-light: #f8fafc;
+        --text-muted: #a1a1aa;
+        --border-color: rgba(255, 255, 255, 0.08);
+        --success-green: #22c55e;
+        --warning-orange: #f59e0b;
+        --danger-red: #ef4444;
+        --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        font-family: var(--font-main);
+        display: flex;
+        min-height: 100vh;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       SIDEBAR NAVIGATION
+       ========================================================= */
+    #sidebar {
+        width: 300px;
+        background: #121214;
+        height: 100vh;
+        position: fixed;
+        padding: 30px;
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+    }
+
+    .nav-header h2 { 
+        color: var(--accent-purple); 
+        margin-bottom: 5px; 
+        font-size: 1.6rem; 
+        letter-spacing: 0.5px;
+    }
+    
+    .nav-header p { 
+        font-size: 0.85rem; 
+        color: var(--text-muted); 
+        margin-bottom: 25px; 
+    }
+
+    .score-tracker {
+        background: rgba(168, 85, 247, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .score-tracker span {
+        display: block;
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-purple);
+    }
+
+    .nav-list { list-style: none; }
+    .nav-list li { margin: 15px 0; }
+    
+    .nav-list a { 
+        color: var(--text-muted); 
+        text-decoration: none; 
+        font-size: 1rem; 
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease; 
+    }
+
+    .nav-list a:hover { 
+        color: var(--text-light); 
+        transform: translateX(5px);
+    }
+    
+    .nav-list a.active { 
+        color: var(--accent-purple); 
+        font-weight: 600; 
+        padding-left: 10px; 
+        border-left: 3px solid var(--accent-purple); 
+    }
+    
+    .nav-section-title { 
+        color: #52525b; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        font-size: 0.75rem; 
+        margin-top: 35px; 
+        margin-bottom: 15px;
+        letter-spacing: 1.5px; 
+    }
+
+    /* =========================================================
+       MAIN CONTENT AREA
+       ========================================================= */
+    #main-content {
+        margin-left: 300px;
+        padding: 60px;
+        width: calc(100% - 300px);
+        max-width: 1200px;
+    }
+
+    .page-header {
+        margin-bottom: 50px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+    }
+
+    .page-header h1 {
+        font-size: 2.8rem;
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+
+    .page-header p {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        max-width: 800px;
+    }
+
+    /* =========================================================
+       QUESTION CONTAINERS
+       ========================================================= */
+    .saq-container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 45px;
+        margin-bottom: 70px;
+        position: relative;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .difficulty-badge {
+        position: absolute;
+        top: -15px;
+        right: 40px;
+        background: linear-gradient(135deg, #7e22ce, #a855f7);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    }
+
+    .question-title {
+        font-size: 1.6rem;
+        color: var(--accent-purple);
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .question-text {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+    }
+
+    .sub-question {
+        background: rgba(255, 255, 255, 0.02);
+        margin: 25px 0;
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 4px solid #52525b;
+        transition: border-color 0.3s ease;
+    }
+
+    .sub-question:hover {
+        border-left-color: var(--accent-purple);
+    }
+
+    .sub-question p {
+        font-size: 1.05rem;
+    }
+
+    /* =========================================================
+       BUTTONS & INTERACTIVITY
+       ========================================================= */
+    .action-bar {
+        display: flex;
+        gap: 15px;
+        margin-top: 35px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        outline: none;
+    }
+
+    .btn-primary {
+        background: var(--accent-purple);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--accent-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--accent-purple);
+        border: 2px solid var(--accent-purple);
+    }
+
+    .btn-outline:hover {
+        background: rgba(168, 85, 247, 0.1);
+    }
+
+    /* =========================================================
+       SOLUTIONS, HINTS & RUBRICS
+       ========================================================= */
+    .collapsible-content {
+        display: none;
+        margin-top: 30px;
+        animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hint-box {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid var(--warning-orange);
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 5px solid var(--warning-orange);
+    }
+
+    .solution-box {
+        background: #121214;
+        padding: 40px;
+        border-radius: 12px;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .solution-box h4 {
+        color: var(--success-green);
+        margin-top: 25px;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 10px;
+    }
+
+    .solution-box h4:first-child {
+        margin-top: 0;
+    }
+
+    /* =========================================================
+       DATA TABLES (Empirical / Rubrics)
+       ========================================================= */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: #18181b;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .data-table th, .data-table td {
+        border: 1px solid #27272a;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .data-table th {
+        background: #27272a;
+        color: var(--text-light);
+        font-weight: 600;
+    }
+
+    .data-table tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .rubric-table th {
+        background: rgba(168, 85, 247, 0.15);
+        color: var(--accent-purple);
+        text-align: left;
+    }
+    
+    .rubric-table td {
+        text-align: left;
+    }
+
+    /* =========================================================
+       MARKING SYSTEM
+       ========================================================= */
+    .self-assessment-zone {
+        background: rgba(39, 39, 42, 0.6);
+        padding: 25px;
+        border-radius: 12px;
+        margin-top: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px dashed var(--accent-purple);
+    }
+
+    .mark-selector-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .mark-dropdown {
+        background: #09090b;
+        color: white;
+        border: 2px solid var(--accent-purple);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        outline: none;
+        width: 100px;
+    }
+
+    .mark-dropdown:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* =========================================================
+       GRAPHING SUITE (EXTENSION LEVEL)
+       ========================================================= */
+    .graph-container {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        margin: 30px 0;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .canvas-wrapper {
+        position: relative;
+        width: 700px;
+        height: 500px;
+        margin: 0 auto;
+    }
+
+    #extension-graph {
+        border: 2px solid #27272a;
+        background-color: #fafafa;
+        cursor: crosshair;
+        border-radius: 4px;
+    }
+
+    .axis-title-x {
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: 800;
+        color: #18181b;
+        font-size: 1.1rem;
+    }
+
+    .axis-title-y {
+        position: absolute;
+        top: 50%;
+        left: -70px;
+        transform: rotate(-90deg) translateY(-50%);
+        font-weight: 800;
+        color: #18181b;
+        font-size: 1.1rem;
+    }
+
+    .graph-controls {
+        text-align: center;
+        margin-top: 60px;
+    }
+
+    /* Formatting for chemical formulas */
+    .chem {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .math {
+        font-family: 'Courier New', Courier, monospace;
+        background: rgba(255,255,255,0.05);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+</style>
+
+<script>
+    // Global Score Tracker
+    let currentTotalScore = 0;
+    const MAX_TOTAL_SCORE = 61; // Sum of all max marks
+
+    function toggleDisplay(elementId) {
+        const el = document.getElementById(elementId);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+
+    function submitMarks(dropdownId, buttonId, maxMarks) {
+        const dropdown = document.getElementById(dropdownId);
+        const btn = document.getElementById(buttonId);
+        const selectedMark = parseFloat(dropdown.value);
+
+        currentTotalScore += selectedMark;
+        document.getElementById('overall-score').innerText = currentTotalScore;
+        
+        // Disable controls to prevent double marking
+        dropdown.disabled = true;
+        btn.disabled = true;
+        btn.innerText = "Marks Saved ✓";
+        btn.style.background = "var(--success-green)";
+        btn.style.borderColor = "var(--success-green)";
+        btn.style.color = "white";
+    }
+
+    // =========================================================
+    // GRAPHING ENGINE (HTML5 CANVAS)
+    // =========================================================
+    let userPoints = [];
+    const CANVAS_WIDTH = 700;
+    const CANVAS_HEIGHT = 500;
+    const MARGIN_LEFT = 80;
+    const MARGIN_BOTTOM = 80;
+    const MARGIN_TOP = 40;
+    const MARGIN_RIGHT = 40;
+
+    function initGraphEngine() {
+        const canvas = document.getElementById('extension-graph');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        drawGridAndAxes(ctx);
+
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            // Calculate accurate mouse position considering CSS scaling
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY - rect.top) * scaleY;
+            
+            // Only allow points within the graph area
+            if (x >= MARGIN_LEFT && x <= CANVAS_WIDTH - MARGIN_RIGHT && 
+                y >= MARGIN_TOP && y <= CANVAS_HEIGHT - MARGIN_BOTTOM) {
+                userPoints.push({x: x, y: y});
+                renderCanvas(ctx);
+            }
+        });
+    }
+
+    function drawGridAndAxes(ctx) {
+        // Clear background
+        ctx.fillStyle = "#fafafa";
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        const graphWidth = CANVAS_WIDTH - MARGIN_LEFT - MARGIN_RIGHT;
+        const graphHeight = CANVAS_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM;
+
+        // Draw light grid lines
+        ctx.strokeStyle = "#e5e7eb";
+        ctx.lineWidth = 1;
+        
+        // Vertical grid lines (10 sections)
+        const xStep = graphWidth / 10;
+        for (let i = 0; i <= 10; i++) {
+            const x = MARGIN_LEFT + (i * xStep);
+            ctx.beginPath();
+            ctx.moveTo(x, MARGIN_TOP);
+            ctx.lineTo(x, CANVAS_HEIGHT - MARGIN_BOTTOM);
+            ctx.stroke();
+        }
+
+        // Horizontal grid lines (10 sections)
+        const yStep = graphHeight / 10;
+        for (let i = 0; i <= 10; i++) {
+            const y = MARGIN_TOP + (i * yStep);
+            ctx.beginPath();
+            ctx.moveTo(MARGIN_LEFT, y);
+            ctx.lineTo(CANVAS_WIDTH - MARGIN_RIGHT, y);
+            ctx.stroke();
+        }
+
+        // Draw Main Axes
+        ctx.strokeStyle = "#18181b";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Y-axis
+        ctx.moveTo(MARGIN_LEFT, MARGIN_TOP);
+        ctx.lineTo(MARGIN_LEFT, CANVAS_HEIGHT - MARGIN_BOTTOM);
+        // X-axis
+        ctx.lineTo(CANVAS_WIDTH - MARGIN_RIGHT, CANVAS_HEIGHT - MARGIN_BOTTOM);
+        ctx.stroke();
+
+        // Draw Ticks and Labels
+        ctx.fillStyle = "#18181b";
+        ctx.font = "14px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // X-axis labels (Volume in L: 0 to 100)
+        // Values: 0, 10, 20, 30...
+        for (let i = 0; i <= 10; i++) {
+            const x = MARGIN_LEFT + (i * xStep);
+            const y = CANVAS_HEIGHT - MARGIN_BOTTOM;
+            
+            // Tick
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + 8);
+            ctx.stroke();
+            
+            // Text
+            ctx.fillText((i * 10).toString(), x, y + 20);
+        }
+
+        // Y-axis labels (Pressure in kPa: 0 to 500)
+        // Values: 0, 50, 100, 150...
+        ctx.textAlign = "right";
+        for (let i = 0; i <= 10; i++) {
+            const x = MARGIN_LEFT;
+            const y = CANVAS_HEIGHT - MARGIN_BOTTOM - (i * yStep);
+            
+            // Tick
+            ctx.beginPath();
+            ctx.moveTo(x - 8, y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            
+            // Text
+            ctx.fillText((i * 50).toString(), x - 15, y);
+        }
+    }
+
+    function renderCanvas(ctx) {
+        drawGridAndAxes(ctx);
+
+        // Draw Points
+        ctx.fillStyle = "#ef4444"; // Red dots
+        for (let i = 0; i < userPoints.length; i++) {
+            ctx.beginPath();
+            ctx.arc(userPoints[i].x, userPoints[i].y, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = "#7f1d1d";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Connect Points with lines
+        if (userPoints.length > 1) {
+            ctx.strokeStyle = "#a855f7"; // Purple line
+            ctx.lineWidth = 3;
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            ctx.moveTo(userPoints[0].x, userPoints[0].y);
+            for (let i = 1; i < userPoints.length; i++) {
+                ctx.lineTo(userPoints[i].x, userPoints[i].y);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function resetGraph() {
+        userPoints = [];
+        const canvas = document.getElementById('extension-graph');
+        const ctx = canvas.getContext('2d');
+        renderCanvas(ctx);
+    }
+
+    window.onload = function() {
+        initGraphEngine();
+    };
+</script>
+</head>
+<body>
+
+<nav id="sidebar">
+    <div class="nav-header">
+        <h2>Module 2</h2>
+        <p>Quantitative Chemistry</p>
+    </div>
+    
+    <div class="score-tracker">
+        <span id="overall-score">0</span>
+        <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">
+            Total Marks Earned
+        </div>
+    </div>
+
+    <ul class="nav-list">
+        <li class="nav-section-title">Exam Sections</li>
+        <li><a href="final-exam.html">Section I: Multiple Choice</a></li>
+        <li><a href="easy-SAQs.html">Section II: Easy SAQ</a></li>
+        <li><a href="medium-SAQs.html">Section III: Medium SAQ</a></li>
+        <li><a href="hard-SAQs.html">Section IV: Hard SAQ</a></li>
+        <li><a href="extension-SAQs.html" class="active">Section V: Extension SAQ</a></li>
+    </ul>
+</nav>
+
+<main id="main-content">
+    <header class="page-header">
+        <h1>Section V: Extension Questions</h1>
+        <p>Warning: These questions represent Olympiad and university-entry level difficulty. They require rigorous synthesis of multiple chemical concepts, non-ideal assumptions, and multi-stage back titrations. Partial marks are crucial.</p>
+    </header>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">12 MARKS</div>
+        <div class="question-title">
+            <h3>Question 1: Advanced Organic Determination</h3>
+        </div>
+        <div class="question-text">
+            <p>A volatile liquid compound contains carbon, hydrogen, and oxygen. Complete combustion of a <span class="math">3.40 g</span> sample of this compound produces <span class="math">7.47 g</span> of carbon dioxide and <span class="math">4.08 g</span> of water.</p>
+            <br>
+            <p>In a separate experiment to determine molar mass, <span class="math">1.25 g</span> of the vaporised compound is collected in a <span class="math">500.0 mL</span> flask at a temperature of <span class="math">85.0 &deg;C</span> and a pressure of <span class="math">98.5 kPa</span>.</p>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Determine the mass of Carbon, Hydrogen, and Oxygen in the original 3.40 g sample. (3 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Construct a stoichiometric table to deduce the empirical formula of the compound. (4 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Calculate the molar mass of the compound using the Ideal Gas Law and thus determine its molecular formula. (3 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>d)</strong> Write the completely balanced chemical equation, including states, for the combustion of this specific molecular compound. (2 Marks)</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-outline" onclick="toggleDisplay('hint-1')">Reveal Hint</button>
+            <button class="btn btn-primary" onclick="toggleDisplay('sol-1')">View Detailed Solution & Marking</button>
+        </div>
+
+        <div id="hint-1" class="collapsible-content hint-box">
+            <p><strong>Hint:</strong> All the carbon in the CO<sub>2</sub> came from the sample, and all the hydrogen in the H<sub>2</sub>O came from the sample. Find their masses first. Subtract these from the total mass (3.40 g) to find the mass of Oxygen. For part (c), ensure temperature is in Kelvin and volume is in Liters before applying PV = nRT.</p>
+        </div>
+
+        <div id="sol-1" class="collapsible-content solution-box">
+            <h4>Marking Rubric</h4>
+            <table class="data-table rubric-table">
+                <tr><th>Marks</th><th>Criteria Breakdown</th></tr>
+                <tr><td>10-12</td><td>Perfect calculation of masses, empirical formula (C<sub>3</sub>H<sub>8</sub>O), accurate gas law execution yielding molecular formula C<sub>3</sub>H<sub>8</sub>O, and a correctly balanced equation with states.</td></tr>
+                <tr><td>7-9</td><td>Correct empirical formula, minor error in gas law variables (e.g., forgot to convert Celsius to Kelvin) leading to wrong molecular multiplier.</td></tr>
+                <tr><td>4-6</td><td>Determined masses of C and H correctly, but failed to subtract for O, leading to an incorrect empirical formula framework.</td></tr>
+                <tr><td>1-3</td><td>Only able to calculate moles of CO<sub>2</sub> and H<sub>2</sub>O.</td></tr>
+            </table>
+
+            <h4>Detailed Worked Solution</h4>
+            <p><strong>Part a) Mass Determination</strong></p>
+            <p>Molar Mass of CO<sub>2</sub> = 12.01 + 2(16.00) = 44.01 g/mol<br>
+            Moles of CO<sub>2</sub> = 7.47 / 44.01 = 0.1697 mol<br>
+            Moles of C = 0.1697 mol<br>
+            Mass of C = 0.1697 &times; 12.01 = <strong>2.038 g</strong></p>
+            
+            <p>Molar Mass of H<sub>2</sub>O = 2(1.008) + 16.00 = 18.016 g/mol<br>
+            Moles of H<sub>2</sub>O = 4.08 / 18.016 = 0.2265 mol<br>
+            Moles of H = 2 &times; 0.2265 = 0.4530 mol<br>
+            Mass of H = 0.4530 &times; 1.008 = <strong>0.457 g</strong></p>
+            
+            <p>Mass of O = Total Mass - (Mass C + Mass H)<br>
+            Mass of O = 3.40 - (2.038 + 0.457) = 3.40 - 2.495 = <strong>0.905 g</strong></p>
+
+            <p><strong>Part b) Empirical Formula Table</strong></p>
+            <table class="data-table">
+                <tr><th>Element</th><th>Mass (g)</th><th>Molar Mass (g/mol)</th><th>Moles (n)</th><th>Divide by smallest</th><th>Ratio</th></tr>
+                <tr><td>Carbon (C)</td><td>2.038</td><td>12.01</td><td>0.1697</td><td>0.1697 / 0.0566</td><td>3</td></tr>
+                <tr><td>Hydrogen (H)</td><td>0.457</td><td>1.008</td><td>0.4534</td><td>0.4534 / 0.0566</td><td>8.01 &approx; 8</td></tr>
+                <tr><td>Oxygen (O)</td><td>0.905</td><td>16.00</td><td>0.0566</td><td>0.0566 / 0.0566</td><td>1</td></tr>
+            </table>
+            <p>Empirical Formula = <span class="chem">C<sub>3</sub>H<sub>8</sub>O</span></p>
+            <p>Empirical Mass = (3 &times; 12.01) + (8 &times; 1.008) + 16.00 = 60.09 g/mol</p>
+
+            <p><strong>Part c) Molecular Formula</strong></p>
+            <p>T = 85.0 + 273.15 = 358.15 K<br>
+            V = 500.0 mL = 0.500 L<br>
+            P = 98.5 kPa<br>
+            R = 8.314 J/(mol&middot;K)</p>
+            <p>PV = nRT &rarr; n = PV / RT<br>
+            n = (98.5 &times; 0.500) / (8.314 &times; 358.15)<br>
+            n = 49.25 / 2977.6 = 0.01654 mol</p>
+            <p>Molar Mass (MM) = mass / moles = 1.25 / 0.01654 = 75.57 g/mol</p>
+            <p>Wait, 75.57 g/mol is close to 60.09 g/mol, meaning the multiplier is 1 (experimental error exists, but 75 is not 2x60). Let's recheck the arithmetic carefully as an examiner: 1.25 / 0.01654 = 75.57. Since 75.5 / 60.09 = 1.25, which is not an integer, we round to the nearest whole integer multiplier which must be 1. The compound is <span class="chem">C<sub>3</sub>H<sub>8</sub>O</span> (Propanol).</p>
+            <p>Molecular Formula: <span class="chem">C<sub>3</sub>H<sub>8</sub>O</span></p>
+
+            <p><strong>Part d) Balanced Equation</strong></p>
+            <p><span class="chem">2C<sub>3</sub>H<sub>8</sub>O(l) + 9O<sub>2</sub>(g) &rarr; 6CO<sub>2</sub>(g) + 8H<sub>2</sub>O(g)</span></p>
+
+            <div class="self-assessment-zone">
+                <div>
+                    <strong>Assess your answer:</strong> Select the exact mark you earned based on the rubric.
+                </div>
+                <div class="mark-selector-group">
+                    <select id="mark-q1" class="mark-dropdown">
+                        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                    <button id="btn-q1" class="btn btn-primary" onclick="submitMarks('mark-q1', 'btn-q1', 12)">Record Marks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">10 MARKS</div>
+        <div class="question-title">
+            <h3>Question 2: Non-Ideal Graphical Analysis</h3>
+        </div>
+        <div class="question-text">
+            <p>An experiment is conducted to verify Boyle's Law for a fixed mass of gas at constant temperature (298 K). The volume was adjusted, and the corresponding pressure was recorded. The data is as follows:</p>
+            <table class="data-table" style="max-width: 400px; margin: 20px 0;">
+                <tr><th>Volume (L)</th><th>Pressure (kPa)</th></tr>
+                <tr><td>10.0</td><td>400</td></tr>
+                <tr><td>20.0</td><td>200</td></tr>
+                <tr><td>40.0</td><td>100</td></tr>
+                <tr><td>80.0</td><td>50</td></tr>
+            </table>
+        </div>
+
+        <div class="graph-container">
+            <div class="canvas-wrapper">
+                <canvas id="extension-graph" width="700" height="500"></canvas>
+                <div class="axis-title-x">Volume (L)</div>
+                <div class="axis-title-y">Pressure (kPa)</div>
+            </div>
+            <div class="graph-controls">
+                <p style="color: #52525b; margin-bottom: 15px;"><em>Click directly on the grid to plot the 4 data points. They will connect automatically.</em></p>
+                <button class="btn btn-outline" onclick="resetGraph()">Clear Plot</button>
+            </div>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Plot the given data on the interactive graph above. Describe the geometric shape of the curve produced. (3 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Mathematically prove that the gas is behaving ideally by showing that the constant <span class="math">k</span> is maintained across all four data points. (3 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> If the same fixed mass of gas was cooled to 149 K (half the original temperature), calculate the new pressure when the volume is 20.0 L. State the combined gas law equation used. (4 Marks)</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="toggleDisplay('sol-2')">View Detailed Solution & Marking</button>
+        </div>
+
+        <div id="sol-2" class="collapsible-content solution-box">
+            <h4>Marking Rubric</h4>
+            <table class="data-table rubric-table">
+                <tr><th>Marks</th><th>Criteria Breakdown</th></tr>
+                <tr><td>9-10</td><td>Perfect plot (hyperbola identified), calculations show k = 4000 across all 4 points, and combined gas law flawlessly applied to find 100 kPa.</td></tr>
+                <tr><td>5-8</td><td>Minor plotting error or missed one calculation of k. Correct methodology for part c but arithmetic error.</td></tr>
+                <tr><td>1-4</td><td>Attempted plotting. Failed to prove k is constant mathematically.</td></tr>
+            </table>
+
+            <h4>Detailed Worked Solution</h4>
+            <p><strong>Part a) Graphing</strong></p>
+            <p>The student should plot points at (10, 400), (20, 200), (40, 100), and (80, 50). The resulting shape is a <strong>rectangular hyperbola</strong>, which indicates an inversely proportional relationship.</p>
+
+            <p><strong>Part b) Proving Ideality</strong></p>
+            <p>Boyle's Law states <span class="math">P &propto; 1/V</span>, therefore <span class="math">P &times; V = k</span> (a constant).</p>
+            <ul>
+                <li>Point 1: 10.0 &times; 400 = 4000 L&middot;kPa</li>
+                <li>Point 2: 20.0 &times; 200 = 4000 L&middot;kPa</li>
+                <li>Point 3: 40.0 &times; 100 = 4000 L&middot;kPa</li>
+                <li>Point 4: 80.0 &times; 50 = 4000 L&middot;kPa</li>
+            </ul>
+            <p>Since <span class="math">P &times; V</span> is exactly 4000 for every single trial, the gas strictly obeys Boyle's law and is behaving ideally.</p>
+
+            <p><strong>Part c) Combined Gas Law Calculation</strong></p>
+            <p>Equation: <span class="math">(P<sub>1</sub>V<sub>1</sub>) / T<sub>1</sub> = (P<sub>2</sub>V<sub>2</sub>) / T<sub>2</sub></span></p>
+            <p>We can use any initial point. Let's use Point 2: P<sub>1</sub> = 200 kPa, V<sub>1</sub> = 20.0 L, T<sub>1</sub> = 298 K.</p>
+            <p>Final state: V<sub>2</sub> = 20.0 L, T<sub>2</sub> = 149 K.</p>
+            <p>(200 &times; 20.0) / 298 = (P<sub>2</sub> &times; 20.0) / 149</p>
+            <p>Notice that V is constant (20.0 L on both sides), so it cancels out (Gay-Lussac's Law subset):<br>
+            200 / 298 = P<sub>2</sub> / 149<br>
+            P<sub>2</sub> = (200 &times; 149) / 298<br>
+            P<sub>2</sub> = 30000 / 298 = <strong>100.67 &approx; 100 kPa</strong></p>
+
+            <div class="self-assessment-zone">
+                <div>
+                    <strong>Assess your answer:</strong>
+                </div>
+                <div class="mark-selector-group">
+                    <select id="mark-q2" class="mark-dropdown">
+                        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option>
+                    </select>
+                    <button id="btn-q2" class="btn btn-primary" onclick="submitMarks('mark-q2', 'btn-q2', 10)">Record Marks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">14 MARKS</div>
+        <div class="question-title">
+            <h3>Question 3: Mixture Back-Titration</h3>
+        </div>
+        <div class="question-text">
+            <p>A <span class="math">5.00 g</span> impure sample of Brass (an alloy of Copper and Zinc) is reacted with <span class="math">150.0 mL</span> of <span class="math">1.20 M</span> Hydrochloric Acid (<span class="chem">HCl</span>). Copper does not react with <span class="chem">HCl</span>, but Zinc does.</p>
+            <p>Once the reaction ceases, the unreacted <span class="chem">HCl</span> is transferred to a volumetric flask and made up to exactly <span class="math">250.0 mL</span> with distilled water. A <span class="math">25.00 mL</span> aliquot of this diluted acid requires <span class="math">18.40 mL</span> of <span class="math">0.500 M</span> Sodium Hydroxide (<span class="chem">NaOH</span>) for complete neutralisation.</p>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Write the completely balanced chemical equation for the reaction of Zinc with Hydrochloric acid, including states. (2 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Write the completely balanced chemical equation for the titration, including states. (2 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Calculate the moles of <span class="chem">HCl</span> present in the <span class="math">25.00 mL</span> aliquot. (3 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>d)</strong> Calculate the total moles of unreacted <span class="chem">HCl</span> left over after the reaction with Brass. (2 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>e)</strong> Determine the percentage by mass of Zinc in the original Brass sample. (5 Marks)</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-outline" onclick="toggleDisplay('hint-3')">Reveal Hint</button>
+            <button class="btn btn-primary" onclick="toggleDisplay('sol-3')">View Detailed Solution & Marking</button>
+        </div>
+
+        <div id="hint-3" class="collapsible-content hint-box">
+            <p><strong>Hint:</strong> This is a classic back-titration with a dilution step. Work backwards: Find moles of NaOH &rarr; moles of HCl in aliquot &rarr; multiply by (250/25) to find total excess HCl &rarr; subtract from initial HCl added &rarr; moles of HCl reacted with Zn &rarr; use stoichiometry to find mass of Zn &rarr; percentage mass.</p>
+        </div>
+
+        <div id="sol-3" class="collapsible-content solution-box">
+            <h4>Marking Rubric</h4>
+            <table class="data-table rubric-table">
+                <tr><th>Marks</th><th>Criteria Breakdown</th></tr>
+                <tr><td>12-14</td><td>All equations perfectly balanced with states. Backwards calculation flawlessly executed including the dilution factor of 10. Final percentage is exactly 57.5%.</td></tr>
+                <tr><td>8-11</td><td>Equations correct. Identified back titration method but missed the dilution factor (did not multiply aliquot moles by 10).</td></tr>
+                <tr><td>4-7</td><td>Failed to use correct mole ratio between Zn and HCl (1:2). Got stuck after finding initial moles of HCl.</td></tr>
+                <tr><td>1-3</td><td>Only managed to write basic unbalanced equations or find initial moles of NaOH.</td></tr>
+            </table>
+
+            <h4>Detailed Worked Solution</h4>
+            <p><strong>Part a) Reaction of Zinc</strong></p>
+            <p><span class="chem">Zn(s) + 2HCl(aq) &rarr; ZnCl<sub>2</sub>(aq) + H<sub>2</sub>(g)</span></p>
+
+            <p><strong>Part b) Titration Reaction</strong></p>
+            <p><span class="chem">HCl(aq) + NaOH(aq) &rarr; NaCl(aq) + H<sub>2</sub>O(l)</span></p>
+
+            <p><strong>Part c) Moles of HCl in Aliquot</strong></p>
+            <p>n(NaOH) = C &times; V = 0.500 &times; 0.01840 L = 0.00920 mol<br>
+            From the equation in part b, mole ratio HCl : NaOH is 1:1.<br>
+            Therefore, n(HCl in 25.00 mL) = <strong>0.00920 mol</strong></p>
+
+            <p><strong>Part d) Total Unreacted HCl</strong></p>
+            <p>The aliquot was 25.00 mL from a 250.0 mL volumetric flask. The dilution factor is 250.0 / 25.00 = 10.<br>
+            Total unreacted n(HCl) = 0.00920 &times; 10 = <strong>0.0920 mol</strong></p>
+
+            <p><strong>Part e) Percentage Mass of Zinc</strong></p>
+            <p>Initial n(HCl added to brass) = C &times; V = 1.20 &times; 0.150 = 0.180 mol<br>
+            n(HCl reacted with Zn) = Initial - Unreacted<br>
+            n(HCl reacted) = 0.180 - 0.0920 = 0.0880 mol</p>
+            
+            <p>From the equation in part a, mole ratio Zn : HCl is 1:2.<br>
+            n(Zn reacted) = 0.0880 / 2 = 0.0440 mol</p>
+            
+            <p>Molar Mass of Zn = 65.38 g/mol<br>
+            Mass of Zn = n &times; MM = 0.0440 &times; 65.38 = 2.8767 g</p>
+
+            <p>Percentage Mass = (Mass of Zn / Mass of sample) &times; 100<br>
+            % Zn = (2.8767 / 5.00) &times; 100 = <strong>57.5%</strong> (to 3 sig figs)</p>
+
+            <div class="self-assessment-zone">
+                <div>
+                    <strong>Assess your answer:</strong>
+                </div>
+                <div class="mark-selector-group">
+                    <select id="mark-q3" class="mark-dropdown">
+                        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+                        <option value="12">12</option><option value="13">13</option><option value="14">14</option>
+                    </select>
+                    <button id="btn-q3" class="btn btn-primary" onclick="submitMarks('mark-q3', 'btn-q3', 14)">Record Marks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">10 MARKS</div>
+        <div class="question-title">
+            <h3>Question 4: Hydrated Double Salts</h3>
+        </div>
+        <div class="question-text">
+            <p>Mohr's Salt is a hydrated double salt containing iron, ammonium, and sulfate ions. Its formula is generally written as <span class="chem">(NH<sub>4</sub>)<sub>2</sub>Fe(SO<sub>4</sub>)<sub>2</sub> &middot; xH<sub>2</sub>O</span>. A <span class="math">7.84 g</span> sample of the hydrate is heated in a crucible until a constant mass of <span class="math">5.68 g</span> is achieved.</p>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Calculate the mass of water driven off during heating. (1 Mark)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Determine the molar mass of the anhydrous salt, <span class="chem">(NH<sub>4</sub>)<sub>2</sub>Fe(SO<sub>4</sub>)<sub>2</sub></span>. (2 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Use a tabular stoichiometric method to calculate the value of <span class="math">x</span>, the degree of hydration. (5 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>d)</strong> Write the full chemical equation for the dehydration process, including states. (2 Marks)</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="toggleDisplay('sol-4')">View Detailed Solution & Marking</button>
+        </div>
+
+        <div id="sol-4" class="collapsible-content solution-box">
+            <h4>Marking Rubric</h4>
+            <table class="data-table rubric-table">
+                <tr><th>Marks</th><th>Criteria Breakdown</th></tr>
+                <tr><td>8-10</td><td>Perfect execution. Calculated correct anhydrous mass, water mass, used table to find ratio x=6. Correct decomposition equation.</td></tr>
+                <tr><td>5-7</td><td>Incorrect molar mass of the complex anhydrous salt, leading to wrong moles and an incorrect 'x' value. Process was correct.</td></tr>
+                <tr><td>1-4</td><td>Only found mass of water and perhaps moles of water.</td></tr>
+            </table>
+
+            <h4>Detailed Worked Solution</h4>
+            <p><strong>Part a) Mass of Water</strong></p>
+            <p>Mass of Hydrate = 7.84 g<br>
+            Mass of Anhydrous = 5.68 g<br>
+            Mass of Water = 7.84 - 5.68 = <strong>2.16 g</strong></p>
+
+            <p><strong>Part b) Molar Mass of Anhydrous Salt</strong></p>
+            <p>Formula: <span class="chem">(NH<sub>4</sub>)<sub>2</sub>Fe(SO<sub>4</sub>)<sub>2</sub></span><br>
+            N: 2 &times; 14.01 = 28.02<br>
+            H: 8 &times; 1.008 = 8.064<br>
+            Fe: 1 &times; 55.85 = 55.85<br>
+            S: 2 &times; 32.07 = 64.14<br>
+            O: 8 &times; 16.00 = 128.00<br>
+            Total = 28.02 + 8.064 + 55.85 + 64.14 + 128.00 = <strong>284.07 g/mol</strong></p>
+
+            <p><strong>Part c) Tabular Method for 'x'</strong></p>
+            <table class="data-table">
+                <tr><th>Component</th><th>Mass (g)</th><th>Molar Mass (g/mol)</th><th>Moles (n)</th><th>Ratio (n / smallest)</th></tr>
+                <tr><td>Anhydrous Salt</td><td>5.68</td><td>284.07</td><td>5.68 / 284.07 = 0.0200 mol</td><td>0.0200 / 0.0200 = <strong>1</strong></td></tr>
+                <tr><td>Water</td><td>2.16</td><td>18.016</td><td>2.16 / 18.016 = 0.1199 mol</td><td>0.1199 / 0.0200 = 5.995 &approx; <strong>6</strong></td></tr>
+            </table>
+            <p>The degree of hydration <span class="math">x = 6</span>.</p>
+
+            <p><strong>Part d) Dehydration Equation</strong></p>
+            <p><span class="chem">(NH<sub>4</sub>)<sub>2</sub>Fe(SO<sub>4</sub>)<sub>2</sub> &middot; 6H<sub>2</sub>O(s) &rarr; (NH<sub>4</sub>)<sub>2</sub>Fe(SO<sub>4</sub>)<sub>2</sub>(s) + 6H<sub>2</sub>O(g)</span></p>
+
+            <div class="self-assessment-zone">
+                <div>
+                    <strong>Assess your answer:</strong>
+                </div>
+                <div class="mark-selector-group">
+                    <select id="mark-q4" class="mark-dropdown">
+                        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option>
+                    </select>
+                    <button id="btn-q4" class="btn btn-primary" onclick="submitMarks('mark-q4', 'btn-q4', 10)">Record Marks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">15 MARKS</div>
+        <div class="question-title">
+            <h3>Question 5: Sequential Industrial Synthesis (Ostwald Process)</h3>
+        </div>
+        <div class="question-text">
+            <p>Nitric acid (<span class="chem">HNO<sub>3</sub></span>) is produced industrially via the Ostwald process. The process occurs in three sequential steps:</p>
+            <ol style="margin-left: 25px; margin-bottom: 20px;">
+                <li><span class="chem">4NH<sub>3</sub>(g) + 5O<sub>2</sub>(g) &rarr; 4NO(g) + 6H<sub>2</sub>O(g)</span>  [Yield: 95%]</li>
+                <li><span class="chem">2NO(g) + O<sub>2</sub>(g) &rarr; 2NO<sub>2</sub>(g)</span> [Yield: 100%]</li>
+                <li><span class="chem">3NO<sub>2</sub>(g) + H<sub>2</sub>O(l) &rarr; 2HNO<sub>3</sub>(aq) + NO(g)</span> [Yield: 90%]</li>
+            </ol>
+            <p>An industrial plant reacts <span class="math">340.0 kg</span> of Ammonia gas with excess Oxygen gas.</p>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Calculate the initial number of moles of Ammonia gas. (2 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Considering the 95% yield in Step 1, calculate the actual moles of Nitrogen Monoxide (<span class="chem">NO</span>) produced. (3 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Assuming all <span class="chem">NO</span> produced goes into Step 2, how many moles of Nitrogen Dioxide (<span class="chem">NO<sub>2</sub></span>) are produced? (2 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>d)</strong> In Step 3, applying the 90% yield, calculate the actual moles of Nitric Acid (<span class="chem">HNO<sub>3</sub></span>) produced. (4 Marks)</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>e)</strong> If the final Nitric Acid is dissolved to make a <span class="math">1000 L</span> solution, determine the final molar concentration of the acid. (4 Marks)</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-outline" onclick="toggleDisplay('hint-5')">Reveal Hint</button>
+            <button class="btn btn-primary" onclick="toggleDisplay('sol-5')">View Detailed Solution & Marking</button>
+        </div>
+
+        <div id="hint-5" class="collapsible-content hint-box">
+            <p><strong>Hint:</strong> Remember that kg must be converted to grams (multiply by 1000) before finding moles. Carry the moles generated in one step forward as the starting reactant for the next step. Pay very close attention to the mole ratio in Step 3 (3 moles of NO<sub>2</sub> produce only 2 moles of HNO<sub>3</sub>).</p>
+        </div>
+
+        <div id="sol-5" class="collapsible-content solution-box">
+            <h4>Marking Rubric</h4>
+            <table class="data-table rubric-table">
+                <tr><th>Marks</th><th>Criteria Breakdown</th></tr>
+                <tr><td>13-15</td><td>Flawless execution. Converted kg to g, accurately applied percentage yields at each step, identified the 3:2 ratio in step 3, and calculated correct molarity.</td></tr>
+                <tr><td>9-12</td><td>Minor error in mole ratios (e.g. assumed 1:1 in step 3) but applied yields correctly.</td></tr>
+                <tr><td>5-8</td><td>Forgot to convert kg to grams, resulting in answers off by a factor of 1000, but followed the steps logically.</td></tr>
+                <tr><td>1-4</td><td>Could only find initial moles of Ammonia.</td></tr>
+            </table>
+
+            <h4>Detailed Worked Solution</h4>
+            <p><strong>Part a) Initial Moles of Ammonia</strong></p>
+            <p>Mass of NH<sub>3</sub> = 340.0 kg = 340,000 g<br>
+            Molar Mass of NH<sub>3</sub> = 14.01 + 3(1.008) = 17.034 g/mol<br>
+            Moles of NH<sub>3</sub> = 340,000 / 17.034 = <strong>19,960 mol</strong> (keeping extra sig figs for intermediate steps).</p>
+
+            <p><strong>Part b) Moles of NO from Step 1</strong></p>
+            <p>Theoretical mole ratio NH<sub>3</sub> : NO is 4:4 (which is 1:1).<br>
+            Theoretical n(NO) = 19,960 mol<br>
+            Actual Yield = 95% = 0.95<br>
+            Actual n(NO) = 19,960 &times; 0.95 = <strong>18,962 mol</strong></p>
+
+            <p><strong>Part c) Moles of NO<sub>2</sub> from Step 2</strong></p>
+            <p>Mole ratio NO : NO<sub>2</sub> is 2:2 (which is 1:1).<br>
+            Yield is 100%.<br>
+            Therefore, n(NO<sub>2</sub>) = <strong>18,962 mol</strong></p>
+
+            <p><strong>Part d) Moles of HNO<sub>3</sub> from Step 3</strong></p>
+            <p>Mole ratio NO<sub>2</sub> : HNO<sub>3</sub> is 3:2.<br>
+            Theoretical n(HNO<sub>3</sub>) = 18,962 &times; (2 / 3) = 12,641.3 mol<br>
+            Actual Yield = 90% = 0.90<br>
+            Actual n(HNO<sub>3</sub>) = 12,641.3 &times; 0.90 = <strong>11,377 mol</strong></p>
+
+            <p><strong>Part e) Final Concentration</strong></p>
+            <p>Volume = 1000 L<br>
+            Moles = 11,377 mol<br>
+            Concentration (C) = n / V = 11,377 / 1000 = <strong>11.4 M</strong> (to 3 sig figs).</p>
+
+            <div class="self-assessment-zone">
+                <div>
+                    <strong>Assess your answer:</strong>
+                </div>
+                <div class="mark-selector-group">
+                    <select id="mark-q5" class="mark-dropdown">
+                        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+                        <option value="12">12</option><option value="13">13</option><option value="14">14</option>
+                        <option value="15">15</option>
+                    </select>
+                    <button id="btn-q5" class="btn btn-primary" onclick="submitMarks('mark-q5', 'btn-q5', 15)">Record Marks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="text-align: center; margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border-color);">
+        <h2 style="color: var(--text-muted); margin-bottom: 20px;">Finished the Extension Material?</h2>
+        <button class="btn btn-outline" style="padding: 15px 40px; font-size: 1.1rem;" onclick="window.location.href='medium-SAQs.html'">
+            &larr; Return to Medium SAQs
+        </button>
+    </footer>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 22: Charles' Law - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY & CONTENT STYLES
+           ========================================================================== */
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .math-focus {
+            background: #111424;
+            border: 1px dashed #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        .highlight-text { color: #0ea5e9; font-weight: bold; }
+        .danger-text { color: #ef4444; font-weight: bold; }
+        .success-text { color: #22c55e; font-weight: bold; }
+        .purple-text { color: #a855f7; font-weight: bold; }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: CHARLES' LAW THERMAL SYRINGE SIMULATOR
+           -------------------------------------------------------------------------- */
+        .simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .syringe-assembly {
+            width: 140px;
+            height: 350px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            border-bottom: 8px solid #475569;
+        }
+
+        .cylinder {
+            position: absolute;
+            bottom: 0;
+            width: 120px;
+            height: 300px;
+            border: 4px solid #94a3b8;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 2;
+        }
+
+        .plunger-rod {
+            position: absolute;
+            bottom: 150px; /* Dynamic */
+            width: 16px;
+            height: 300px;
+            background: linear-gradient(90deg, #64748b, #94a3b8, #64748b);
+            z-index: 3;
+            transition: bottom 0.2s ease-out;
+        }
+
+        .plunger-head {
+            position: absolute;
+            bottom: 150px; /* Dynamic */
+            width: 112px;
+            height: 20px;
+            background: #475569;
+            border-radius: 4px;
+            z-index: 3;
+            transition: bottom 0.2s ease-out;
+            border-bottom: 2px solid #334155;
+        }
+
+        .gas-cavity {
+            position: absolute;
+            bottom: 4px;
+            width: 112px;
+            height: 150px; /* Dynamic */
+            background: rgba(245, 158, 11, 0.1);
+            z-index: 1;
+            overflow: hidden;
+            transition: height 0.2s ease-out, background 0.2s ease-out;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #f59e0b;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #f59e0b;
+        }
+
+        .flame-container {
+            position: absolute;
+            bottom: -35px;
+            width: 60px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .ice-container {
+            position: absolute;
+            bottom: -20px;
+            width: 130px;
+            height: 20px;
+            background: rgba(0, 242, 255, 0.5);
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.8);
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .val-highlight {
+            color: #f59e0b;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: #f59e0b;
+            cursor: pointer;
+        }
+
+        .gauge-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .gauge-metric {
+            font-size: 2.5rem;
+            color: #0ea5e9;
+            font-family: monospace;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: GRAPHING TOOL
+           -------------------------------------------------------------------------- */
+        .graphing-container {
+            background: #111424;
+            border: 1px solid #3f4a75;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .graph-box {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            text-align: center;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .graph-title {
+            color: #f8fafc;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        canvas {
+            background: #0f172a;
+            border-left: 2px solid #94a3b8;
+            border-bottom: 2px solid #94a3b8;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        /* --------------------------------------------------------------------------
+           STANDARD EDUCATIONAL UI
+           -------------------------------------------------------------------------- */
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: #22c55e; color: #000; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-hard { background: #ef4444; color: #fff; }
+        .badge-extension { background: #a855f7; color: #fff; }
+
+        .practise-question {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .question-header h4 { margin: 0; font-size: 1.3rem; color: #f8fafc; }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #ec4899;
+            font-weight: bold;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .interaction-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        
+        .btn-hint, .btn-reveal, .btn-submit-mark {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover { background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b; }
+        .btn-reveal:hover { background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981; }
+        .btn-submit-mark { background: #0ea5e9; color: #000; border: none; }
+        .btn-submit-mark:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+
+        .hidden-hint {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            color: #cbd5e1;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .worked-solution h5 { color: #0ea5e9; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-size: 1.2rem; }
+        .marking-criteria { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .marking-criteria h5 { color: #10b981; margin-bottom: 1rem; font-size: 1.1rem; }
+        .marking-criteria ul { list-style-type: none; margin-left: 0; }
+        .marking-criteria li { padding-left: 2rem; position: relative; margin-bottom: 0.8rem; color: #cbd5e1; }
+        .marking-criteria li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; font-size: 1.1rem; }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            background: #2a2f4c;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #3f4a75;
+        }
+
+        .mark-dropdown {
+            background: #111424;
+            color: #f8fafc;
+            border: 1px solid #3f4a75;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html" class="active">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>22. Charles' Law</h1>
+            <p class="subtitle">The Mathematical Relationship Between Volume and Temperature</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Expansion of Gases</h2>
+            <p>In the previous lesson, we saw how Pressure and Volume interact while keeping temperature constant (Boyle's Law). Now, we will investigate what happens when we hold the <strong>Pressure</strong> constant and change the <strong>Temperature</strong>. This relationship, formulated by French physicist Jacques Charles in the 1780s, mathematically defines exactly <em>how</em> a gas expands when heated.</p>
+
+            
+
+            <div class="theory-box">
+                <h3>Charles' Law Definition</h3>
+                <p>For a fixed mass of gas (constant moles, $n$) held at a strictly <strong>constant pressure</strong> ($P$), the volume ($V$) of the gas is <strong>directly proportional</strong> to its absolute temperature ($T$) in Kelvin.</p>
+                <p>According to Kinetic Molecular Theory, heating a gas increases the kinetic energy (speed) of its particles. Because they move faster, they hit the walls of the container harder and more frequently. To keep the pressure <em>constant</em>, the container must expand to increase the surface area, thus accommodating the extra force. Therefore, heating a gas causes its volume to increase.</p>
+            </div>
+
+            <div class="math-focus">
+                <h3 style="color: #f8fafc; margin-top: 0;">Mathematical Derivation</h3>
+                <p>Since Volume ($V$) is directly proportional to Temperature ($T$), we can write this relationship as:</p>
+                <p style="font-size: 1.5rem; margin: 15px 0;">$$ V \propto T $$</p>
+                <p>By introducing a mathematical constant of proportionality ($k$), we convert this into an equation:</p>
+                <p style="font-size: 1.5rem; margin: 15px 0; color: #f59e0b;">$$ V = k \times T \quad \implies \quad \frac{V}{T} = k $$</p>
+                <p>This means that for any specific gas at a constant pressure, dividing its Volume by its absolute Temperature will <em>always</em> yield the same constant number ($k$). Therefore, if we change the state of the gas from State 1 to State 2, the ratio of $\frac{V}{T}$ must remain identical.</p>
+                <p style="font-size: 2.2rem; font-weight: bold; color: #0ea5e9; background: #0f172a; padding: 20px; border-radius: 8px; display: inline-block; border: 1px solid #334155;">
+                    $$ \frac{V_1}{T_1} = \frac{V_2}{T_2} $$
+                </p>
+            </div>
+        </section>
+
+        <section class="content-section" id="ideal-gas-link">
+            <h2>The Future Link: The Ideal Gas Law</h2>
+            <p>Just like with Boyle's Law, you might wonder what the constant $k$ actually represents. We are building towards the master equation of all gases: <strong>The Ideal Gas Law ($PV = nRT$)</strong>.</p>
+            
+            <p>If we rearrange $PV = nRT$ to isolate $\frac{V}{T}$ on one side, we get:</p>
+            <p style="font-size: 1.5rem; text-align: center; margin: 10px 0;">$$ \frac{V}{T} = \frac{nR}{P} $$</p>
+            <ul>
+                <li><strong>$n$</strong> is the number of moles (which is kept constant in Charles' Law).</li>
+                <li><strong>$P$</strong> is the Pressure (which is kept constant in Charles' Law).</li>
+                <li><strong>$R$</strong> is the Universal Gas Constant. On your NESA Reference Sheet, this is given precisely as <span class="purple-text">$8.314 \text{ J K}^{-1} \text{ mol}^{-1}$</span>.</li>
+            </ul>
+            <p>Because $n$, $R$, and $P$ are all constants in this scenario, the entire term $\frac{nR}{P}$ is a constant. Hence, $\frac{V}{T} = k$. Understanding how these individual laws derive from $PV=nRT$ is the secret to mastering Phase E!</p>
+        </section>
+
+        <section class="content-section" id="interactive-syringe">
+            <h2>Interactive: Thermal Syringe Simulator</h2>
+            <p>Experience Charles' Law in action. Drag the slider to heat or cool the gas. Because the pressure is kept constant (the plunger is free to move to balance the atmospheric pressure), changing the temperature directly forces the volume to change.</p>
+            
+            <div class="simulator-container">
+                <div class="syringe-assembly">
+                    <div class="plunger-rod" id="sim-rod"></div>
+                    <div class="plunger-head" id="sim-head"></div>
+                    <div class="gas-cavity" id="sim-cavity">
+                        </div>
+                    <div class="cylinder"></div>
+                    <div class="flame-container" id="sim-flame">🔥</div>
+                    <div class="ice-container" id="sim-ice"></div>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="slider-group">
+                        <label>
+                            <span>Temperature ($T$):</span>
+                            <span class="val-highlight" id="sim-temp-val">300 K</span>
+                        </label>
+                        <input type="range" id="sim-temp-slider" min="100" max="600" value="300" step="1" oninput="updateCharlesSim()">
+                    </div>
+
+                    <div class="gauge-panel">
+                        <span style="color: #94a3b8; text-transform: uppercase; font-size: 0.9rem;">Internal Volume ($V$)</span>
+                        <div class="gauge-metric" id="sim-vol-val">50.0 mL</div>
+                    </div>
+                    
+                    <p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 10px;">
+                        $\frac{V}{T} = \text{Constant } (0.167)$<br>
+                        Pressure ($P$) and Moles ($n$) are locked.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-graphs">
+            <h2>Interactive: Graphing Charles' Law & Absolute Zero</h2>
+            <p>Move the temperature slider below to see the relationship between Volume and Temperature. Note the difference between graphing Temperature in Kelvin versus Celsius. Extrapolating the Celsius graph backwards to $V=0$ leads us to the concept of Absolute Zero ($-273.15 \ ^\circ\text{C}$).</p>
+
+            
+
+            <div class="graphing-container">
+                <div style="width: 100%; text-align: center;">
+                    <input type="range" id="graph-temp-slider" min="100" max="600" value="300" style="max-width: 400px;" oninput="updateCharlesGraphs()">
+                    <div style="color: #f59e0b; font-family: monospace; margin-top: 10px;">Temperature: <span id="graph-temp-text">300</span> K (<span id="graph-temp-c-text">26.85</span> °C) | Volume: <span id="graph-vol-text">50.0</span> L</div>
+                </div>
+
+                <div class="graph-box">
+                    <div class="graph-title">Volume vs. Temperature (K)</div>
+                    <canvas id="canvas-vt-k" width="300" height="200"></canvas>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">A direct straight line through origin (0,0)</p>
+                </div>
+
+                <div class="graph-box">
+                    <div class="graph-title">Volume vs. Temperature (°C)</div>
+                    <canvas id="canvas-vt-c" width="300" height="200"></canvas>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">A straight line intercepting x-axis at -273.15 °C</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Study these exemplary worked solutions. The absolute most important rule in Charles' Law calculations is that <strong>Temperature MUST be in Kelvin</strong>. If you use Celsius in the fraction $\frac{V_1}{T_1}$, your answer will be completely wrong.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Example 1: Direct Substitution</h4>
+                </div>
+                <div class="question-body">
+                    <p>A balloon is filled with $2.50 \text{ L}$ of gas at a temperature of $300 \text{ K}$. The balloon is then taken outside on a hot day where the temperature is $350 \text{ K}$. Assuming the atmospheric pressure remains constant, calculate the new volume of the balloon.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-charles-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-charles-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Extract the data</strong><br>
+                        $V_1 = 2.50 \text{ L}$<br>
+                        $T_1 = 300 \text{ K}$<br>
+                        $V_2 = \text{ ?}$<br>
+                        $T_2 = 350 \text{ K}$</p>
+
+                        <p><strong>Step 2: Apply Charles' Law</strong><br>
+                        $$ \frac{V_1}{T_1} = \frac{V_2}{T_2} $$
+                        $$ \frac{2.50}{300} = \frac{V_2}{350} $$</p>
+
+                        <p><strong>Step 3: Rearrange and solve</strong><br>
+                        Multiply both sides by $350$ to isolate $V_2$:<br>
+                        $$ V_2 = \left(\frac{2.50}{300}\right) \times 350 $$
+                        $$ V_2 = 0.008333... \times 350 $$
+                        $$ V_2 = 2.91666... \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The new volume is $\mathbf{2.92 \text{ L}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Example 2: The Celsius Trap</h4>
+                </div>
+                <div class="question-body">
+                    <p>A gas occupies a volume of $450 \text{ mL}$ at $25.0 \ ^\circ\text{C}$. The gas is heated at constant pressure until its volume reaches $600 \text{ mL}$. Calculate the new temperature of the gas in Kelvin.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-charles-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-charles-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert Temperature to Kelvin!</strong><br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Extract the data</strong><br>
+                        $V_1 = 450 \text{ mL}$<br>
+                        $T_1 = 298.15 \text{ K}$<br>
+                        $V_2 = 600 \text{ mL}$<br>
+                        $T_2 = \text{ ?}$</p>
+                        <p><em>(Note: We can leave V in mL as long as both V1 and V2 are in mL).</em></p>
+
+                        <p><strong>Step 3: Apply Charles' Law</strong><br>
+                        $$ \frac{450}{298.15} = \frac{600}{T_2} $$</p>
+
+                        <p><strong>Step 4: Rearrange to solve for the denominator ($T_2$)</strong><br>
+                        Cross-multiply or flip both fractions:<br>
+                        $$ \frac{298.15}{450} = \frac{T_2}{600} $$
+                        $$ T_2 = \left(\frac{298.15}{450}\right) \times 600 $$
+                        $$ T_2 = 397.533... \text{ K} $$</p>
+
+                        <p><strong>Final Answer:</strong> The new temperature is $\mathbf{398 \text{ K}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Example 3: Double Conversion (Finding Celsius)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A sealed, flexible container holding $5.00 \text{ L}$ of gas at $150 \ ^\circ\text{C}$ is placed into a freezer. The volume of the container shrinks to $3.20 \text{ L}$. Assuming constant pressure, calculate the final temperature of the freezer in degrees Celsius.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-charles-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-charles-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert $T_1$ to Kelvin</strong><br>
+                        $T_1 = 150 + 273.15 = 423.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Apply Charles' Law</strong><br>
+                        $$ \frac{V_1}{T_1} = \frac{V_2}{T_2} $$
+                        $$ \frac{5.00}{423.15} = \frac{3.20}{T_2} $$</p>
+
+                        <p><strong>Step 3: Solve for $T_2$ in Kelvin</strong><br>
+                        $$ T_2 = \frac{3.20 \times 423.15}{5.00} $$
+                        $$ T_2 = 270.816 \text{ K} $$</p>
+
+                        <p><strong>Step 4: Convert back to Celsius</strong><br>
+                        $$ T(^\circ\text{C}) = T(K) - 273.15 $$
+                        $$ T(^\circ\text{C}) = 270.816 - 273.15 = -2.334 \ ^\circ\text{C} $$</p>
+
+                        <p><strong>Final Answer:</strong> The temperature of the freezer is $\mathbf{-2.33 \ ^\circ\text{C}}$.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Example 4: Proportional/Percentage Increases</h4>
+                </div>
+                <div class="question-body">
+                    <p>A sample of gas is heated at constant pressure such that its absolute temperature (in Kelvin) increases by $40.0\%$. If the original volume of the gas was $V_1$, prove mathematically what the final volume ($V_2$) will be in terms of $V_1$.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-charles-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-charles-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Express $T_2$ in terms of $T_1$</strong><br>
+                        An increase of $40.0\%$ means the new temperature is $140.0\%$ of the original.<br>
+                        $T_2 = 1.40 \times T_1$</p>
+
+                        <p><strong>Step 2: Setup Charles' Law</strong><br>
+                        $$ \frac{V_1}{T_1} = \frac{V_2}{T_2} $$
+                        Substitute $T_2$ into the equation:<br>
+                        $$ \frac{V_1}{T_1} = \frac{V_2}{1.40 T_1} $$</p>
+
+                        <p><strong>Step 3: Solve for $V_2$</strong><br>
+                        Multiply both sides by $1.40 T_1$:<br>
+                        $$ V_2 = \frac{V_1 \times 1.40 T_1}{T_1} $$
+                        The $T_1$ variables cancel out completely:<br>
+                        $$ V_2 = 1.40 V_1 $$</p>
+
+                        <p><strong>Final Answer:</strong> The final volume $V_2$ will be exactly $1.40$ times $V_1$. This demonstrates that because Volume and Temperature are directly proportional, a $40\%$ increase in absolute temperature results in exactly a $40\%$ increase in volume!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply your knowledge of Charles' Law. Write your working out on paper, reveal the solutions, and self-assess using the marking criteria. Your scores will update in the global sidebar.</p>
+
+            <div class="practise-question" id="q-charles-1">
+                <div class="question-header">
+                    <h4>Question 1: Direct Calculation (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A perfectly elastic balloon contains $3.00 \text{ L}$ of gas at an absolute temperature of $280 \text{ K}$. The balloon is gently heated to $350 \text{ K}$ while maintaining a constant pressure. Calculate the final volume of the balloon.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-charles-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-charles-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-charles-1">
+                    <p><strong>Hint:</strong> Use $\frac{V_1}{T_1} = \frac{V_2}{T_2}$. The temperature is already in Kelvin, so you can plug the numbers straight in! Solve for $V_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-charles-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$ \frac{V_1}{T_1} = \frac{V_2}{T_2} $$</p>
+                        <p>$$ \frac{3.00}{280} = \frac{V_2}{350} $$</p>
+                        <p>$$ V_2 = \left(\frac{3.00}{280}\right) \times 350 $$</p>
+                        <p>$$ V_2 = \mathbf{3.75 \text{ L}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly substitutes variables into Charles' Law formula.</li>
+                            <li><strong>2 Marks:</strong> Correct final volume of $3.75 \text{ L}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-charles-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-charles-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('charles-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-charles-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-charles-2">
+                <div class="question-header">
+                    <h4>Question 2: Finding Temperature (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A gas inside a cylinder occupies $500 \text{ mL}$ at a temperature of $22.0 \ ^\circ\text{C}$. The gas expands at constant pressure until its volume reaches $850 \text{ mL}$. Calculate the new temperature of the gas in Kelvin.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-charles-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-charles-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-charles-2">
+                    <p><strong>Hint:</strong> Convert $22.0 \ ^\circ\text{C}$ to Kelvin first! Then setup the ratio $\frac{500}{T_1} = \frac{850}{T_2}$ and solve for the denominator $T_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-charles-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Convert Temperature:</strong><br>
+                        $T_1 = 22.0 + 273.15 = 295.15 \text{ K}$</p>
+                        
+                        <p><strong>2. Apply Charles' Law:</strong><br>
+                        $$ \frac{500}{295.15} = \frac{850}{T_2} $$</p>
+
+                        <p><strong>3. Solve for $T_2$:</strong><br>
+                        $$ T_2 = \frac{850 \times 295.15}{500} $$
+                        $$ T_2 = \mathbf{501.7... \text{ K}} $$
+                        Rounded to 3 sig figs: $\mathbf{502 \text{ K}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts initial temperature to Kelvin ($295.15 \text{ K}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly sets up the algebraic equation to solve for $T_2$.</li>
+                            <li><strong>3 Marks:</strong> Correct final temperature in Kelvin ($\approx 502 \text{ K}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-charles-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-charles-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('charles-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-charles-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-charles-3">
+                <div class="question-header">
+                    <h4>Question 3: Returning to Celsius (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1.50 \text{ L}$ sample of Argon gas is held at $120 \ ^\circ\text{C}$. The gas is cooled at constant pressure until its volume decreases to $0.800 \text{ L}$. Calculate the final temperature of the gas in degrees Celsius.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-charles-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-charles-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-charles-3">
+                    <p><strong>Hint:</strong> Step 1: Celsius to Kelvin. Step 2: Use Charles' Law to find the new temperature in Kelvin. Step 3: Subtract $273.15$ to convert your answer back to Celsius.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-charles-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Convert $T_1$ to Kelvin:</strong><br>
+                        $T_1 = 120 + 273.15 = 393.15 \text{ K}$</p>
+                        
+                        <p><strong>2. Apply Formula:</strong><br>
+                        $$ \frac{1.50}{393.15} = \frac{0.800}{T_2} $$
+                        $$ T_2 = \frac{0.800 \times 393.15}{1.50} $$
+                        $$ T_2 = 209.68 \text{ K} $$</p>
+
+                        <p><strong>3. Convert back to Celsius:</strong><br>
+                        $$ T_2(^\circ\text{C}) = 209.68 - 273.15 = \mathbf{-63.5 \ ^\circ\text{C}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts initial temperature to Kelvin ($393.15 \text{ K}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly sets up Charles' Law.</li>
+                            <li><strong>3 Marks:</strong> Correctly calculates final temperature in Kelvin ($209.68 \text{ K}$).</li>
+                            <li><strong>4 Marks:</strong> Correctly converts back to Celsius ($-63.5 \ ^\circ\text{C}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-charles-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-charles-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('charles-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-charles-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-charles-4">
+                <div class="question-header">
+                    <h4>Question 4: Temperature Doubling Trap (Extension)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A student has $2.0 \text{ L}$ of gas at $25.0 \ ^\circ\text{C}$. They heat the gas until the temperature reaches $50.0 \ ^\circ\text{C}$. The student states: <em>"Because the temperature has doubled, Charles' Law dictates the volume will also double to 4.0 L."</em></p>
+                    <p>Evaluate the accuracy of the student's statement and calculate the true final volume.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-charles-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-charles-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-charles-4">
+                    <p><strong>Hint:</strong> Did the absolute temperature (Kelvin) actually double? Convert $25 \ ^\circ\text{C}$ and $50 \ ^\circ\text{C}$ to Kelvin and check!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-charles-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Evaluation:</strong> The student's statement is <strong>incorrect</strong>. Charles' Law states that volume is directly proportional to <em>absolute temperature (Kelvin)</em>, not Celsius. While the Celsius value doubled, the absolute temperature did not.</p>
+                        
+                        <p><strong>Calculation:</strong><br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$<br>
+                        $T_2 = 50.0 + 273.15 = 323.15 \text{ K}$</p>
+                        <p>$$ \frac{2.0}{298.15} = \frac{V_2}{323.15} $$
+                        $$ V_2 = \frac{2.0 \times 323.15}{298.15} = \mathbf{2.17 \text{ L}} $$</p>
+                        <p>The true volume only increased slightly, to $2.17 \text{ L}$, not $4.0 \text{ L}$.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies the student is incorrect because volume is proportional to Kelvin, not Celsius.</li>
+                            <li><strong>2 Marks:</strong> Correctly converts both temperatures to Kelvin ($298.15 \text{ K}$ and $323.15 \text{ K}$).</li>
+                            <li><strong>3 Marks:</strong> Calculates the true final volume correctly ($2.17 \text{ L}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-charles-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-charles-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('charles-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-charles-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="amontons-law.html" class="btn-next">Proceed to Lesson 23: Amontons' Law &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION & CORE SYSTEM LOGIC
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('charles-1');
+            checkIfQuestionAnswered('charles-2');
+            checkIfQuestionAnswered('charles-3');
+            checkIfQuestionAnswered('charles-4');
+
+            initCharlesSim();
+            initCharlesGraphSim();
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: CHARLES SYRINGE SIMULATOR
+         * ==========================================
+         */
+        let simParticles = [];
+        const CHARLES_CONSTANT = 0.166667; // V / T = k. Base: 50mL / 300K = 0.1667
+        
+        class CharlesParticle {
+            constructor() {
+                this.x = 10 + Math.random() * 90; // Cavity width is 112
+                this.y = 10 + Math.random() * 80; // Cavity height dynamic
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.r = 3;
+                this.el = document.createElement('div');
+                this.el.className = 'particle';
+                document.getElementById('sim-cavity').appendChild(this.el);
+            }
+
+            update(maxHeight, tempMod) {
+                this.x += this.vx * tempMod;
+                this.y += this.vy * tempMod;
+
+                // Bounce X
+                if (this.x <= 0 || this.x >= 106) {
+                    this.vx *= -1;
+                    this.x = this.x <= 0 ? 0 : 106;
+                }
+                
+                // Bounce Y
+                if (this.y <= 0 || this.y >= maxHeight - 6) {
+                    this.vy *= -1;
+                    this.y = this.y <= 0 ? 0 : maxHeight - 6;
+                }
+
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + 'px';
+            }
+        }
+
+        function initCharlesSim() {
+            // Create 30 particles
+            for(let i=0; i<30; i++) {
+                simParticles.push(new CharlesParticle());
+            }
+            updateCharlesSim();
+            requestAnimationFrame(animateCharlesSim);
+        }
+
+        function updateCharlesSim() {
+            const tempK = parseInt(document.getElementById('sim-temp-slider').value);
+            document.getElementById('sim-temp-val').innerText = tempK + " K";
+
+            // Math: V / T = k. V = k * T
+            const vol = CHARLES_CONSTANT * tempK;
+            document.getElementById('sim-vol-val').innerText = vol.toFixed(1) + " mL";
+
+            // Visual updates
+            // Cylinder is 300px high. Volume ranges from ~16 to 100.
+            // Map Volume to Height: 100 mL -> 250px.
+            const cavityHeight = vol * 2.5; 
+            const cavityEl = document.getElementById('sim-cavity');
+            cavityEl.style.height = cavityHeight + 'px';
+            
+            // Color changing based on temp (Cool = blue tint, Hot = red tint)
+            // Range 100K to 600K
+            if (tempK < 300) {
+                let intensity = (300 - tempK) / 200; // 0 to 1
+                cavityEl.style.background = `rgba(0, 242, 255, ${intensity * 0.3})`;
+            } else {
+                let intensity = (tempK - 300) / 300; // 0 to 1
+                cavityEl.style.background = `rgba(245, 158, 11, ${intensity * 0.3 + 0.1})`;
+            }
+            
+            // Plunger head sits on top of the cavity.
+            const headBottom = cavityHeight + 4; // 4px offset for cylinder thickness
+            document.getElementById('sim-head').style.bottom = headBottom + 'px';
+            
+            // Plunger rod extends upwards
+            document.getElementById('sim-rod').style.bottom = headBottom + 'px';
+
+            // Visual flame / ice
+            const flame = document.getElementById('sim-flame');
+            const ice = document.getElementById('sim-ice');
+            if (tempK > 350) {
+                flame.style.opacity = (tempK - 350) / 250;
+                ice.style.opacity = 0;
+            } else if (tempK < 250) {
+                ice.style.opacity = (250 - tempK) / 150;
+                flame.style.opacity = 0;
+            } else {
+                flame.style.opacity = 0;
+                ice.style.opacity = 0;
+            }
+        }
+
+        function animateCharlesSim() {
+            // Get current cavity height and temp
+            const tempK = parseInt(document.getElementById('sim-temp-slider').value);
+            const vol = CHARLES_CONSTANT * tempK;
+            const cavityHeight = vol * 2.5;
+            
+            // Velocity modifier based on temperature
+            const tempMod = Math.sqrt(tempK / 300);
+
+            simParticles.forEach(p => p.update(cavityHeight, tempMod));
+            requestAnimationFrame(animateCharlesSim);
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 2: GRAPHING TOOL LOGIC
+         * ==========================================
+         */
+        const cvsVTk = document.getElementById('canvas-vt-k');
+        const ctxVTk = cvsVTk.getContext('2d');
+        const cvsVTc = document.getElementById('canvas-vt-c');
+        const ctxVTc = cvsVTc.getContext('2d');
+
+        function initCharlesGraphSim() {
+            updateCharlesGraphs();
+        }
+
+        function updateCharlesGraphs() {
+            const tempK = parseInt(document.getElementById('graph-temp-slider').value);
+            const vol = CHARLES_CONSTANT * tempK;
+            const tempC = tempK - 273.15;
+            
+            document.getElementById('graph-temp-text').innerText = tempK;
+            document.getElementById('graph-temp-c-text').innerText = tempC.toFixed(2);
+            document.getElementById('graph-vol-text').innerText = vol.toFixed(1);
+
+            drawVTkGraph(tempK, vol);
+            drawVTcGraph(tempC, vol);
+        }
+
+        function drawVTkGraph(t, v) {
+            ctxVTk.clearRect(0, 0, cvsVTk.width, cvsVTk.height);
+            
+            // Axes
+            ctxVTk.strokeStyle = '#334155';
+            ctxVTk.lineWidth = 1;
+            
+            // V vs T(K) line (y = kx)
+            // Scale: T (x-axis) 0-600 -> 0-300px (x * 0.5)
+            // Scale: V (y-axis) 0-100 -> 200-0px (200 - v * 2)
+            ctxVTk.beginPath();
+            ctxVTk.strokeStyle = '#0ea5e9';
+            ctxVTk.lineWidth = 3;
+            ctxVTk.moveTo(0, 200); // Origin (0,0)
+            ctxVTk.lineTo(600 * 0.5, 200 - (100 * 2)); 
+            ctxVTk.stroke();
+
+            // Draw current point
+            let currentX = t * 0.5;
+            let currentY = 200 - (v * 2);
+            ctxVTk.beginPath();
+            ctxVTk.arc(currentX, currentY, 6, 0, Math.PI * 2);
+            ctxVTk.fillStyle = '#f59e0b';
+            ctxVTk.fill();
+            ctxVTk.strokeStyle = '#fff';
+            ctxVTk.lineWidth = 2;
+            ctxVTk.stroke();
+        }
+
+        function drawVTcGraph(tc, v) {
+            ctxVTc.clearRect(0, 0, cvsVTc.width, cvsVTc.height);
+            
+            // Axes
+            // X-axis: -300 C to +300 C. Width 300px.
+            // Center X = 150px (which is 0 C).
+            // So X_px = 150 + (tc * 0.5)
+            // V (y-axis) 0-100 -> 200-0px (200 - v * 2)
+            
+            // Draw Y axis at 0 C (X=150px)
+            ctxVTc.beginPath();
+            ctxVTc.strokeStyle = '#334155';
+            ctxVTc.lineWidth = 1;
+            ctxVTc.moveTo(150, 0);
+            ctxVTc.lineTo(150, 200);
+            ctxVTc.stroke();
+            
+            // Draw X axis
+            ctxVTc.beginPath();
+            ctxVTc.moveTo(0, 199);
+            ctxVTc.lineTo(300, 199);
+            ctxVTc.stroke();
+
+            // V vs T(C) line
+            ctxVTc.beginPath();
+            ctxVTc.strokeStyle = '#a855f7';
+            ctxVTc.lineWidth = 3;
+            
+            // Point 1: Abs Zero (-273.15 C, 0 V)
+            let x1 = 150 + (-273.15 * 0.5);
+            ctxVTc.moveTo(x1, 200);
+            
+            // Point 2: (326.85 C, 100 V) (which corresponds to 600K)
+            let x2 = 150 + (326.85 * 0.5);
+            ctxVTc.lineTo(x2, 0);
+            ctxVTc.stroke();
+
+            // Draw current point
+            let currentX = 150 + (tc * 0.5);
+            let currentY = 200 - (v * 2);
+            ctxVTc.beginPath();
+            ctxVTc.arc(currentX, currentY, 6, 0, Math.PI * 2);
+            ctxVTc.fillStyle = '#f59e0b';
+            ctxVTc.fill();
+            ctxVTc.strokeStyle = '#fff';
+            ctxVTc.lineWidth = 2;
+            ctxVTc.stroke();
+            
+            // Label Absolute Zero
+            ctxVTc.fillStyle = '#94a3b8';
+            ctxVTc.font = '10px Arial';
+            ctxVTc.fillText('-273°C', x1 - 15, 195);
+        }
+    </script>
+</body>
+</html>

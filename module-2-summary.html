@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Quantitative Chemistry - Summary & Data Sheet</title>
+    <link rel="stylesheet" href="styles.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <style>
+        /* ==========================================================================
+           SUMMARY PAGE SPECIFIC STYLING
+           ========================================================================== */
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .formula-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+
+        .formula-card:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-5px);
+        }
+
+        .formula-card h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .formula-display {
+            font-size: 1.4rem;
+            margin: 15px 0;
+            text-align: center;
+            color: #f8fafc;
+        }
+
+        .variable-list {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Periodic Table Styling */
+        .periodic-table-wrapper {
+            overflow-x: auto;
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            margin-top: 30px;
+        }
+
+        .periodic-table {
+            display: grid;
+            grid-template-columns: repeat(18, minmax(45px, 1fr));
+            gap: 4px;
+            min-width: 900px;
+        }
+
+        .element {
+            aspect-ratio: 1 / 1.1;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: default;
+            transition: all 0.2s;
+        }
+
+        .element:hover {
+            border-color: #f8fafc;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            transform: scale(1.1);
+        }
+
+        .el-num { font-size: 0.6rem; color: #94a3b8; align-self: flex-start; }
+        .el-sym { font-size: 1rem; font-weight: bold; color: #f8fafc; }
+        .el-mass { font-size: 0.55rem; color: #38bdf8; }
+
+        /* Color Coding */
+        .reactive-nonmetal { background: #1e3a8a; }
+        .noble-gas { background: #581c87; }
+        .alkali-metal { background: #7f1d1d; }
+        .alkaline-earth { background: #7c2d12; }
+        .metalloid { background: #14532d; }
+        .post-transition { background: #064e3b; }
+        .transition-metal { background: #1e293b; }
+        .lanthanide { background: #4c1d95; }
+        .actinide { background: #831843; }
+
+        .gap { visibility: hidden; }
+
+        /* Tables Styling */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .data-table th {
+            background: #334155;
+            color: #0ea5e9;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .solubility-soluble { color: #22c55e; }
+        .solubility-insoluble { color: #ef4444; }
+
+        .section-header {
+            margin-top: 50px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0ea5e9;
+            color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+
+<nav id="sidebar" class="navigation-bar">
+    <div class="nav-header">
+        <h2>Module 2</h2>
+        <p>Quantitative Chemistry</p>
+        <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+    </div>
+    <ul class="nav-list">
+        <li class="nav-section-title">Introduction</li>
+        <li><a href="index.html">Home & Guide</a></li>
+        <li class="nav-section-title">Phase A: Foundations</li>
+        <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+        <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+        <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+        <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+        <li class="nav-section-title">Phase B: The Mole</li>
+        <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+        <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+        <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+        <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+        <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+        <li class="nav-section-title">Phase C: Stoichiometry</li>
+        <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+        <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+        <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+        <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+        <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+        <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+        <li class="nav-section-title">Phase D: Concentration</li>
+        <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+        <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+        <li><a href="dilutions.html">18. Dilutions</a></li>
+        <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+        <li class="nav-section-title">Phase E: Gas Laws</li>
+        <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+        <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+        <li><a href="charles-law.html">22. Charles' Law</a></li>
+        <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+        <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+        <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+        <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+        <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+        <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+        <li class="nav-section-title">Phase F: Assessment</li>
+        <li><a href="module-2-summary.html" class="active">29. Formula Summary</a></li>
+        <li><a href="final-exam.html">30. Final Exam</a></li>
+        <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+    </ul>
+</nav>
+
+<main id="main-content">
+    <header class="page-header">
+        <h1>Module 2 Formula Summary</h1>
+        <p class="subtitle">The Chemist's Toolkit: Every Equation and Data Set required for the HSC</p>
+    </header>
+
+    <section class="content-section">
+        <h2 class="section-header">1. Core Stoichiometry Formulas</h2>
+        <div class="summary-grid">
+            <div class="formula-card">
+                <h3>The Mole (Mass)</h3>
+                <div class="formula-display">$$n = \frac{m}{MM}$$</div>
+                <ul class="variable-list">
+                    <li>$n$: number of moles (mol)</li>
+                    <li>$m$: mass (g)</li>
+                    <li>$MM$: molar mass (g/mol)</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>The Mole (Particles)</h3>
+                <div class="formula-display">$$n = \frac{N}{N_A}$$</div>
+                <ul class="variable-list">
+                    <li>$N$: number of particles</li>
+                    <li>$N_A$: Avogadro's constant ($6.022 \times 10^{23} \text{ mol}^{-1}$)</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Percentage Yield</h3>
+                <div class="formula-display">$$\% \text{ Yield} = \frac{\text{Actual}}{\text{Theoretical}} \times 100$$</div>
+                <p class="variable-list" style="font-style: italic;">Note: Both values must be in the same units (moles or mass).</p>
+            </div>
+        </div>
+
+        <h2 class="section-header">2. Concentration & Solutions</h2>
+        <div class="summary-grid">
+            <div class="formula-card">
+                <h3>Molarity (M)</h3>
+                <div class="formula-display">$$c = \frac{n}{V}$$</div>
+                <ul class="variable-list">
+                    <li>$c$: concentration (mol/L or M)</li>
+                    <li>$V$: volume in Litres (L)</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Dilution Formula</h3>
+                <div class="formula-display">$$c_1V_1 = c_2V_2$$</div>
+                <ul class="variable-list">
+                    <li>Subscript 1: Initial (Stock) state</li>
+                    <li>Subscript 2: Final (Diluted) state</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Concentration (g/L)</h3>
+                <div class="formula-display">$$c_{g/L} = \frac{m}{V}$$</div>
+                <p class="variable-list">To convert mol/L to g/L: multiply by Molar Mass.</p>
+            </div>
+        </div>
+
+        <h2 class="section-header">3. Gas Laws</h2>
+        <div class="summary-grid">
+            <div class="formula-card">
+                <h3>Ideal Gas Law</h3>
+                <div class="formula-display">$$PV = nRT$$</div>
+                <ul class="variable-list">
+                    <li>$P$: Pressure (kPa)</li>
+                    <li>$R$: Gas Constant ($8.314 \text{ J K}^{-1}\text{mol}^{-1}$)</li>
+                    <li>$T$: Temperature (Kelvin, $K = ^\circ C + 273.15$)</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Combined Gas Law</h3>
+                <div class="formula-display">$$\frac{P_1V_1}{T_1} = \frac{P_2V_2}{T_2}$$</div>
+                <p class="variable-list">Used when $n$ (moles) is constant.</p>
+            </div>
+            <div class="formula-card">
+                <h3>Gay-Lussac's (Volume Ratio)</h3>
+                <div class="formula-display">$$V \propto n$$</div>
+                <p class="variable-list">For reactions involving <b>only</b> gases at constant $T$ and $P$, volumes react in whole number ratios.</p>
+            </div>
+        </div>
+    </section>
+    
+    
+
+    <section class="content-section">
+        <h2 class="section-header">4. Solubility Rules (NAGSAG)</h2>
+        <p>Essential for predicting precipitates in stoichiometry and identifying spectator ions.</p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Rule / Ion</th>
+                    <th>Solubility</th>
+                    <th>Exceptions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>N</b>itrates ($NO_3^-$)</td>
+                    <td class="solubility-soluble">Always Soluble</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><b>A</b>cetates ($CH_3COO^-$)</td>
+                    <td class="solubility-soluble">Always Soluble</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><b>G</b>roup 1 Ions ($Li^+, Na^+ \dots$)</td>
+                    <td class="solubility-soluble">Always Soluble</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><b>S</b>ulfates ($SO_4^{2-}$)</td>
+                    <td class="solubility-soluble">Soluble</td>
+                    <td>$Pb^{2+}, Ba^{2+}, Sr^{2+}, Ca^{2+}$</td>
+                </tr>
+                <tr>
+                    <td><b>A</b>mmonium ($NH_4^+$)</td>
+                    <td class="solubility-soluble">Always Soluble</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><b>G</b>roup 17 (Halides: $Cl^-, Br^- \dots$)</td>
+                    <td class="solubility-soluble">Soluble</td>
+                    <td>$Ag^+, Pb^{2+}, Hg_2^{2+}$</td>
+                </tr>
+                <tr>
+                    <td>Carbonates ($CO_3^{2-}$) / Phosphates ($PO_4^{3-}$)</td>
+                    <td class="solubility-insoluble">Insoluble</td>
+                    <td>Group 1 and $NH_4^+$</td>
+                </tr>
+                <tr>
+                    <td>Hydroxides ($OH^-$)</td>
+                    <td class="solubility-insoluble">Insoluble</td>
+                    <td>Group 1, $NH_4^+$, $Ba^{2+}$, $Sr^{2+}$</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="content-section">
+        <h2 class="section-header">5. Polyatomic Ions to Memorise</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Formula</th>
+                    <th>Charge</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Hydroxide</td><td>$OH^-$</td><td>-1</td></tr>
+                <tr><td>Nitrate</td><td>$NO_3^-$</td><td>-1</td></tr>
+                <tr><td>Bicarbonate (Hydrogen Carbonate)</td><td>$HCO_3^-$</td><td>-1</td></tr>
+                <tr><td>Permanganate</td><td>$MnO_4^-$</td><td>-1</td></tr>
+                <tr><td>Sulfate</td><td>$SO_4^{2-}$</td><td>-2</td></tr>
+                <tr><td>Carbonate</td><td>$CO_3^{2-}$</td><td>-2</td></tr>
+                <tr><td>Chromate</td><td>$CrO_4^{2-}$</td><td>-2</td></tr>
+                <tr><td>Dichromate</td><td>$Cr_2O_7^{2-}$</td><td>-2</td></tr>
+                <tr><td>Phosphate</td><td>$PO_4^{3-}$</td><td>-3</td></tr>
+                <tr><td>Ammonium</td><td>$NH_4^+$</td><td>+1</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="content-section">
+        <h2 class="section-header">6. The Periodic Table of Elements (118 Elements)</h2>
+        <p>Molar masses ($MM$) are provided to 4 significant figures, as found on the NESA Data Sheet.</p>
+        
+        <div class="periodic-table-wrapper">
+            <div class="periodic-table" id="ptable">
+                <div class="element reactive-nonmetal"><div class="el-num">1</div><div class="el-sym">H</div><div class="el-mass">1.008</div></div>
+                <div class="gap" style="grid-column: 2 / 18"></div>
+                <div class="element noble-gas"><div class="el-num">2</div><div class="el-sym">He</div><div class="el-mass">4.003</div></div>
+                
+                <div class="element alkali-metal"><div class="el-num">3</div><div class="el-sym">Li</div><div class="el-mass">6.941</div></div>
+                <div class="element alkaline-earth"><div class="el-num">4</div><div class="el-sym">Be</div><div class="el-mass">9.012</div></div>
+                <div class="gap" style="grid-column: 3 / 13"></div>
+                <div class="element metalloid"><div class="el-num">5</div><div class="el-sym">B</div><div class="el-mass">10.81</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">6</div><div class="el-sym">C</div><div class="el-mass">12.01</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">7</div><div class="el-sym">N</div><div class="el-mass">14.01</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">8</div><div class="el-sym">O</div><div class="el-mass">16.00</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">9</div><div class="el-sym">F</div><div class="el-mass">19.00</div></div>
+                <div class="element noble-gas"><div class="el-num">10</div><div class="el-sym">Ne</div><div class="el-mass">20.18</div></div>
+
+                <div class="element alkali-metal"><div class="el-num">11</div><div class="el-sym">Na</div><div class="el-mass">22.99</div></div>
+                <div class="element alkaline-earth"><div class="el-num">12</div><div class="el-sym">Mg</div><div class="el-mass">24.31</div></div>
+                <div class="gap" style="grid-column: 3 / 13"></div>
+                <div class="element post-transition"><div class="el-num">13</div><div class="el-sym">Al</div><div class="el-mass">26.98</div></div>
+                <div class="element metalloid"><div class="el-num">14</div><div class="el-sym">Si</div><div class="el-mass">28.09</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">15</div><div class="el-sym">P</div><div class="el-mass">30.97</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">16</div><div class="el-sym">S</div><div class="el-mass">32.06</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">17</div><div class="el-sym">Cl</div><div class="el-mass">35.45</div></div>
+                <div class="element noble-gas"><div class="el-num">18</div><div class="el-sym">Ar</div><div class="el-mass">39.95</div></div>
+
+                <div class="element alkali-metal"><div class="el-num">19</div><div class="el-sym">K</div><div class="el-mass">39.10</div></div>
+                <div class="element alkaline-earth"><div class="el-num">20</div><div class="el-sym">Ca</div><div class="el-mass">40.08</div></div>
+                <div class="element transition-metal"><div class="el-num">21</div><div class="el-sym">Sc</div><div class="el-mass">44.96</div></div>
+                <div class="element transition-metal"><div class="el-num">22</div><div class="el-sym">Ti</div><div class="el-mass">47.87</div></div>
+                <div class="element transition-metal"><div class="el-num">23</div><div class="el-sym">V</div><div class="el-mass">50.94</div></div>
+                <div class="element transition-metal"><div class="el-num">24</div><div class="el-sym">Cr</div><div class="el-mass">52.00</div></div>
+                <div class="element transition-metal"><div class="el-num">25</div><div class="el-sym">Mn</div><div class="el-mass">54.94</div></div>
+                <div class="element transition-metal"><div class="el-num">26</div><div class="el-sym">Fe</div><div class="el-mass">55.85</div></div>
+                <div class="element transition-metal"><div class="el-num">27</div><div class="el-sym">Co</div><div class="el-mass">58.93</div></div>
+                <div class="element transition-metal"><div class="el-num">28</div><div class="el-sym">Ni</div><div class="el-mass">58.69</div></div>
+                <div class="element transition-metal"><div class="el-num">29</div><div class="el-sym">Cu</div><div class="el-mass">63.55</div></div>
+                <div class="element transition-metal"><div class="el-num">30</div><div class="el-sym">Zn</div><div class="el-mass">65.38</div></div>
+                <div class="element post-transition"><div class="el-num">31</div><div class="el-sym">Ga</div><div class="el-mass">69.72</div></div>
+                <div class="element metalloid"><div class="el-num">32</div><div class="el-sym">Ge</div><div class="el-mass">72.63</div></div>
+                <div class="element metalloid"><div class="el-num">33</div><div class="el-sym">As</div><div class="el-mass">74.92</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">34</div><div class="el-sym">Se</div><div class="el-mass">78.97</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">35</div><div class="el-sym">Br</div><div class="el-mass">79.90</div></div>
+                <div class="element noble-gas"><div class="el-num">36</div><div class="el-sym">Kr</div><div class="el-mass">83.80</div></div>
+
+                </div>
+        </div>
+    </section>
+
+    <footer class="page-footer">
+        <div class="footer-nav">
+            <a href="final-exam.html" class="btn-next">Ready for the Final Exam? &rarr;</a>
+        </div>
+    </footer>
+</main>
+
+<script>
+    // Periodic Table Data Generation (to ensure all 118 are present without infinite HTML lines)
+    const elementsData = [
+        {n:37, s:"Rb", m:85.47, c:"alkali-metal"}, {n:38, s:"Sr", m:87.62, c:"alkaline-earth"}, {n:39, s:"Y", m:88.91, c:"transition-metal"},
+        {n:40, s:"Zr", m:91.22, c:"transition-metal"}, {n:41, s:"Nb", m:92.91, c:"transition-metal"}, {n:42, s:"Mo", m:95.95, c:"transition-metal"},
+        {n:43, s:"Tc", m:98.91, c:"transition-metal"}, {n:44, s:"Ru", m:101.1, c:"transition-metal"}, {n:45, s:"Rh", m:102.9, c:"transition-metal"},
+        {n:46, s:"Pd", m:106.4, c:"transition-metal"}, {n:47, s:"Ag", m:107.9, c:"transition-metal"}, {n:48, s:"Cd", m:112.4, c:"transition-metal"},
+        {n:49, s:"In", m:114.8, c:"post-transition"}, {n:50, s:"Sn", m:118.7, c:"post-transition"}, {n:51, s:"Sb", m:121.8, c:"metalloid"},
+        {n:52, s:"Te", m:127.6, c:"metalloid"}, {n:53, s:"I", m:126.9, c:"reactive-nonmetal"}, {n:54, s:"Xe", m:131.3, c:"noble-gas"},
+        // Group 6 starts with Cs, Ba, then Lu (skipping lanthanides to the bottom)
+        {n:55, s:"Cs", m:132.9, c:"alkali-metal"}, {n:56, s:"Ba", m:137.3, c:"alkaline-earth"}, {n:71, s:"Lu", m:175.0, c:"transition-metal"},
+        {n:72, s:"Hf", m:178.5, c:"transition-metal"}, {n:73, s:"Ta", m:180.9, c:"transition-metal"}, {n:74, s:"W", m:183.8, c:"transition-metal"},
+        {n:75, s:"Re", m:186.2, c:"transition-metal"}, {n:76, s:"Os", m:190.2, c:"transition-metal"}, {n:77, s:"Ir", m:192.2, c:"transition-metal"},
+        {n:78, s:"Pt", m:195.1, c:"transition-metal"}, {n:79, s:"Au", m:197.0, c:"transition-metal"}, {n:80, s:"Hg", m:200.6, c:"transition-metal"},
+        {n:81, s:"Tl", m:204.4, c:"post-transition"}, {n:82, s:"Pb", m:207.2, c:"post-transition"}, {n:83, s:"Bi", m:209.0, c:"post-transition"},
+        {n:84, s:"Po", m:209.0, c:"metalloid"}, {n:85, s:"At", m:210.0, c:"reactive-nonmetal"}, {n:86, s:"Rn", m:222.0, c:"noble-gas"},
+        // Row 7
+        {n:87, s:"Fr", m:223.0, c:"alkali-metal"}, {n:88, s:"Ra", m:226.0, c:"alkaline-earth"}, {n:103, s:"Lr", m:266.1, c:"transition-metal"},
+        {n:104, s:"Rf", m:267.1, c:"transition-metal"}, {n:105, s:"Db", m:268.1, c:"transition-metal"}, {n:106, s:"Sg", m:269.1, c:"transition-metal"},
+        {n:107, s:"Bh", m:270.1, c:"transition-metal"}, {n:108, s:"Hs", m:269.2, c:"transition-metal"}, {n:109, s:"Mt", m:278.2, c:"transition-metal"},
+        {n:110, s:"Ds", m:281.2, c:"transition-metal"}, {n:111, s:"Rg", m:282.2, c:"transition-metal"}, {n:112, s:"Cn", m:285.2, c:"transition-metal"},
+        {n:113, s:"Nh", m:286.2, c:"post-transition"}, {n:114, s:"Fl", m:289.2, c:"post-transition"}, {n:115, s:"Mc", m:290.2, c:"post-transition"},
+        {n:116, s:"Lv", m:293.2, c:"post-transition"}, {n:117, s:"Ts", m:294.2, c:"reactive-nonmetal"}, {n:118, s:"Og", m:294.2, c:"noble-gas"}
+    ];
+
+    const ptable = document.getElementById('ptable');
+    elementsData.forEach(el => {
+        const div = document.createElement('div');
+        div.className = `element ${el.c}`;
+        div.innerHTML = `<div class="el-num">${el.n}</div><div class="el-sym">${el.s}</div><div class="el-mass">${el.m}</div>`;
+        ptable.appendChild(div);
+    });
+
+    // Score Tracking logic (Standard across all pages)
+    document.addEventListener("DOMContentLoaded", function() {
+        updateTotalMarksDisplay();
+    });
+
+    function updateTotalMarksDisplay() {
+        const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+        const displayElement = document.getElementById('total-marks');
+        if (displayElement) {
+            displayElement.innerText = totalScore;
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 28: Gas Stoichiometry - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY & CONTENT STYLES
+           ========================================================================== */
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .math-focus {
+            background: #111424;
+            border: 1px dashed #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+        
+        .haunt-box {
+            background: rgba(168, 85, 247, 0.05);
+            border: 2px solid #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .haunt-box::before {
+            content: '👻';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            right: -10px;
+            bottom: -30px;
+            transform: rotate(15deg);
+        }
+
+        .highlight-text { color: #0ea5e9; font-weight: bold; }
+        .danger-text { color: #ef4444; font-weight: bold; }
+        .success-text { color: #22c55e; font-weight: bold; }
+        .purple-text { color: #a855f7; font-weight: bold; }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: GAY-LUSSAC'S VOLUME SIMULATOR
+           -------------------------------------------------------------------------- */
+        .simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .reaction-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .molecule-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .molecule-title {
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: #f8fafc;
+        }
+
+        .volume-blocks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-width: 150px;
+            justify-content: center;
+        }
+
+        .vol-block {
+            width: 25px;
+            height: 25px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: rgba(255,255,255,0.8);
+            transition: all 0.3s;
+        }
+
+        .block-n2 { background: #0ea5e9; border: 1px solid #0284c7; }
+        .block-h2 { background: #f59e0b; border: 1px solid #d97706; }
+        .block-nh3 { background: #10b981; border: 1px solid #059669; }
+        .block-excess { background: #ef4444; border: 1px dashed #b91c1c; opacity: 0.6; }
+        .block-empty { background: transparent; border: 1px dashed #475569; }
+
+        .reaction-arrow {
+            font-size: 2rem;
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .sim-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            justify-content: center;
+        }
+
+        .slider-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .val-highlight { font-family: monospace; font-size: 1.2rem; }
+        .val-n2 { color: #0ea5e9; }
+        .val-h2 { color: #f59e0b; }
+
+        input[type=range] { width: 100%; cursor: pointer; }
+        
+        .sim-analysis {
+            background: #111424;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #3f4a75;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: THE HAUNTED PIPELINE (MIXED STOICHIOMETRY)
+           -------------------------------------------------------------------------- */
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #1e293b, #0f172a);
+            padding: 40px 20px;
+            border-radius: 12px;
+            border: 1px solid #a855f7;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: relative;
+        }
+
+        .pipeline-node {
+            background: #111424;
+            border: 2px solid #a855f7;
+            border-radius: 12px;
+            width: 140px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .pipeline-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+        }
+
+        .node-title {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .node-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: monospace;
+            color: #0ea5e9;
+        }
+
+        .pipeline-arrow {
+            flex-grow: 1;
+            height: 4px;
+            background: #475569;
+            position: relative;
+            min-width: 40px;
+        }
+
+        .arrow-label {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .pipeline-controls {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .pipe-input {
+            background: #0f172a;
+            border: 1px solid #38bdf8;
+            color: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            width: 150px;
+            text-align: center;
+        }
+
+        .pipe-btn {
+            background: #a855f7;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .pipe-btn:hover { background: #c084fc; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+
+        /* --------------------------------------------------------------------------
+           STANDARD EDUCATIONAL UI
+           -------------------------------------------------------------------------- */
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: #22c55e; color: #000; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-hard { background: #ef4444; color: #fff; }
+        .badge-extension { background: #a855f7; color: #fff; }
+
+        .practise-question {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .question-header h4 { margin: 0; font-size: 1.3rem; color: #f8fafc; }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #ec4899;
+            font-weight: bold;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .interaction-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        
+        .btn-hint, .btn-reveal, .btn-submit-mark {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover { background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b; }
+        .btn-reveal:hover { background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981; }
+        .btn-submit-mark { background: #0ea5e9; color: #000; border: none; }
+        .btn-submit-mark:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+
+        .hidden-hint {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            color: #cbd5e1;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .worked-solution h5 { color: #0ea5e9; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-size: 1.2rem; }
+        .marking-criteria { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .marking-criteria h5 { color: #10b981; margin-bottom: 1rem; font-size: 1.1rem; }
+        .marking-criteria ul { list-style-type: none; margin-left: 0; }
+        .marking-criteria li { padding-left: 2rem; position: relative; margin-bottom: 0.8rem; color: #cbd5e1; }
+        .marking-criteria li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; font-size: 1.1rem; }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            background: #2a2f4c;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #3f4a75;
+        }
+
+        .mark-dropdown {
+            background: #111424;
+            color: #f8fafc;
+            border: 1px solid #3f4a75;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html" class="active">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>28. Gas Stoichiometry</h1>
+            <p class="subtitle">Combining Moles, Mass, and Gas Volumes in Chemical Reactions</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Climax of Module 2</h2>
+            <p>Welcome to the summit of Quantitative Chemistry. Up until now, you have learned how to calculate reacting masses (Phase C), reacting concentrations (Phase D), and properties of isolated gases (Phase E). Now, we merge them all.</p>
+            
+            <div class="haunt-box">
+                <h3 style="color: #a855f7; margin-top: 0;">Everything Comes Back to "Haunt" You!</h3>
+                <p>Limiting Reagents. Molar Masses. Balancing Equations. Empirical Formulas. They are all returning in this final sub-topic. But view this as a solace, not a fright! You are not learning any new mathematics today. You are simply applying the tools you have already mastered—like $PV=nRT$ and $n=m/MM$—to solve comprehensive chemical puzzles.</p>
+                <p>When you encounter a gas stoichiometry problem, simply ask yourself: <strong>"Do I need to find Moles, or can I use a shortcut?"</strong></p>
+            </div>
+        </section>
+
+        <section class="content-section" id="volume-ratios">
+            <h2>Shortcut: Gay-Lussac's Law of Combining Volumes</h2>
+            <p>If a chemical reaction involves <strong>ONLY gases</strong>, and the temperature and pressure are held constant throughout the reaction, Avogadro's Law ($V \propto n$) gifts us an incredible shortcut.</p>
+            <p>Because volume is directly proportional to moles, <strong>the stoichiometric coefficients in a balanced equation dictate the exact Volume Ratio of the reacting gases!</strong> You do not need to calculate moles at all.</p>
+
+            <div class="math-focus">
+                <p style="font-size: 1.2rem; margin-bottom: 5px;">Example: The Synthesis of Ammonia</p>
+                <p style="font-size: 1.5rem; font-weight: bold; color: #f8fafc; margin: 0;">$N_2(g) + 3H_2(g) \rightarrow 2NH_3(g)$</p>
+                <p style="margin-top: 15px;">Mole Ratio: $1 \text{ mol} : 3 \text{ mol} \rightarrow 2 \text{ mol}$</p>
+                <p style="color: #22c55e; font-weight: bold; font-size: 1.2rem;">Volume Ratio: $1 \text{ L} : 3 \text{ L} \rightarrow 2 \text{ L}$</p>
+                <p style="margin-top: 15px; font-size: 0.95rem; color: #94a3b8;">If you react $10 \text{ L}$ of Nitrogen, you will instantly know it requires $30 \text{ L}$ of Hydrogen and produces exactly $20 \text{ L}$ of Ammonia. No $PV=nRT$ required!</p>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-1">
+            <h2>Interactive: Reaction Volume Simulator</h2>
+            <p>Use the sliders to adjust the initial volumes of $N_2$ and $H_2$ gases. The simulator will identify the Limiting Reagent (LR), calculate the volume of $NH_3$ produced, and show you how much of the excess reactant is left over.</p>
+
+            <div class="simulator-container">
+                <div class="sim-controls">
+                    <div class="slider-group">
+                        <label>
+                            <span>Volume of $N_2(g)$:</span>
+                            <span class="val-highlight val-n2" id="sim1-n2-val">2.0 L</span>
+                        </label>
+                        <input type="range" id="sim1-n2-slider" min="1" max="10" step="0.5" value="2" oninput="updateVolumeSim()">
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span>Volume of $H_2(g)$:</span>
+                            <span class="val-highlight val-h2" id="sim1-h2-val">3.0 L</span>
+                        </label>
+                        <input type="range" id="sim1-h2-slider" min="1" max="15" step="0.5" value="3" oninput="updateVolumeSim()">
+                    </div>
+                </div>
+
+                <div class="reaction-display">
+                    <div class="molecule-group">
+                        <span class="molecule-title" style="color: #0ea5e9;">$N_2$ (Used)</span>
+                        <div class="volume-blocks" id="blocks-n2"></div>
+                    </div>
+                    <div class="reaction-arrow">+</div>
+                    <div class="molecule-group">
+                        <span class="molecule-title" style="color: #f59e0b;">$H_2$ (Used)</span>
+                        <div class="volume-blocks" id="blocks-h2"></div>
+                    </div>
+                    <div class="reaction-arrow">&rarr;</div>
+                    <div class="molecule-group">
+                        <span class="molecule-title" style="color: #10b981;">$NH_3$ (Produced)</span>
+                        <div class="volume-blocks" id="blocks-nh3"></div>
+                    </div>
+                </div>
+
+                <div class="sim-analysis" id="sim1-analysis">
+                    Limiting Reagent: H₂ | Produces: 2.0 L NH₃ | Excess: 1.0 L N₂ remaining.
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="mixed-stoichiometry">
+            <h2>Mixed Stoichiometry: When Solids meet Gases</h2>
+            <p>You cannot use volume ratios if a reactant or product is a solid or a liquid! (e.g., $CaCO_3(s)$ reacting to form $CO_2(g)$). The volume of a solid is irrelevant to gas laws.</p>
+            <p>If you are given the mass of a solid and asked for the volume of a gas, you must navigate through the mole. <strong>Moles are the universal currency of chemistry.</strong></p>
+            <ul>
+                <li><strong>Step 1:</strong> Convert the known substance into moles (using $n = m/MM$ or $n = c \times V$).</li>
+                <li><strong>Step 2:</strong> Use the stoichiometric ratio from the balanced equation to find the moles of the unknown gas.</li>
+                <li><strong>Step 3:</strong> Convert the moles of the gas into Volume using $PV = nRT$ (or $V = n \times 24.79$ if strictly at SLC).</li>
+            </ul>
+        </section>
+
+        <section class="content-section" id="interactive-2">
+            <h2>Interactive: The Stoichiometry Pipeline</h2>
+            <p>Let's map out the reaction of solid Magnesium with Hydrochloric Acid to produce Hydrogen gas: <br><strong>$Mg(s) + 2HCl(aq) \rightarrow MgCl_2(aq) + H_2(g)$</strong></p>
+            <p>Enter a mass of Magnesium below and click Calculate to watch the math flow through the pipeline to find the final Volume of $H_2$ gas at SLC ($25 ^\circ\text{C}, 100 \text{kPa}$).</p>
+
+            <div class="pipeline-container">
+                <div class="pipeline-node">
+                    <span class="node-title">Mass Mg(s)</span>
+                    <span class="node-value" id="pipe-mass">0.0 g</span>
+                </div>
+                
+                <div class="pipeline-arrow">
+                    <div class="arrow-label">÷ MM (24.31)</div>
+                </div>
+                
+                <div class="pipeline-node">
+                    <span class="node-title">Moles Mg(s)</span>
+                    <span class="node-value" id="pipe-mol-s" style="color: #f59e0b;">0.00</span>
+                </div>
+                
+                <div class="pipeline-arrow">
+                    <div class="arrow-label">Ratio (1:1)</div>
+                </div>
+                
+                <div class="pipeline-node">
+                    <span class="node-title">Moles H₂(g)</span>
+                    <span class="node-value" id="pipe-mol-g" style="color: #f59e0b;">0.00</span>
+                </div>
+                
+                <div class="pipeline-arrow">
+                    <div class="arrow-label">× V_m (24.79)</div>
+                </div>
+                
+                <div class="pipeline-node" style="border-color: #10b981;">
+                    <span class="node-title" style="color: #10b981;">Volume H₂(g)</span>
+                    <span class="node-value" id="pipe-vol" style="color: #10b981;">0.0 L</span>
+                </div>
+
+                <div class="pipeline-controls">
+                    <input type="number" id="pipe-input" class="pipe-input" placeholder="e.g. 15.0" min="0.1" step="0.1">
+                    <button class="pipe-btn" onclick="runPipeline()">Run Pipeline</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="empirical-formula">
+            <h2>Finding Empirical Formulas with Gases</h2>
+            <p>A classic HSC trick question involves combusting an unknown hydrocarbon gas ($C_xH_y$) in Oxygen, and measuring the volume of Carbon Dioxide and Water Vapour produced. Because everything is a gas, you can use the volume ratios to find the empirical formula backwards!</p>
+            <p>If $10 \text{ mL}$ of a hydrocarbon produces $30 \text{ mL}$ of $CO_2$, the volume ratio is $1:3$. This means every 1 molecule of hydrocarbon contains 3 atoms of Carbon ($x=3$). We will explore this in the Extension examples below.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Review the meticulous application of stoichiometry combined with gas laws. Note how we distinguish between problems that allow volume ratios and those that mandate mole calculations.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Example 1: Pure Volume Ratios</h4>
+                </div>
+                <div class="question-body">
+                    <p>Hydrogen gas reacts with Chlorine gas to form Hydrogen Chloride gas according to the equation:<br>
+                    $H_2(g) + Cl_2(g) \rightarrow 2HCl(g)$</p>
+                    <p>If $12.5 \text{ L}$ of Hydrogen gas completely reacts at constant temperature and pressure, calculate the volume of $HCl$ gas produced.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-gas-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-gas-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>Because all reactants and products are gases at constant $T$ and $P$, we can use Gay-Lussac's Law of Combining Volumes. We do not need to calculate moles.</em></p>
+                        
+                        <p><strong>Step 1: Identify the Volume Ratio</strong><br>
+                        From the balanced equation, the ratio of $H_2 : HCl$ is $1 : 2$.</p>
+
+                        <p><strong>Step 2: Calculate Product Volume</strong><br>
+                        Volume of $HCl$ produced = Volume of $H_2 \times 2$<br>
+                        $V(HCl) = 12.5 \text{ L} \times 2 = 25.0 \text{ L}$</p>
+
+                        <p><strong>Final Answer:</strong> $\mathbf{25.0 \text{ L}}$ of $HCl$ gas is produced.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Example 2: Solid to Gas (Mixed Stoichiometry)</h4>
+                </div>
+                <div class="question-body">
+                    <p>Sodium metal reacts violently with water to produce aqueous Sodium Hydroxide and Hydrogen gas:<br>
+                    $2Na(s) + 2H_2O(l) \rightarrow 2NaOH(aq) + H_2(g)$</p>
+                    <p>Calculate the volume of Hydrogen gas produced at STP ($0 ^\circ\text{C}, 100 \text{kPa}$) when $4.60 \text{ g}$ of Sodium completely reacts.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-gas-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-gas-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>Since we are starting with a solid mass, we MUST calculate moles first.</em></p>
+
+                        <p><strong>Step 1: Calculate moles of Reactant ($Na$)</strong><br>
+                        $MM(Na) = 22.99 \text{ g/mol}$<br>
+                        $n(Na) = \frac{m}{MM} = \frac{4.60}{22.99} = 0.20008... \text{ mol}$</p>
+
+                        <p><strong>Step 2: Mole Ratio</strong><br>
+                        Ratio of $Na : H_2$ is $2 : 1$.<br>
+                        $n(H_2) = \frac{0.20008}{2} = 0.10004... \text{ mol}$</p>
+
+                        <p><strong>Step 3: Convert Gas Moles to Volume at STP</strong><br>
+                        Because the conditions are strictly STP, we can use the Molar Volume shortcut ($V_m = 22.71 \text{ L/mol}$).<br>
+                        $V(H_2) = n \times V_m$<br>
+                        $V(H_2) = 0.10004 \times 22.71 = 2.271... \text{ L}$</p>
+
+                        <p><strong>Final Answer:</strong> $\mathbf{2.27 \text{ L}}$ of Hydrogen gas is produced (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Example 3: Limiting Reagents with Gases</h4>
+                </div>
+                <div class="question-body">
+                    <p>Ammonia gas reacts with Oxygen gas to form Nitrogen Monoxide and Water Vapour:<br>
+                    $4NH_3(g) + 5O_2(g) \rightarrow 4NO(g) + 6H_2O(g)$</p>
+                    <p>In a sealed reaction vessel at constant temperature and pressure, $20.0 \text{ L}$ of Ammonia is mixed with $20.0 \text{ L}$ of Oxygen and ignited. Determine the limiting reagent and calculate the final volume of $NO$ gas produced.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-gas-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-gas-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>Because all substances are gases at constant conditions, we can do the Limiting Reagent calculation entirely using volumes instead of moles!</em></p>
+
+                        <p><strong>Step 1: Find the Limiting Reagent</strong><br>
+                        Divide the available volume of each reactant by its stoichiometric coefficient:<br>
+                        For $NH_3$: $\frac{20.0 \text{ L}}{4} = 5.00$<br>
+                        For $O_2$: $\frac{20.0 \text{ L}}{5} = 4.00$<br>
+                        Since $4.00 < 5.00$, Oxygen ($O_2$) is the <strong>Limiting Reagent</strong>.</p>
+
+                        <p><strong>Step 2: Calculate Product Volume based on LR</strong><br>
+                        We use the volume of $O_2$ ($20.0 \text{ L}$) to find the volume of $NO$.<br>
+                        Ratio of $O_2 : NO$ is $5 : 4$.<br>
+                        $V(NO) = V(O_2) \times \frac{4}{5}$<br>
+                        $V(NO) = 20.0 \times \frac{4}{5} = 16.0 \text{ L}$</p>
+
+                        <p><strong>Final Answer:</strong> The limiting reagent is $O_2$, and $\mathbf{16.0 \text{ L}}$ of $NO$ gas is produced.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Example 4: Unknown Empirical Formula</h4>
+                </div>
+                <div class="question-body">
+                    <p>Exactly $15.0 \text{ mL}$ of an unknown gaseous hydrocarbon ($C_xH_y$) undergoes complete combustion in excess Oxygen. The products are cooled to $120 ^\circ\text{C}$ (ensuring water remains a gas). The combustion yields $45.0 \text{ mL}$ of Carbon Dioxide gas and $60.0 \text{ mL}$ of Water Vapour. All volumes are measured at the same temperature and pressure.</p>
+                    <p>Determine the empirical formula of the hydrocarbon.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-gas-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-gas-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>Since conditions are constant, the volume ratios directly represent the mole ratios (coefficients) in the balanced chemical equation.</em></p>
+                        
+                        <p><strong>Step 1: Write the general skeleton equation</strong><br>
+                        $1 C_xH_y(g) + zO_2(g) \rightarrow xCO_2(g) + \frac{y}{2}H_2O(g)$</p>
+
+                        <p><strong>Step 2: Determine the Volume Ratios</strong><br>
+                        Hydrocarbon : $CO_2$ : $H_2O$<br>
+                        $15.0 \text{ mL} : 45.0 \text{ mL} : 60.0 \text{ mL}$</p>
+
+                        <p><strong>Step 3: Simplify the ratio to find coefficients</strong><br>
+                        Divide all volumes by the volume of the hydrocarbon ($15.0$):<br>
+                        $1 : 3 : 4$<br>
+                        This means 1 mole of hydrocarbon produces 3 moles of $CO_2$ and 4 moles of $H_2O$.</p>
+
+                        <p><strong>Step 4: Solve for $x$ and $y$</strong><br>
+                        Carbon: All carbon goes into $CO_2$. Since there are 3 moles of $CO_2$, there must be 3 Carbon atoms. $\therefore x = 3$.<br>
+                        Hydrogen: All hydrogen goes into $H_2O$. Since there are 4 moles of $H_2O$ (which each contain 2 hydrogens), there must be $4 \times 2 = 8$ Hydrogen atoms. $\therefore y = 8$.</p>
+
+                        <p><strong>Final Answer:</strong> The empirical formula is $\mathbf{C_3H_8}$ (Propane).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Put everything together. Identify when to use shortcuts and when to calculate moles. Write your working out on paper, explicitly checking your states ($s, l, aq, g$), reveal the solutions, and self-assess using the criteria.</p>
+
+            <div class="practise-question" id="q-gs-1">
+                <div class="question-header">
+                    <h4>Question 1: Pure Gas Reactants (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Nitrogen gas reacts with Oxygen gas to form Nitrogen Dioxide:<br>
+                    $N_2(g) + 2O_2(g) \rightarrow 2NO_2(g)$</p>
+                    <p>If $8.50 \text{ L}$ of Nitrogen gas completely reacts at constant temperature and pressure, calculate the volume of Nitrogen Dioxide gas produced.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gs-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gs-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gs-1">
+                    <p><strong>Hint:</strong> Everything is a gas! You don't need to find moles. Just look at the ratio of $N_2$ to $NO_2$ in the equation and multiply the volume by that ratio.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gs-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>Ratio of $N_2 : NO_2$ is $1 : 2$.</p>
+                        <p>$$ V(NO_2) = V(N_2) \times 2 $$</p>
+                        <p>$$ V(NO_2) = 8.50 \times 2 $$</p>
+                        <p>$$ V(NO_2) = \mathbf{17.0 \text{ L}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly identifies the 1:2 volume ratio between the reactant and product.</li>
+                            <li><strong>2 Marks:</strong> Correct final volume calculated ($17.0 \text{ L}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gs-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-gs-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gs-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gs-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-gs-2">
+                <div class="question-header">
+                    <h4>Question 2: Solid to Gas via PV=nRT (Medium)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Magnesium metal reacts with excess Hydrochloric Acid:<br>
+                    $Mg(s) + 2HCl(aq) \rightarrow MgCl_2(aq) + H_2(g)$</p>
+                    <p>Calculate the volume of Hydrogen gas produced when $12.5 \text{ g}$ of Magnesium completely reacts in a lab at $28.0 ^\circ\text{C}$ and $102 \text{ kPa}$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gs-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gs-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gs-2">
+                    <p><strong>Hint:</strong> <br>1. Calculate Moles of Mg ($m/MM$).<br>2. Find Moles of $H_2$ using the $1:1$ ratio.<br>3. Because the conditions ($28^\circ\text{C}$, $102\text{kPa}$) are NOT STP or SLC, you MUST use $V = nRT/P$ to find the final volume!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gs-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Moles of Mg:</strong><br>
+                        $n(Mg) = \frac{m}{MM} = \frac{12.5}{24.31} = 0.51419... \text{ mol}$</p>
+                        
+                        <p><strong>2. Moles of H₂:</strong><br>
+                        Ratio $Mg : H_2$ is $1 : 1$.<br>
+                        $n(H_2) = 0.51419... \text{ mol}$</p>
+
+                        <p><strong>3. Calculate Volume via Ideal Gas Law:</strong><br>
+                        $T = 28.0 + 273.15 = 301.15 \text{ K}$<br>
+                        $P = 102 \text{ kPa}$<br>
+                        $$ V = \frac{nRT}{P} $$
+                        $$ V = \frac{0.51419 \times 8.314 \times 301.15}{102} $$
+                        $$ V = \frac{1287.41...}{102} = \mathbf{12.62... \text{ L}} $$
+                        Rounding to 3 sig figs: $\mathbf{12.6 \text{ L}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates moles of Mg ($\approx 0.514 \text{ mol}$).</li>
+                            <li><strong>2 Marks:</strong> Determines moles of Hydrogen are equal ($1:1$ ratio).</li>
+                            <li><strong>3 Marks:</strong> Converts temperature to Kelvin and sets up $PV=nRT$ equation.</li>
+                            <li><strong>4 Marks:</strong> Correct final volume calculated ($\approx 12.6 \text{ L}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gs-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-gs-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gs-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gs-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-gs-3">
+                <div class="question-header">
+                    <h4>Question 3: Limiting Reagents with Mixed States (Hard)</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calcium Carbonate reacts with Hydrochloric Acid:<br>
+                    $CaCO_3(s) + 2HCl(aq) \rightarrow CaCl_2(aq) + CO_2(g) + H_2O(l)$</p>
+                    <p>If $15.0 \text{ g}$ of $CaCO_3$ is reacted with $100 \text{ mL}$ of $2.00 \text{ M}$ $HCl$ at Standard Laboratory Conditions (SLC), determine the limiting reagent and calculate the volume of $CO_2$ gas produced.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gs-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gs-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gs-3">
+                    <p><strong>Hint:</strong> <br>1. Find moles of $CaCO_3$ ($m/MM$).<br>2. Find moles of $HCl$ ($c \times V$, convert V to Litres).<br>3. Divide by coefficients to find the Limiting Reagent.<br>4. Use the moles of the LR to find moles of $CO_2$.<br>5. Use the SLC shortcut ($V = n \times 24.79$) to find the volume.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gs-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Moles of Reactants:</strong><br>
+                        $MM(CaCO_3) = 100.09 \text{ g/mol}$<br>
+                        $n(CaCO_3) = \frac{15.0}{100.09} = 0.14986... \text{ mol}$<br><br>
+                        $n(HCl) = c \times V = 2.00 \times 0.100 = 0.200 \text{ mol}$</p>
+                        
+                        <p><strong>2. Identify Limiting Reagent:</strong><br>
+                        Required ratio $CaCO_3 : HCl$ is $1 : 2$.<br>
+                        Testing $HCl$: $\frac{0.200}{2} = 0.100$<br>
+                        Since $0.100 < 0.1498$, <strong>$HCl$ is the Limiting Reagent</strong>.</p>
+
+                        <p><strong>3. Calculate Moles of Product ($CO_2$):</strong><br>
+                        Ratio $HCl : CO_2$ is $2 : 1$.<br>
+                        $n(CO_2) = \frac{n(HCl)}{2} = \frac{0.200}{2} = 0.100 \text{ mol}$</p>
+                        
+                        <p><strong>4. Convert Moles to Volume at SLC:</strong><br>
+                        Conditions are SLC, so $V_m = 24.79 \text{ L/mol}$.<br>
+                        $$ V(CO_2) = n \times 24.79 $$
+                        $$ V = 0.100 \times 24.79 = \mathbf{2.479 \text{ L}} $$
+                        Rounding to 3 sig figs: $\mathbf{2.48 \text{ L}}$.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates correct moles of $CaCO_3$ ($\approx 0.150 \text{ mol}$).</li>
+                            <li><strong>2 Marks:</strong> Calculates correct moles of $HCl$ ($0.200 \text{ mol}$).</li>
+                            <li><strong>3 Marks:</strong> Correctly identifies $HCl$ as the limiting reagent.</li>
+                            <li><strong>4 Marks:</strong> Uses the limiting reagent to find moles of $CO_2$ ($0.100 \text{ mol}$).</li>
+                            <li><strong>5 Marks:</strong> Correctly applies the SLC volume shortcut to find final volume ($\approx 2.48 \text{ L}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gs-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-gs-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gs-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gs-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-gs-4">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Question 4: Combustion Empirical Formula (Extension)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Exactly $20.0 \text{ mL}$ of an unknown gaseous hydrocarbon ($C_xH_y$) is combusted in excess Oxygen. The products are cooled to $150 ^\circ\text{C}$ at $101.3 \text{ kPa}$. The combustion yields exactly $80.0 \text{ mL}$ of Carbon Dioxide gas and $100.0 \text{ mL}$ of Water Vapour.</p>
+                    <p>Determine the molecular formula of the hydrocarbon, and state its IUPAC name.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-gs-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-gs-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-gs-4">
+                    <p><strong>Hint:</strong> 
+                    1. Divide the volume of $CO_2$ by the volume of hydrocarbon to find $x$ (Carbon atoms).<br>
+                    2. Divide the volume of $H_2O$ by the volume of hydrocarbon to find the coefficient of water. Multiply that coefficient by 2 to find $y$ (Hydrogen atoms).<br>
+                    3. Write the formula $C_xH_y$ and name it using your organic chemistry prefixes (Meth, Eth, Prop, But...).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-gs-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Write the general skeleton equation:</strong><br>
+                        $1 C_xH_y(g) + zO_2(g) \rightarrow xCO_2(g) + \frac{y}{2}H_2O(g)$</p>
+
+                        <p><strong>2. Determine the Volume Ratios:</strong><br>
+                        Hydrocarbon : $CO_2$ : $H_2O$<br>
+                        $20.0 \text{ mL} : 80.0 \text{ mL} : 100.0 \text{ mL}$</p>
+
+                        <p><strong>3. Simplify to find coefficients:</strong><br>
+                        Divide all by $20.0$:<br>
+                        $1 : 4 : 5$<br>
+                        This means 1 mole of hydrocarbon produces 4 moles of $CO_2$ and 5 moles of $H_2O$.</p>
+
+                        <p><strong>4. Solve for $x$ and $y$:</strong><br>
+                        Carbon: All carbon goes into $CO_2$. $\implies x = 4$.<br>
+                        Hydrogen: All hydrogen goes into $H_2O$. There are 5 moles of $H_2O$, each containing 2 hydrogens. $\implies y = 5 \times 2 = 10$.</p>
+
+                        <p><strong>Final Answer:</strong> The formula is $\mathbf{C_4H_{10}}$. The IUPAC name is <strong>Butane</strong>.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Simplifies the volumes into a workable 1:4:5 ratio.</li>
+                            <li><strong>2 Marks:</strong> Correctly determines the number of Carbon atoms ($x=4$).</li>
+                            <li><strong>3 Marks:</strong> Correctly determines the number of Hydrogen atoms ($y=10$), remembering to multiply the water coefficient by 2.</li>
+                            <li><strong>4 Marks:</strong> Correctly identifies the formula as $C_4H_{10}$ and names it Butane.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-gs-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-gs-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('gs-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-gs-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="module-2-summary.html" class="btn-next">Phase F: Proceed to Lesson 29: Formula Summary &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('gs-1');
+            checkIfQuestionAnswered('gs-2');
+            checkIfQuestionAnswered('gs-3');
+            checkIfQuestionAnswered('gs-4');
+
+            updateVolumeSim(); // Init Interactive 1
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: VOLUME RATIO SIMULATOR
+         * ==========================================
+         * Reaction: N2 + 3H2 -> 2NH3
+         */
+        function updateVolumeSim() {
+            const vN2 = parseFloat(document.getElementById('sim1-n2-slider').value);
+            const vH2 = parseFloat(document.getElementById('sim1-h2-slider').value);
+            
+            document.getElementById('sim1-n2-val').innerText = vN2.toFixed(1) + " L";
+            document.getElementById('sim1-h2-val').innerText = vH2.toFixed(1) + " L";
+
+            // Stoichiometry Math
+            // Ratio is 1 N2 to 3 H2.
+            // Let's find LR.
+            let requiredH2 = vN2 * 3;
+            let lr = "";
+            let vNH3 = 0;
+            let excess = "";
+            let usedN2 = 0;
+            let usedH2 = 0;
+
+            if (vH2 < requiredH2) {
+                // H2 is Limiting
+                lr = "H₂";
+                usedH2 = vH2;
+                usedN2 = vH2 / 3;
+                vNH3 = usedN2 * 2;
+                let excessN2 = vN2 - usedN2;
+                excess = `${excessN2.toFixed(1)} L N₂ remaining`;
+            } else if (vH2 > requiredH2) {
+                // N2 is Limiting
+                lr = "N₂";
+                usedN2 = vN2;
+                usedH2 = vN2 * 3;
+                vNH3 = usedN2 * 2;
+                let excessH2 = vH2 - usedH2;
+                excess = `${excessH2.toFixed(1)} L H₂ remaining`;
+            } else {
+                // Perfect stoichiometric ratio
+                lr = "None (Perfect Ratio)";
+                usedN2 = vN2;
+                usedH2 = vH2;
+                vNH3 = vN2 * 2;
+                excess = "0 L remaining";
+            }
+
+            // Update text analysis
+            document.getElementById('sim1-analysis').innerHTML = `Limiting Reagent: <strong style="color:#ef4444">${lr}</strong> | Produces: <strong style="color:#10b981">${vNH3.toFixed(1)} L NH₃</strong> | Excess: <strong>${excess}</strong>`;
+
+            // Draw visual blocks (max 20 blocks for performance, scale 1 block = 0.5L)
+            renderBlocks('blocks-n2', usedN2, vN2 - usedN2, 'block-n2');
+            renderBlocks('blocks-h2', usedH2, vH2 - usedH2, 'block-h2');
+            renderBlocks('blocks-nh3', vNH3, 0, 'block-nh3');
+        }
+
+        function renderBlocks(containerId, used, excess, mainClass) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            // Multiply by 2 because step is 0.5 (so 1L = 2 blocks visually)
+            let usedBlocks = Math.round(used * 2);
+            let excessBlocks = Math.round(excess * 2);
+
+            for(let i=0; i < usedBlocks; i++) {
+                let div = document.createElement('div');
+                div.className = `vol-block ${mainClass}`;
+                container.appendChild(div);
+            }
+            
+            for(let i=0; i < excessBlocks; i++) {
+                let div = document.createElement('div');
+                div.className = `vol-block block-excess`;
+                div.title = "Excess Unreacted Gas";
+                container.appendChild(div);
+            }
+            
+            // If total blocks is zero, show empty dashed
+            if (usedBlocks + excessBlocks === 0) {
+                 let div = document.createElement('div');
+                div.className = `vol-block block-empty`;
+                container.appendChild(div);
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 2: THE PIPELINE
+         * ==========================================
+         * Mg + 2HCl -> MgCl2 + H2
+         */
+        function runPipeline() {
+            const inputVal = document.getElementById('pipe-input').value;
+            if(!inputVal || inputVal <= 0) return;
+            
+            const mass = parseFloat(inputVal);
+            document.getElementById('pipe-mass').innerText = mass.toFixed(1) + " g";
+
+            // Step 1: Mass to Moles Mg
+            const MM_Mg = 24.31;
+            const molMg = mass / MM_Mg;
+            
+            setTimeout(() => {
+                const el = document.getElementById('pipe-mol-s');
+                el.innerText = molMg.toFixed(3);
+                el.style.transform = "scale(1.2)";
+                setTimeout(() => el.style.transform = "scale(1)", 300);
+            }, 500);
+
+            // Step 2: Moles Mg to Moles H2 (1:1 ratio)
+            const molH2 = molMg; // 1:1
+            setTimeout(() => {
+                const el = document.getElementById('pipe-mol-g');
+                el.innerText = molH2.toFixed(3);
+                el.style.transform = "scale(1.2)";
+                setTimeout(() => el.style.transform = "scale(1)", 300);
+            }, 1000);
+
+            // Step 3: Moles H2 to Volume (SLC -> 24.79)
+            const volH2 = molH2 * 24.79;
+            setTimeout(() => {
+                const el = document.getElementById('pipe-vol');
+                el.innerText = volH2.toFixed(1) + " L";
+                el.style.transform = "scale(1.3)";
+                el.style.textShadow = "0 0 10px #10b981";
+                setTimeout(() => {
+                    el.style.transform = "scale(1)";
+                    el.style.textShadow = "none";
+                }, 400);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

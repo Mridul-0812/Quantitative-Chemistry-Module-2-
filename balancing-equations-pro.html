@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4: Advanced Balancing (Pro Tricks)</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* Specific inline styles for the Dojo and interactive elements to ensure standalone functionality */
+        .ninja-card {
+            background: linear-gradient(145deg, rgba(20,20,30,0.8), rgba(40,40,60,0.8));
+            border: 1px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(176,38,255,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .ninja-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 80px;
+            height: 80px;
+            background: rgba(176,38,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(15deg);
+        }
+        .fraction-btn {
+            background: var(--accent-cyan);
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+        .fraction-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--accent-cyan);
+        }
+        .equation-box {
+            font-family: monospace;
+            font-size: 1.5rem;
+            background: rgba(0,0,0,0.6);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 1rem 0;
+            border: 1px dashed var(--accent-cyan);
+            transition: all 0.5s ease;
+        }
+        .highlight-coeff {
+            color: #ffeb3b;
+            font-weight: bold;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        .pop-animation {
+            animation: pop 0.4s ease-out;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); color: #fff; }
+            100% { transform: scale(1); }
+        }
+        .polyatomic-chunk {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 4px;
+            padding: 0.2rem 0.4rem;
+            margin: 0 0.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html" class="active">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>4. Advanced Balancing</h1>
+            <p class="subtitle">Welcome to the Balancing Dojo: Pro Tricks for Complex Equations</p>
+        </header>
+
+        <section class="content-section" id="theory-polyatomic">
+            <div class="ninja-card">
+                <div class="ninja-badge">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z"></path>
+                    </svg>
+                </div>
+                <h2>Trick #1: The Polyatomic "Chunking" Method</h2>
+                <p>When you encounter massive equations filled with polyatomic ions (like Nitrate $NO_3^-$, Sulfate $SO_4^{2-}$, or Phosphate $PO_4^{3-}$), counting individual Oxygen and Nitrogen atoms will quickly lead to madness.</p>
+                <p><strong>The Secret:</strong> If a polyatomic ion appears intact on <em>both sides</em> of the arrow, do not break it apart! Treat it as a single giant "chunk" or "block".</p>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                    <h4>Example:</h4>
+                    <p>Instead of balancing N and O separately in this reaction:</p>
+                    <p style="font-size: 1.2rem; text-align: center;">
+                        $Pb(\text{NO}_3)_2 + 2KI \rightarrow PbI_2 + 2K\text{NO}_3$
+                    </p>
+                    <p>Treat the <span class="polyatomic-chunk">$NO_3$</span> as a single entity.</p>
+                    <ul class="feature-list" style="margin-top: 0.5rem;">
+                        <li><strong>Reactants:</strong> 1 Lead, 2 Iodines, 2 <span class="polyatomic-chunk">$NO_3$</span> groups.</li>
+                        <li><strong>Products:</strong> 1 Lead, 2 Iodines, 2 <span class="polyatomic-chunk">$NO_3$</span> groups.</li>
+                    </ul>
+                    <p>Done in seconds.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="theory-water">
+            <div class="ninja-card">
+                <div class="ninja-badge" style="background: rgba(0,240,255,0.2);">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 12 2 12 2C12 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path>
+                        <path d="M12 18V12"></path>
+                        <path d="M9 15H15"></path>
+                    </svg>
+                </div>
+                <h2>Trick #2: The $H-OH$ Water Split</h2>
+                <p>Acid-base neutralisation reactions almost always produce water ($H_2O$). But counting Hydrogens and Oxygens in these reactions can be highly confusing because Hydrogen appears in the acid, the base, and the water.</p>
+                <p><strong>The Secret:</strong> Rewrite Water ($H_2O$) as Hydrogen Hydroxide: <span style="color: var(--accent-cyan); font-weight: bold;">$H-OH$</span>.</p>
+                <p>By doing this, you can treat the Hydroxide ion ($OH^-$) as a polyatomic chunk!</p>
+                
+                <div class="hidden-solution" style="display: block; background: rgba(0,240,255,0.05); border-left: 4px solid var(--accent-cyan); padding: 1.5rem; border-radius: 8px;">
+                    <h4>Let's look at Phosphoric Acid neutralising Calcium Hydroxide:</h4>
+                    <p><strong>Normal format (Hard to balance):</strong></p>
+                    <p>$$H_3PO_4 + Ca(OH)_2 \rightarrow Ca_3(PO_4)_2 + H_2O$$</p>
+                    
+                    <p><strong>Ninja format (Easy to balance):</strong></p>
+                    <p>$$H_3PO_4 + Ca(OH)_2 \rightarrow Ca_3(PO_4)_2 + H-OH$$</p>
+                    
+                    <ol>
+                        <li>Balance Calcium (Ca): Put a 3 in front of $Ca(OH)_2$.</li>
+                        <li>Balance Phosphate ($PO_4$): Put a 2 in front of $H_3PO_4$.</li>
+                        <li>Now count the pieces! We have $2 \times 3 = 6$ Hydrogens ($H$). We have $3 \times 2 = 6$ Hydroxides ($OH$).</li>
+                        <li>Therefore, we need 6 $H-OH$ molecules.</li>
+                    </ol>
+                    <p><strong>Final Balanced:</strong> $$2H_3PO_4 + 3Ca(OH)_2 \rightarrow Ca_3(PO_4)_2 + 6H_2O$$</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="theory-fractions">
+            <div class="ninja-card">
+                <h2>Trick #3: The Combustion Fraction Buster</h2>
+                <p>Combustion reactions involving alkanes (like Butane, $C_4H_{10}$) often leave you with an odd number of Oxygen atoms on the right, but $O_2$ on the left means you can only add Oxygen in pairs (even numbers). You end up needing something like "6.5" molecules of $O_2$.</p>
+                <p><strong>The Secret:</strong> Use the decimal/fraction! Write $6.5$ (or $\frac{13}{2}$). Since we cannot have half a molecule in a final answer, simply multiply the <em>entire equation</em> by 2.</p>
+                
+                <div style="background: rgba(0,0,0,0.5); padding: 2rem; border-radius: 12px; margin-top: 2rem; text-align: center; border: 1px solid var(--glass-border);">
+                    <h3 style="margin-top: 0;">Interactive: Bust the Fraction!</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">We have perfectly balanced the Carbons and Hydrogens, but Oxygen requires a decimal. Click the button to multiply everything by 2 and resolve the equation.</p>
+                    
+                    <div class="equation-box" id="interactive-equation">
+                        <span id="coeff-1" class="highlight-coeff">1</span> $C_4H_{10}$ 
+                        + 
+                        <span id="coeff-2" class="highlight-coeff" style="color: #ff5252;">6.5</span> $O_2$ 
+                        &rarr; 
+                        <span id="coeff-3" class="highlight-coeff">4</span> $CO_2$ 
+                        + 
+                        <span id="coeff-4" class="highlight-coeff">5</span> $H_2O$
+                    </div>
+                    
+                    <button class="fraction-btn" id="btn-bust" onclick="triggerFractionBuster()">Multiply Equation by 2!</button>
+                    <button class="btn-hint" id="btn-reset-bust" onclick="resetFractionBuster()" style="display: none; margin-top: 1rem;">Reset</button>
+
+                    <div id="buster-feedback" style="margin-top: 1.5rem; color: var(--success-green); font-weight: bold; opacity: 0; transition: opacity 0.5s;">
+                        Boom! Fraction busted. The equation is now completely balanced with whole numbers.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Masterclass: Worked Solutions</h2>
+            <p>Review these highly detailed examples of the ninja tricks in action before attempting the practice questions.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: Advanced Chunking</h4>
+                </div>
+                <p>Balance: $$Al_2(SO_4)_3 + Ba(NO_3)_2 \rightarrow BaSO_4 + Al(NO_3)_3$$</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Identify the chunks.</strong></p>
+                    <p>We have Sulfate ($SO_4$) and Nitrate ($NO_3$) on both sides.</p>
+                    <p><strong>Step 2: Balance Aluminium (Al).</strong></p>
+                    <p>Left: 2 Al. Right: 1 Al. Put a 2 in front of Aluminium Nitrate.</p>
+                    <p>$$Al_2(SO_4)_3 + Ba(NO_3)_2 \rightarrow BaSO_4 + 2Al(NO_3)_3$$</p>
+                    <p><strong>Step 3: Balance Nitrate ($NO_3$).</strong></p>
+                    <p>Right: $2 \times 3 = 6$ Nitrates. Left: 2 Nitrates. Put a 3 in front of Barium Nitrate.</p>
+                    <p>$$Al_2(SO_4)_3 + 3Ba(NO_3)_2 \rightarrow BaSO_4 + 2Al(NO_3)_3$$</p>
+                    <p><strong>Step 4: Balance Barium (Ba).</strong></p>
+                    <p>Left: 3 Ba. Right: 1 Ba. Put a 3 in front of Barium Sulfate.</p>
+                    <p>$$Al_2(SO_4)_3 + 3Ba(NO_3)_2 \rightarrow 3BaSO_4 + 2Al(NO_3)_3$$</p>
+                    <p><strong>Step 5: Check Sulfate ($SO_4$).</strong></p>
+                    <p>Left: 3 Sulfates. Right: 3 Sulfates. Perfectly balanced!</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Liquid Octane Combustion</h4>
+                </div>
+                <p>Balance the combustion of Octane: $$C_8H_{18} + O_2 \rightarrow CO_2 + H_2O$$</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Balance Carbon.</strong></p>
+                    <p>Put an 8 in front of $CO_2$: $$C_8H_{18} + O_2 \rightarrow 8CO_2 + H_2O$$</p>
+                    <p><strong>Step 2: Balance Hydrogen.</strong></p>
+                    <p>Put a 9 in front of $H_2O$: $$C_8H_{18} + O_2 \rightarrow 8CO_2 + 9H_2O$$</p>
+                    <p><strong>Step 3: Count Oxygen on the right.</strong></p>
+                    <p>$(8 \times 2) + (9 \times 1) = 16 + 9 = 25$ Oxygen atoms.</p>
+                    <p><strong>Step 4: Use a fraction for $O_2$.</strong></p>
+                    <p>We need $25/2$ or $12.5$ $O_2$ molecules.</p>
+                    <p>$$C_8H_{18} + 12.5O_2 \rightarrow 8CO_2 + 9H_2O$$</p>
+                    <p><strong>Step 5: Bust the fraction!</strong></p>
+                    <p>Multiply every coefficient by 2.</p>
+                    <p>$$2C_8H_{18} + 25O_2 \rightarrow 16CO_2 + 18H_2O$$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Complex Redox (Algebraic Sneak Peek)</h4>
+                </div>
+                <p>Balance: $$NH_3 + O_2 \rightarrow NO + H_2O$$</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                <div id="ws-3" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Balance Hydrogen first.</strong></p>
+                    <p>Left: 3 H. Right: 2 H. Common multiple is 6.</p>
+                    <p>Put 2 in front of $NH_3$ and 3 in front of $H_2O$.</p>
+                    <p>$$2NH_3 + O_2 \rightarrow NO + 3H_2O$$</p>
+                    <p><strong>Step 2: Balance Nitrogen.</strong></p>
+                    <p>Left: 2 N. Right: 1 N. Put 2 in front of $NO$.</p>
+                    <p>$$2NH_3 + O_2 \rightarrow 2NO + 3H_2O$$</p>
+                    <p><strong>Step 3: Count Oxygen.</strong></p>
+                    <p>Right side: $2$ (from $NO$) + $3$ (from $H_2O$) = 5 Oxygen atoms.</p>
+                    <p>Left side has $O_2$. So we need $5/2$ or $2.5$.</p>
+                    <p>$$2NH_3 + 2.5O_2 \rightarrow 2NO + 3H_2O$$</p>
+                    <p><strong>Step 4: Bust the fraction.</strong></p>
+                    <p>Multiply everything by 2.</p>
+                    <p>$$4NH_3 + 5O_2 \rightarrow 4NO + 6H_2O$$</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise">
+            <h2>Pro Practice Arena</h2>
+            <p>Test your skills. Use the strategies outlined above. For complex equations, get a pen and paper.</p>
+
+            <div class="practise-question" id="q-pro-1">
+                <div class="question-header">
+                    <h4>Question 1: The Iron-Sulfate Swap</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Balance the following equation using the chunking method:</p>
+                    <p>$$Fe(NO_3)_3 + Na_2SO_4 \rightarrow Fe_2(SO_4)_3 + NaNO_3$$</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-pro-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-pro-1')">Reveal Answer</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-pro-1" style="display: none;">
+                    <p><strong>Hint:</strong> Start by balancing the Iron (Fe) and the Sulfate ($SO_4$) chunks first. Iron needs a 2 on the left. Sulfate needs a 3 on the left.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-pro-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Balanced Equation:</h5>
+                        <p>$$2Fe(NO_3)_3 + 3Na_2SO_4 \rightarrow Fe_2(SO_4)_3 + 6NaNO_3$$</p>
+                        <p><em>Check: 2 Fe, 6 $NO_3$, 6 Na, 3 $SO_4$ on both sides.</em></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly balances the reactants with coefficients 2 and 3.</li>
+                            <li><strong>2 Marks:</strong> Entirely balanced equation with a 6 in front of Sodium Nitrate.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-pro-1">Mark:</label>
+                        <select id="mark-selector-pro-1" class="mark-dropdown">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('pro-1')">Submit</button>
+                        <span class="mark-feedback" id="feedback-pro-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-pro-2">
+                <div class="question-header">
+                    <h4>Question 2: The Sulfuric Split</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Balance this neutralisation reaction using the $H-OH$ trick:</p>
+                    <p>$$H_2SO_4 + Al(OH)_3 \rightarrow Al_2(SO_4)_3 + H_2O$$</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-pro-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-pro-2')">Reveal Answer</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-pro-2" style="display: none;">
+                    <p><strong>Hint:</strong> Rewrite $H_2O$ as $H-OH$. Put a 3 in front of the acid to balance the sulfate, and a 2 in front of the base to balance the aluminium. How many $H$ and $OH$ do you have now?</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-pro-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Balanced Equation:</h5>
+                        <p>$$3H_2SO_4 + 2Al(OH)_3 \rightarrow Al_2(SO_4)_3 + 6H_2O$$</p>
+                        <p><em>Reasoning: 3 acids give 6 H. 2 bases give 6 OH. Together they make 6 $H-OH$ ($H_2O$).</em></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies that 3 sulfates and 2 aluminiums are needed on the left.</li>
+                            <li><strong>2 Marks:</strong> Correctly balances water with a coefficient of 6.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-pro-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('pro-2')">Submit</button>
+                        <span class="mark-feedback" id="feedback-pro-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-pro-3">
+                <div class="question-header">
+                    <h4>Question 3: Combusting Benzene</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Benzene is a highly flammable hydrocarbon liquid. Balance its combustion equation:</p>
+                    <p>$$C_6H_6 + O_2 \rightarrow CO_2 + H_2O$$</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-pro-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-pro-3')">Reveal Answer</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-pro-3" style="display: none;">
+                    <p><strong>Hint:</strong> $C_6H_6$ means you need 6 $CO_2$ and 3 $H_2O$. This gives 15 Oxygen atoms on the right. 15 divided by 2 is 7.5. What do you do with 7.5?</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-pro-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Balanced Equation:</h5>
+                        <p>$$2C_6H_6 + 15O_2 \rightarrow 12CO_2 + 6H_2O$$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Initial setup of $6CO_2$ and $3H_2O$.</li>
+                            <li><strong>2 Marks:</strong> Identifies the need for $7.5$ or $\frac{15}{2}$ $O_2$.</li>
+                            <li><strong>3 Marks:</strong> Accurately multiplies the entire equation by 2 to yield integer coefficients.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-pro-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('pro-3')">Submit</button>
+                        <span class="mark-feedback" id="feedback-pro-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-pro-4">
+                <div class="question-header">
+                    <h4>Question 4: Ammonium Phosphate Synthesis</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Balance this double displacement containing two different polyatomic chunks:</p>
+                    <p>$$(NH_4)_3PO_4 + Pb(NO_3)_4 \rightarrow Pb_3(PO_4)_4 + NH_4NO_3$$</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-pro-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-pro-4')">Reveal Answer</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-pro-4" style="display: none;">
+                    <p><strong>Hint:</strong> The chunks are Ammonium ($NH_4$), Phosphate ($PO_4$), and Nitrate ($NO_3$). Start with the most complex molecule: $Pb_3(PO_4)_4$. It requires 3 Lead and 4 Phosphates.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-pro-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Balanced Equation:</h5>
+                        <p>$$4(NH_4)_3PO_4 + 3Pb(NO_3)_4 \rightarrow Pb_3(PO_4)_4 + 12NH_4NO_3$$</p>
+                        <p><em>Reasoning: To get 3 Lead, multiply $Pb(NO_3)_4$ by 3 (gives 12 Nitrates). To get 4 Phosphates, multiply $(NH_4)_3PO_4$ by 4 (gives 12 Ammoniums). 12 Ammoniums and 12 Nitrates perfectly make 12 $NH_4NO_3$.</em></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Places a 4 in front of Ammonium Phosphate.</li>
+                            <li><strong>2 Marks:</strong> Places a 3 in front of Lead(IV) Nitrate.</li>
+                            <li><strong>3 Marks:</strong> Places a 12 in front of Ammonium Nitrate.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-pro-4" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('pro-4')">Submit</button>
+                        <span class="mark-feedback" id="feedback-pro-4"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-pro-5">
+                <div class="question-header">
+                    <h4>Question 5: The Final Boss</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>This is a notoriously difficult equation. Use all your skills to balance the reaction of Potassium Permanganate with Hydrochloric Acid:</p>
+                    <p>$$KMnO_4 + HCl \rightarrow KCl + MnCl_2 + H_2O + Cl_2$$</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-pro-5')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-pro-5')">Reveal Answer</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-pro-5" style="display: none;">
+                    <p><strong>Hint:</strong> 
+                    1. Balance Oxygen first. Put a 4 in front of $H_2O$.<br>
+                    2. This means you need 8 $HCl$.<br>
+                    3. Count Chlorine on the right. You have 1 (in KCl) + 2 (in $MnCl_2$) + 2 (in $Cl_2$) = 5. But you have 8 on the left. You need a fraction of $Cl_2$ to make up the difference!<br>
+                    4. Specifically, you need $5/2$ $Cl_2$. Then bust the fraction.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-pro-5" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Balanced Equation:</h5>
+                        <p>$$2KMnO_4 + 16HCl \rightarrow 2KCl + 2MnCl_2 + 8H_2O + 5Cl_2$$</p>
+                        <p><em>Check: 2 K, 2 Mn, 8 O, 16 H, 16 Cl on both sides.</em></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly balances Oxygen and Hydrogen initially ($4H_2O$ and $8HCl$).</li>
+                            <li><strong>2 Marks:</strong> Identifies the uneven distribution of Chlorine.</li>
+                            <li><strong>3 Marks:</strong> Applies the fraction multiplier concept correctly across the whole equation.</li>
+                            <li><strong>4 Marks:</strong> Correct final integer coefficients: 2, 16 -> 2, 2, 8, 5.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-pro-5" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('pro-5')">Submit</button>
+                        <span class="mark-feedback" id="feedback-pro-5"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="content-section" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px;">
+            <h2 style="margin-top: 0;">🥋 Ninja Cheat Sheet</h2>
+            <ul style="line-height: 1.8;">
+                <li><strong>The MINOH order:</strong> Metals &rarr; Ions (Polyatomic) &rarr; Non-metals &rarr; Oxygen &rarr; Hydrogen.</li>
+                <li><strong>Keep chunks together:</strong> Don't split $SO_4$, $NO_3$, $PO_4$ if they exist on both sides.</li>
+                <li><strong>Acid + Base = $H-OH$:</strong> Always rewrite water this way when dealing with hydroxides.</li>
+                <li><strong>Fractions are your friends:</strong> Use $.5$ for diatomic molecules (like $O_2$, $Cl_2$) to fix odd numbers, then multiply the whole street by 2.</li>
+                <li><strong>Never, ever touch the subscript:</strong> That's not being a ninja, that's committing alchemy.</li>
+            </ul>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="what-is-a-mole.html" class="btn-next">Proceed to Phase B: What is a Mole? &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * GLOBAL SYSTEM INITIALISATION
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            ['pro-1', 'pro-2', 'pro-3', 'pro-4', 'pro-5'].forEach(id => checkIfQuestionAnswered(id));
+        });
+
+        /**
+         * FRACTION BUSTER INTERACTIVE WIDGET LOGIC
+         */
+        function triggerFractionBuster() {
+            const coeffs = ['coeff-1', 'coeff-2', 'coeff-3', 'coeff-4'];
+            const targets = [2, 13, 8, 10]; // Multiplied by 2
+            
+            coeffs.forEach((id, index) => {
+                const el = document.getElementById(id);
+                // Trigger animation
+                el.classList.add('pop-animation');
+                
+                // Change text mid-animation
+                setTimeout(() => {
+                    el.innerText = targets[index];
+                    el.style.color = '#ffeb3b'; // Unify color after fix
+                }, 200);
+
+                // Remove class after animation
+                setTimeout(() => {
+                    el.classList.remove('pop-animation');
+                }, 400);
+            });
+
+            // Update border and feedback
+            const box = document.getElementById('interactive-equation');
+            box.style.borderColor = 'var(--success-green)';
+            box.style.boxShadow = '0 0 20px rgba(0, 230, 118, 0.2)';
+
+            document.getElementById('btn-bust').style.display = 'none';
+            document.getElementById('btn-reset-bust').style.display = 'inline-block';
+            document.getElementById('buster-feedback').style.opacity = '1';
+        }
+
+        function resetFractionBuster() {
+            const coeffs = ['coeff-1', 'coeff-2', 'coeff-3', 'coeff-4'];
+            const targets = ['1', '6.5', '4', '5'];
+            
+            coeffs.forEach((id, index) => {
+                const el = document.getElementById(id);
+                el.innerText = targets[index];
+            });
+            document.getElementById('coeff-2').style.color = '#ff5252';
+
+            const box = document.getElementById('interactive-equation');
+            box.style.borderColor = 'var(--accent-cyan)';
+            box.style.boxShadow = 'none';
+
+            document.getElementById('btn-bust').style.display = 'inline-block';
+            document.getElementById('btn-reset-bust').style.display = 'none';
+            document.getElementById('buster-feedback').style.opacity = '0';
+        }
+
+        /**
+         * UI TOGGLES (Hints & Solutions)
+         */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                // Request MathJax to re-render dynamically revealed elements
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        /**
+         * LOCAL STORAGE MARKING ENGINE
+         */
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            // Save to storage
+            localStorage.setItem(storageKey, selectedMark);
+
+            // Update UI
+            feedbackSpan.innerHTML = `<strong> Ninja skills approved: ${selectedMark} mark(s) saved.</strong>`;
+            feedbackSpan.style.color = "var(--success-green)";
+
+            // Push to global score
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                // Flash the score to indicate it changed
+                displayElement.style.color = "var(--success-green)";
+                displayElement.innerText = totalScore;
+                setTimeout(() => {
+                    displayElement.style.color = "inherit";
+                }, 500);
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                    feedbackSpan.style.color = "var(--text-secondary)";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

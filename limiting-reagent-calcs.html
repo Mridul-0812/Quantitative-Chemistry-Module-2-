@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 13: Limiting Reagent Calculations | The Stoichiometry Lab</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* =========================================================
+           LESSON 13 SPECIFIC STYLES - ADVANCED UI ELEMENTS
+           ========================================================= 
+        */
+        :root {
+            --lab-bg: #0f172a;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-pink: #ff2d55;
+            --neon-blue: #00f2ff;
+            --neon-yellow: #f3ff00;
+            --success-glow: #00ff88;
+        }
+
+        body {
+            background-color: var(--lab-bg);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Glassmorphism Section Cards */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+        }
+
+        /* The "Forbidden Zone" Warning */
+        .forbidden-zone {
+            border: 3px dashed var(--neon-pink);
+            background: rgba(255, 45, 85, 0.1);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .forbidden-zone::before {
+            content: "⚠️ DANGER: COMMON ERROR";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--neon-pink);
+            color: white;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-bottom-left-radius: 1rem;
+        }
+
+        /* Custom Buttons */
+        .btn-lab {
+            background: linear-gradient(135deg, var(--neon-blue), #0066ff);
+            color: #000;
+            font-weight: 800;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .btn-lab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.7);
+        }
+
+        /* Interactive 1: The Molecular Reactor */
+        #reactor-container {
+            width: 100%;
+            height: 500px;
+            background: #000;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #reactor-canvas {
+            flex-grow: 1;
+            cursor: crosshair;
+        }
+
+        .reactor-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+        }
+
+        /* Interactive 2: The Stoichiometry Race */
+        .race-track {
+            height: 120px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            margin: 10px 0;
+            border-radius: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .racer {
+            height: 100%;
+            width: 80px;
+            position: absolute;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            transition: left 0.1s linear;
+        }
+
+        .finish-line {
+            position: absolute;
+            right: 20px;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            background: repeating-linear-gradient(45deg, #fff, #fff 10px, #000 10px, #000 20px);
+        }
+
+        /* Formula Display */
+        .formula-box {
+            background: rgba(0, 242, 255, 0.05);
+            border-left: 5px solid var(--neon-blue);
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-blue); }
+
+        /* Step Indicator */
+        .step-pill {
+            display: inline-block;
+            background: var(--neon-blue);
+            color: #000;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html" class="active">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+
+            <li class="nav-section-title">Phase D: Concentration & Solutions</li>
+            <li><a href="concentration-basics.html">16. Concentration Basics</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            <li><a href="titration-intro.html">20. Titration Intro</a></li>
+
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-laws-boyle-charles.html">21. Gas Laws (Boyle/Charles)</a></li>
+            <li><a href="ideal-gas-law.html">22. Ideal Gas Law</a></li>
+            <li><a href="molar-volume.html">23. Molar Volume at STP/RTP</a></li>
+            <li><a href="gay-lussacs-law.html">24. Gay-Lussac's Law</a></li>
+            <li><a href="avogadros-law.html">25. Avogadro's Law</a></li>
+
+            <li class="nav-section-title">Phase F: Advanced Applications</li>
+            <li><a href="stoich-gases.html">26. Stoichiometry with Gases</a></li>
+            <li><a href="stoich-solutions.html">27. Stoichiometry with Solutions</a></li>
+            <li><a href="complex-multi-step.html">28. Complex Multi-Step Calcs</a></li>
+            
+            <li class="nav-section-title">Phase G: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1 class="neon-text">13. Limiting Reagent Calculations</h1>
+            <p class="subtitle">The Formal Mathematical Approach to "Who Runs Out First?"</p>
+        </header>
+
+        <section class="glass-card">
+            <h2>The Protocol: Formal Calculation Steps</h2>
+            <p>In the last lesson, we looked at the *logic* of the Limiting Reagent (LR). Today, we combine that logic with the full <strong>Mass $\rightarrow$ Mole $\rightarrow$ Mole $\rightarrow$ Mass</strong> workflow. This is the "Final Boss" of stoichiometry for many students, but if you follow these five steps, you literally cannot fail.</p>
+            
+            
+
+            <div class="formula-box">
+                <span class="step-pill">STEP 1</span> <strong>Balance and Identify:</strong> Write the balanced chemical equation. If the products aren't given, use your Module 2 knowledge to deduce them. Ensure states like $(s)$, $(l)$, $(g)$, or $(aq)$ are included.<br><br>
+                <span class="step-pill">STEP 2</span> <strong>Find Starting Moles:</strong> Convert the given mass (grams) of <em>both</em> (or all) reactants into moles using:
+                $$n = \frac{m}{MM}$$
+                <span class="step-pill">STEP 3</span> <strong>The Comparison (Test Value):</strong> Divide each reactant's moles by its stoichiometric coefficient.
+                $$\text{Test Value} = \frac{\text{Actual Moles (n)}}{\text{Coefficient in Equation}}$$
+                <strong>The reactant with the SMALLEST Test Value is the Limiting Reagent.</strong><br><br>
+                <span class="step-pill">STEP 4</span> <strong>The Product Link:</strong> Use the <em>actual moles</em> of your identified Limiting Reagent (not the test value!) to calculate the moles of the product you want.
+                $$n(\text{want}) = n(\text{have}) \times \frac{\text{Coefficient (want)}}{\text{Coefficient (have)}}$$
+                <span class="step-pill">STEP 5</span> <strong>Final Conversion:</strong> Convert the moles of product back into mass (grams) or volume if required.
+                $$m = n \times MM$$
+            </div>
+        </section>
+
+        <section class="glass-card">
+            <h2>Short Summary & Concept Recap</h2>
+            <p>Why do we need a "Test Value"? Because chemicals aren't used up in a 1-to-1 race. If an equation says $2A + 1B \rightarrow C$, you are using up substance $A$ <strong>twice as fast</strong> as $B$. Even if you start with the same amount of both, $A$ will vanish first.</p>
+            
+            <div class="forbidden-zone">
+                <h4>DO NOT BE TRICKED!</h4>
+                <p>The "Test Value" found in Step 3 is a <strong>temporary ghost number</strong>. Its only purpose is to help you pick the winner. Once you have identified the Limiting Reagent, <strong>delete the test values from your brain</strong>. For all subsequent calculations (Steps 4 and 5), you must go back and use the <em>original actual moles</em> you calculated in Step 2.</p>
+            </div>
+        </section>
+
+        <section class="glass-card">
+            <h2>Interactivity 1: The Molecular Constructor</h2>
+            <p>Experience the math visually. Adjust the starting mass of the reactants. Watch as the machine converts them to moles, identifies the limiting reagent, and constructs the maximum possible product atoms!</p>
+            
+            <div id="reactor-container">
+                <canvas id="reactor-canvas"></canvas>
+                <div class="reactor-controls">
+                    <div>
+                        <label>Magnesium (g):</label>
+                        <input type="range" id="mass-mg" min="1" max="50" value="12" oninput="runSimulation()">
+                        <span id="mass-mg-label">12g</span>
+                    </div>
+                    <div>
+                        <label>Chlorine Gas (g):</label>
+                        <input type="range" id="mass-cl" min="1" max="100" value="71" oninput="runSimulation()">
+                        <span id="mass-cl-label">71g</span>
+                    </div>
+                    <div id="sim-stats" style="grid-column: span 2; font-family: monospace; font-size: 0.9rem; color: var(--neon-blue);">
+                        Moles Mg: 0.50 | Moles Cl2: 1.00 | LR: Magnesium
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-card">
+            <h2>Interactivity 2: The Reagent Race</h2>
+            <p>Equation: $2H_2 + O_2 \rightarrow 2H_2O$. Hydrogen is consumed twice as fast. If we start the race with these amounts, who hits zero first? Click <strong>START RACE</strong> to find out!</p>
+            
+            <div class="race-track">
+                <div id="racer-h2" class="racer">🔵<span style="font-size: 0.8rem; background: #000;">H₂</span></div>
+                <div class="finish-line"></div>
+            </div>
+            <div class="race-track">
+                <div id="racer-o2" class="racer">🔴<span style="font-size: 0.8rem; background: #000;">O₂</span></div>
+                <div class="finish-line"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 20px;">
+                <label>H₂ Moles:</label>
+                <input type="number" id="race-h2-input" value="10" step="1" style="width: 60px;">
+                <label>O₂ Moles:</label>
+                <input type="number" id="race-o2-input" value="6" step="1" style="width: 60px;">
+                <button class="btn-lab" onclick="startRace()">START RACE</button>
+            </div>
+            <p id="race-result" style="margin-top: 15px; font-weight: bold; color: var(--neon-pink);"></p>
+        </section>
+
+        <section class="glass-card">
+            <h2 class="neon-text">Worked Examples</h2>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-pill">LEVEL: EASY</span>
+                    <h4>Example 1: The Haber Process</h4>
+                </div>
+                <p>Nitrogen gas reacts with hydrogen gas to form ammonia ($NH_3$). If $4.0\text{ mol}$ of $N_2$ reacts with $9.0\text{ mol}$ of $H_2$, find the moles of ammonia produced.</p>
+                <button class="btn-lab" onclick="toggleSolution('we-1')">Reveal Solution</button>
+                <div id="we-1" class="hidden-solution" style="display:none; margin-top:1rem;">
+                    <p><strong>Step 1: Balanced Equation</strong><br>$N_2(g) + 3H_2(g) \rightarrow 2NH_3(g)$</p>
+                    <p><strong>Step 2: Moles (Given)</strong><br>$n(N_2) = 4.0\text{ mol}$ | $n(H_2) = 9.0\text{ mol}$</p>
+                    <p><strong>Step 3: Limiting Reagent Test</strong><br>Test $N_2$: $4.0 / 1 = 4.0$<br>Test $H_2$: $9.0 / 3 = 3.0$<br>$\rightarrow 3.0 < 4.0$, so <strong>$H_2$ is the Limiting Reagent</strong>.</p>
+                    <p><strong>Step 4: Moles of Product</strong><br>Use $H_2$ moles ($9.0\text{ mol}$). Ratio $NH_3 : H_2$ is $2 : 3$.<br>$n(NH_3) = 9.0 \times \frac{2}{3} = \mathbf{6.0\text{ mol}}$</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-pill">LEVEL: MEDIUM</span>
+                    <h4>Example 2: Metal and Acid</h4>
+                </div>
+                <p>A $12.15\text{g}$ strip of Magnesium is dropped into a solution containing $21.90\text{g}$ of Hydrochloric acid ($HCl$). Calculate the mass of Hydrogen gas produced.</p>
+                <button class="btn-lab" onclick="toggleSolution('we-2')">Reveal Solution</button>
+                <div id="we-2" class="hidden-solution" style="display:none; margin-top:1rem;">
+                    <p><strong>Step 1: Equation</strong><br>$Mg(s) + 2HCl(aq) \rightarrow MgCl_2(aq) + H_2(g)$</p>
+                    <p><strong>Step 2: Starting Moles</strong><br>$n(Mg) = 12.15 / 24.31 = 0.50\text{ mol}$<br>$n(HCl) = 21.90 / 36.46 = 0.60\text{ mol}$</p>
+                    <p><strong>Step 3: LR Test</strong><br>Test $Mg$: $0.50 / 1 = 0.50$<br>Test $HCl$: $0.60 / 2 = 0.30$<br>$\rightarrow HCl$ is the <strong>Limiting Reagent</strong>.</p>
+                    <p><strong>Step 4: Product Moles</strong><br>Ratio $H_2 : HCl$ is $1 : 2$.<br>$n(H_2) = 0.60 \times \frac{1}{2} = 0.30\text{ mol}$</p>
+                    <p><strong>Step 5: Final Mass</strong><br>$m(H_2) = 0.30 \times 2.016 = \mathbf{0.605\text{g}}$</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-pill">LEVEL: HARD</span>
+                    <h4>Example 3: Burning Propane</h4>
+                </div>
+                <p>$22.0\text{g}$ of Propane ($C_3H_8$) is burned in $96.0\text{g}$ of Oxygen gas. Calculate the mass of Carbon Dioxide formed.</p>
+                <button class="btn-lab" onclick="toggleSolution('we-3')">Reveal Solution</button>
+                <div id="we-3" class="hidden-solution" style="display:none; margin-top:1rem;">
+                    <p><strong>Step 1: Equation</strong><br>$C_3H_8(g) + 5O_2(g) \rightarrow 3CO_2(g) + 4H_2O(l)$</p>
+                    <p><strong>Step 2: Moles</strong><br>$n(C_3H_8) = 22.0 / 44.1 = 0.50\text{ mol}$<br>$n(O_2) = 96.0 / 32.0 = 3.00\text{ mol}$</p>
+                    <p><strong>Step 3: LR Test</strong><br>Test Propane: $0.50 / 1 = 0.50$<br>Test Oxygen: $3.00 / 5 = 0.60$<br>$\rightarrow$ Propane is the <strong>Limiting Reagent</strong>.</p>
+                    <p><strong>Step 4 & 5: Product</strong><br>$n(CO_2) = 0.50 \times \frac{3}{1} = 1.50\text{ mol}$<br>$m(CO_2) = 1.50 \times 44.01 = \mathbf{66.02\text{g}}$</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-pill" style="background:var(--neon-pink)">LEVEL: EXTENSION</span>
+                    <h4>Example 4: Acid + Carbonate</h4>
+                </div>
+                <p>$10.0\text{g}$ of Calcium Carbonate is added to $0.15\text{ mol}$ of Nitric Acid ($HNO_3$). Calculate the volume of $CO_2$ gas produced at STP ($22.71\text{ L/mol}$).</p>
+                <button class="btn-lab" onclick="toggleSolution('we-4')">Reveal Solution</button>
+                <div id="we-4" class="hidden-solution" style="display:none; margin-top:1rem;">
+                    <p><strong>Step 1: Equation (3 Products!)</strong><br>$CaCO_3(s) + 2HNO_3(aq) \rightarrow Ca(NO_3)_2(aq) + CO_2(g) + H_2O(l)$</p>
+                    <p><strong>Step 2: Moles</strong><br>$n(CaCO_3) = 10.0 / 100.09 = 0.10\text{ mol}$<br>$n(HNO_3) = 0.15\text{ mol}$ (Already in moles!)</p>
+                    <p><strong>Step 3: LR Test</strong><br>Test Carbonate: $0.10 / 1 = 0.10$<br>Test Acid: $0.15 / 2 = 0.075$<br>$\rightarrow HNO_3$ is the <strong>Limiting Reagent</strong>.</p>
+                    <p><strong>Step 4: $CO_2$ Moles</strong><br>Ratio $CO_2 : HNO_3$ is $1 : 2$.<br>$n(CO_2) = 0.15 \times 0.5 = 0.075\text{ mol}$</p>
+                    <p><strong>Step 5: Volume</strong><br>$V = 0.075 \times 22.71 = \mathbf{1.70\text{ L}}$</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-card">
+            <h2 class="neon-text">Test Your Knowledge</h2>
+            <p>Deduce the products, balance the equation, find the LR, and calculate the final quantity. (Atomic masses: $H=1.008, C=12.01, O=16.00, Al=26.98, Cl=35.45$)</p>
+
+            <div class="practise-question" id="pq-1">
+                <div class="question-header">
+                    <h4>Question 1 (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <p>Methane burns in oxygen. If you have $0.8\text{ mol}$ of methane and $1.2\text{ mol}$ of oxygen, how many moles of Water are produced?</p>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-pq-1')">Hint</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-pq-1')">Solution</button>
+                </div>
+                <div id="h-pq-1" class="hidden-hint" style="display:none;">Equation: $CH_4 + 2O_2 \rightarrow CO_2 + 2H_2O$. Test: $0.8/1$ vs $1.2/2$.</div>
+                <div id="s-pq-1" class="hidden-solution" style="display:none;">
+                    <p>Test $CH_4 = 0.8$, Test $O_2 = 0.6$. $O_2$ is limiting.<br>$n(H_2O) = 1.2\text{ mol} \times (2/2) = \mathbf{1.2\text{ mol}}$.</p>
+                </div>
+            </div>
+
+            <div class="practise-question" id="pq-2">
+                <div class="question-header">
+                    <h4>Question 2 (Medium)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <p>Solid Aluminium reacts with Chlorine gas to form Aluminium Chloride. If $5.4\text{g}$ of Aluminium and $21.3\text{g}$ of Chlorine are reacted, calculate the mass of product formed.</p>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-pq-2')">Hint</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-pq-2')">Solution</button>
+                </div>
+                <div id="h-pq-2" class="hidden-hint" style="display:none;">$2Al + 3Cl_2 \rightarrow 2AlCl_3$. Find moles of both first.</div>
+                <div id="s-pq-2" class="hidden-solution" style="display:none;">
+                    <p>$n(Al) = 5.4/26.98 = 0.2\text{ mol}$. Test: $0.2/2 = 0.1$.<br>$n(Cl_2) = 21.3/70.9 = 0.3\text{ mol}$. Test: $0.3/3 = 0.1$.<br>It's a perfect tie! Both are limiting.<br>$n(AlCl_3) = 0.2\text{ mol}$.<br>$m = 0.2 \times 133.33 = \mathbf{26.67\text{g}}$.</p>
+                </div>
+            </div>
+
+            <div class="practise-question" id="pq-3">
+                <div class="question-header">
+                    <h4>Question 3 (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <p>$10.0\text{g}$ of Iron (III) Oxide reacts with $5.0\text{g}$ of Carbon Monoxide gas to form Pure Iron and Carbon Dioxide. Calculate the mass of Iron produced.</p>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-pq-3')">Hint</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-pq-3')">Solution</button>
+                </div>
+                <div id="h-pq-3" class="hidden-hint" style="display:none;">$Fe_2O_3 + 3CO \rightarrow 2Fe + 3CO_2$.</div>
+                <div id="s-pq-3" class="hidden-solution" style="display:none;">
+                    <p>$n(Fe_2O_3) = 10 / 159.7 = 0.0626\text{ mol}$ (Test: $0.0626$).<br>$n(CO) = 5 / 28.01 = 0.1785\text{ mol}$ (Test: $0.0595$).<br>$CO$ is limiting.<br>$n(Fe) = 0.1785 \times (2/3) = 0.119\text{ mol}$.<br>$m(Fe) = 0.119 \times 55.85 = \mathbf{6.65\text{g}}$.</p>
+                </div>
+            </div>
+
+            <div class="practise-question" id="pq-4">
+                <div class="question-header">
+                    <h4>Question 4 (Extension)</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <p>Sodium Carbonate powder ($5.3\text{g}$) is added to a beaker containing $150\text{mL}$ of $1.0\text{M}$ Hydrochloric Acid ($0.15\text{ mol}$ of $HCl$). Calculate the total mass of <strong>all aqueous products</strong> formed when the reaction stops.</p>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('h-pq-4')">Hint</button>
+                    <button class="btn-reveal" onclick="toggleSolution('s-pq-4')">Solution</button>
+                </div>
+                <div id="h-pq-4" class="hidden-hint" style="display:none;">Products are $NaCl(aq)$, $H_2O(l)$, and $CO_2(g)$. Only $NaCl$ is an "aqueous product".</div>
+                <div id="s-pq-4" class="hidden-solution" style="display:none;">
+                    <p>$Na_2CO_3 + 2HCl \rightarrow 2NaCl + H_2O + CO_2$.<br>$n(Na_2CO_3) = 5.3 / 105.99 = 0.05\text{ mol}$ (Test: $0.05$).<br>$n(HCl) = 0.15\text{ mol}$ (Test: $0.075$).<br>$Na_2CO_3$ is limiting!<br>$n(NaCl) = 0.05 \times 2 = 0.10\text{ mol}$.<br>$m(NaCl) = 0.10 \times 58.44 = \mathbf{5.84\text{g}}$.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="excess-reagent-calcs.html" class="btn-next">Next: Excess Reagent Calculations &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /* =========================================================
+           INTERACTIVITY 1: MOLECULAR REACTOR LOGIC
+           ========================================================= */
+        const canvas = document.getElementById('reactor-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function runSimulation() {
+            const mMg = parseFloat(document.getElementById('mass-mg').value);
+            const mCl = parseFloat(document.getElementById('mass-cl').value);
+            
+            document.getElementById('mass-mg-label').innerText = mMg + 'g';
+            document.getElementById('mass-cl-label').innerText = mCl + 'g';
+
+            const nMg = mMg / 24.31;
+            const nCl = mCl / 70.9;
+            
+            const testMg = nMg / 1;
+            const testCl = nCl / 1;
+            
+            const lr = (testMg < testCl) ? "Magnesium" : "Chlorine";
+            document.getElementById('sim-stats').innerText = `Moles Mg: ${nMg.toFixed(2)} | Moles Cl2: ${nCl.toFixed(2)} | LR: ${lr}`;
+            
+            // Visualisation
+            particles = [];
+            // Create Mg atoms (Blue)
+            for(let i=0; i<Math.floor(nMg*20); i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, color: '#00f2ff', r: 5});
+            // Create Cl2 molecules (Yellow)
+            for(let i=0; i<Math.floor(nCl*20); i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, color: '#f3ff00', r: 7});
+        }
+
+        function animate() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += (Math.random() - 0.5) * 2;
+                p.y += (Math.random() - 0.5) * 2;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            runSimulation();
+        });
+
+        /* =========================================================
+           INTERACTIVITY 2: THE REAGENT RACE LOGIC
+           ========================================================= */
+        function startRace() {
+            const h2Init = parseFloat(document.getElementById('race-h2-input').value);
+            const o2Init = parseFloat(document.getElementById('race-o2-input').value);
+            const racerH2 = document.getElementById('racer-h2');
+            const racerO2 = document.getElementById('racer-o2');
+            const result = document.getElementById('race-result');
+            
+            let h2 = h2Init;
+            let o2 = o2Init;
+            result.innerText = "Reaction Progressing...";
+
+            const interval = setInterval(() => {
+                // Rate: H2 uses 2, O2 uses 1
+                h2 -= 0.2;
+                o2 -= 0.1;
+
+                // Update UI (percentage of race finished)
+                let h2Pos = (1 - (h2 / h2Init)) * 90;
+                let o2Pos = (1 - (o2 / o2Init)) * 90;
+
+                racerH2.style.left = h2Pos + "%";
+                racerO2.style.left = o2Pos + "%";
+
+                if (h2 <= 0 || o2 <= 0) {
+                    clearInterval(interval);
+                    if (h2 <= 0 && o2 > 0) result.innerText = "H2 RAN OUT! H2 is the Limiting Reagent.";
+                    else if (o2 <= 0 && h2 > 0) result.innerText = "O2 RAN OUT! O2 is the Limiting Reagent.";
+                    else result.innerText = "TIE! Stoichiometric Perfection.";
+                }
+            }, 50);
+        }
+
+        /* =========================================================
+           GENERAL UI HELPERS
+           ========================================================= */
+        function toggleSolution(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === "none" ? "block" : "none";
+            MathJax.typeset();
+        }
+
+        function toggleHint(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === "none" ? "block" : "none";
+        }
+
+        // Initialize
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        runSimulation();
+        animate();
+    </script>
+</body>
+</html>

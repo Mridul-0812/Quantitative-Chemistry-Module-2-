@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Quantitative Chemistry - Final Exam</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Specific Exam Interactive Styles */
+:root {
+    --bg-dark: #1e1b4b;
+    --text-light: #f8fafc;
+    --accent-blue: #0ea5e9;
+    --success-green: #22c55e;
+    --error-red: #ef4444;
+}
+
+/* High-Contrast Choice Labels */
+.mcq-options {
+    margin: 20px 0;
+}
+
+.mcq-option-label {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: #f1f5f9; /* Light grey for high contrast against dark bg */
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    color: #0f172a !important; /* Force dark text for visibility */
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.mcq-option-label:hover {
+    background: #e2e8f0;
+    border-color: var(--accent-blue);
+}
+
+.mcq-option-label input[type="radio"] {
+    margin-right: 15px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+/* States applied via JS after submission */
+.mcq-option-label.correct {
+    background: #dcfce7 !important;
+    border-color: var(--success-green) !important;
+    color: #14532d !important;
+    font-weight: bold;
+}
+
+.mcq-option-label.incorrect {
+    background: #fee2e2 !important;
+    border-color: var(--error-red) !important;
+    color: #7f1d1d !important;
+}
+
+.mcq-option-label.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.exam-section-title {
+    border-bottom: 3px solid var(--accent-blue);
+    padding-bottom: 10px;
+    margin-top: 50px;
+    margin-bottom: 25px;
+    color: var(--text-light);
+}
+
+/* Button Styling */
+.btn-hint, .btn-submit-mark, .btn-nav {
+    background-color: #0369a1 !important;
+    color: white !important;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.btn-hint:hover, .btn-submit-mark:hover {
+    background-color: #0c4a6e !important;
+}
+
+.mark-feedback {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Containers */
+.practise-question {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hidden-hint, .hidden-solution {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background: #1e293b;
+    border-left: 4px solid var(--accent-blue);
+}
+</style>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    }
+};
+
+function toggleHint(hintId) {
+    const hintElement = document.getElementById(hintId);
+    hintElement.style.display = hintElement.style.display === "none" ? "block" : "none";
+}
+
+function submitMCQ(questionId, correctValue) {
+    const options = document.getElementsByName(questionId);
+    let selectedValue = null;
+    let selectedLabel = null;
+    
+    for (const option of options) {
+        if (option.checked) {
+            selectedValue = option.value;
+            selectedLabel = option.parentElement;
+            break;
+        }
+    }
+
+    if (!selectedValue) {
+        alert("Please select an option before submitting!");
+        return;
+    }
+
+    for (const option of options) {
+        option.disabled = true;
+        option.parentElement.classList.add('disabled');
+        if (option.value === correctValue) {
+            option.parentElement.classList.add('correct');
+        }
+    }
+
+    const solutionDiv = document.getElementById('solution-' + questionId);
+    const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+    if (selectedValue === correctValue) {
+        selectedLabel.classList.add('correct');
+        feedbackSpan.innerHTML = "<strong>Correct! +1 Mark</strong>";
+        feedbackSpan.style.color = "#4ade80";
+        updateGlobalScore(0, 1);
+        localStorage.setItem('chem_mod2_exam_' + questionId, 1);
+    } else {
+        selectedLabel.classList.add('incorrect');
+        feedbackSpan.innerHTML = "<strong>Incorrect. 0 Marks</strong>";
+        feedbackSpan.style.color = "#f87171";
+        localStorage.setItem('chem_mod2_exam_' + questionId, 0);
+    }
+
+    solutionDiv.style.display = "block";
+    if (window.MathJax) MathJax.typesetPromise([solutionDiv]);
+}
+
+function updateGlobalScore(previousMark, newMark) {
+    let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+    totalScore = totalScore - previousMark + newMark;
+    localStorage.setItem('chem_mod2_total_score', totalScore);
+    document.getElementById('total-marks').innerText = totalScore;
+}
+
+function navigateToSAQ() {
+    window.location.href = 'easy-SAQs.html';
+}
+</script>
+</head>
+<body>
+
+<nav id="sidebar" class="navigation-bar">
+    <div class="nav-header">
+        <h2>Module 2</h2>
+        <p>Quantitative Chemistry</p>
+        <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+    </div>
+    <ul class="nav-list">
+        <li class="nav-section-title">Introduction</li>
+        <li><a href="index.html">Home & Guide</a></li>
+        <li class="nav-section-title">Phase A: Foundations</li>
+        <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+        <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+        <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+        <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+        <li class="nav-section-title">Phase B: The Mole</li>
+        <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+        <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+        <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+        <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+        <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+        <li class="nav-section-title">Phase C: Stoichiometry</li>
+        <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+        <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+        <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+        <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+        <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+        <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+        <li class="nav-section-title">Phase D: Concentration</li>
+        <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+        <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+        <li><a href="dilutions.html">18. Dilutions</a></li>
+        <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+        <li class="nav-section-title">Phase E: Gas Laws</li>
+        <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+        <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+        <li><a href="charles-law.html">22. Charles' Law</a></li>
+        <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+        <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+        <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+        <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+        <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+        <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+        <li class="nav-section-title">Phase F: Assessment</li>
+        <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+        <li><a href="final-exam.html" class="active">30. Final Exam</a></li>
+        <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+    </ul>
+</nav>
+
+<main id="main-content">
+<header class="page-header">
+    <h1>Final Examination: Quantitative Chemistry</h1>
+    <p class="subtitle">Testing all concepts from Module 2</p>
+</header>
+
+<section class="content-section">
+    <h2>Instructions</h2>
+    <p>This examination consists of two sections. Section I is below. Section II follows on the next page.</p>
+    <ul>
+        <li><strong>Section I:</strong> 10 Multiple Choice Questions (10 Marks).</li>
+        <li>Ensure you have a NESA-approved periodic table and data sheet.</li>
+    </ul>
+</section>
+
+<h2 class="exam-section-title">Section I: Multiple Choice Questions (10 Marks)</h2>
+
+<div class="practise-question" id="question-mcq-1">
+    <div class="question-header">
+        <h4>Question 1</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>Which of the following contains the greatest total number of atoms?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq1" value="a"> A) 1.0 mole of Helium gas ($He$)</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq1" value="b"> B) 1.0 mole of Oxygen gas ($O_2$)</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq1" value="c"> C) 1.0 mole of Water ($H_2O$)</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq1" value="d"> D) 1.0 mole of Methane ($CH_4$)</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-1')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq1', 'd')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq1" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-1" style="display: none;">
+        <p><strong>Hint:</strong> Look at the subscript numbers in each chemical formula. How many atoms make up one single molecule of each substance?</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq1" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>One mole of any substance contains $N_A$ particles. Atoms per particle:</p>
+        <ul>
+            <li>He = 1 atom/molecule</li>
+            <li>$O_2$ = 2 atoms/molecule</li>
+            <li>$H_2O$ = 3 atoms/molecule</li>
+            <li>$CH_4$ = 5 atoms/molecule</li>
+        </ul>
+        <p><strong>Correct Answer: D</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-2">
+    <div class="question-header">
+        <h4>Question 2</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>What is the molar mass of hydrated Copper(II) Sulfate, $CuSO_4 \cdot 5H_2O$?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq2" value="a"> A) 159.61 g/mol</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq2" value="b"> B) 177.63 g/mol</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq2" value="c"> C) 249.69 g/mol</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq2" value="d"> D) 798.05 g/mol</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-2')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq2', 'c')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq2" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-2" style="display: none;">
+        <p><strong>Hint:</strong> The dot does not mean multiply! You need to add the mass of $CuSO_4$ to the mass of five $H_2O$ molecules.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq2" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$MM(CuSO_4) = 159.62$ g/mol. $MM(5H_2O) = 90.08$ g/mol. Total = 249.70 g/mol.</p>
+        <p><strong>Correct Answer: C</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-3">
+    <div class="question-header">
+        <h4>Question 3</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>A compound contains 40.0% Carbon, 6.7% Hydrogen, and 53.3% Oxygen by mass. What is its empirical formula?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq3" value="a"> A) $CHO$</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq3" value="b"> B) $CH_2O$</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq3" value="c"> C) $C_2H_4O_2$</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq3" value="d"> D) $C_3H_6O_3$</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-3')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq3', 'b')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq3" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-3" style="display: none;">
+        <p><strong>Hint:</strong> Assume 100g sample. Convert mass to moles and find the simplest whole number ratio.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq3" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$n(C)=3.33, n(H)=6.65, n(O)=3.33$. Ratio 1:2:1.</p>
+        <p><strong>Correct Answer: B</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-4">
+    <div class="question-header">
+        <h4>Question 4</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>For the reaction $N_2(g) + 3H_2(g) \rightarrow 2NH_3(g)$, 2.0 moles of Nitrogen gas are reacted with 5.0 moles of Hydrogen gas. Which statement is correct?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq4" value="a"> A) Nitrogen is the limiting reagent and 4.0 moles of $NH_3$ will be produced.</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq4" value="b"> B) Hydrogen is the limiting reagent and 3.33 moles of $NH_3$ will be produced.</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq4" value="c"> C) Nitrogen is the limiting reagent and 2.0 moles of $NH_3$ will be produced.</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq4" value="d"> D) Both reactants will be completely consumed.</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-4')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq4', 'b')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq4" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-4" style="display: none;">
+        <p><strong>Hint:</strong> Divide available moles by the stoichiometric coefficient to see which is smaller.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq4" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$H_2$ test: $5/3 = 1.67$. $N_2$ test: $2/1 = 2$. $H_2$ is limiting. $n(NH_3) = 5 \times (2/3) = 3.33$.</p>
+        <p><strong>Correct Answer: B</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-5">
+    <div class="question-header">
+        <h4>Question 5</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>What is the molarity of a solution prepared by dissolving 11.7 g of Sodium Chloride ($NaCl$) in water to make a final volume of 500 mL?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq5" value="a"> A) 0.023 M</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq5" value="b"> B) 0.200 M</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq5" value="c"> C) 0.400 M</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq5" value="d"> D) 23.4 M</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-5')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq5', 'c')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq5" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-5" style="display: none;">
+        <p><strong>Hint:</strong> $n = m/MM$ and $c = n/V$. Convert mL to L.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq5" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$n = 11.7 / 58.44 = 0.2$ mol. $c = 0.2 / 0.5 = 0.4$ M.</p>
+        <p><strong>Correct Answer: C</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-6">
+    <div class="question-header">
+        <h4>Question 6</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>A student has 25.0 mL of a 2.0 M stock solution of $HCl$. They add water until the total volume is 250.0 mL. What is the new concentration of the acid?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq6" value="a"> A) 0.05 M</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq6" value="b"> B) 0.10 M</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq6" value="c"> C) 0.20 M</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq6" value="d"> D) 20.0 M</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-6')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq6', 'c')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq6" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-6" style="display: none;">
+        <p><strong>Hint:</strong> Use $C_1V_1 = C_2V_2$.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq6" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$2.0 \times 25 = C_2 \times 250 \rightarrow C_2 = 0.2$ M.</p>
+        <p><strong>Correct Answer: C</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-7">
+    <div class="question-header">
+        <h4>Question 7</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>A weather balloon contains 50.0 L of helium at 100 kPa and $27^\circ C$. It rises to an altitude where the pressure is 50 kPa and the temperature is $-33^\circ C$. What is the new volume of the balloon?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq7" value="a"> A) 20.0 L</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq7" value="b"> B) 80.0 L</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq7" value="c"> C) 100.0 L</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq7" value="d"> D) 125.0 L</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-7')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq7', 'b')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq7" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-7" style="display: none;">
+        <p><strong>Hint:</strong> Combined Gas Law. Use Kelvin.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq7" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$T_1=300K, T_2=240K$. $(100 \times 50)/300 = (50 \times V_2)/240 \rightarrow V_2 = 80$ L.</p>
+        <p><strong>Correct Answer: B</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-8">
+    <div class="question-header">
+        <h4>Question 8</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>Consider the combustion of propane: $C_3H_8(g) + 5O_2(g) \rightarrow 3CO_2(g) + 4H_2O(g)$. If 20 L of propane is reacted completely with excess oxygen at constant temperature and pressure, what is the total volume of the products formed?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq8" value="a"> A) 60 L</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq8" value="b"> B) 80 L</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq8" value="c"> C) 140 L</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq8" value="d"> D) Cannot be determined without knowing the pressure.</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-8')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq8', 'c')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq8" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-8" style="display: none;">
+        <p><strong>Hint:</strong> Volume ratio is the same as the mole ratio for gases.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq8" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$CO_2 = 60$ L, $H_2O = 80$ L. Total = 140 L.</p>
+        <p><strong>Correct Answer: C</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-9">
+    <div class="question-header">
+        <h4>Question 9</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>Which of the following gases has the highest density at Standard Laboratory Conditions (SLC: $25^\circ C$, 100 kPa)?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq9" value="a"> A) $H_2$</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq9" value="b"> B) $N_2$</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq9" value="c"> C) $O_2$</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq9" value="d"> D) $CO_2$</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-9')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq9', 'd')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq9" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-9" style="display: none;">
+        <p><strong>Hint:</strong> Density is proportional to Molar Mass for gases at the same conditions.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq9" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$CO_2$ has the highest MM (44.01 g/mol).</p>
+        <p><strong>Correct Answer: D</strong></p>
+    </div>
+</div>
+
+<div class="practise-question" id="question-mcq-10">
+    <div class="question-header">
+        <h4>Question 10</h4>
+        <span class="marks-allocated">[1 Mark]</span>
+    </div>
+    <div class="question-body">
+        <p>A 2.43 g sample of an unknown alkaline earth metal ($M$) is completely reacted with excess oxygen to form 4.03 g of its metal oxide ($MO$). What is the identity of metal $M$?</p>
+    </div>
+    <div class="mcq-options">
+        <label class="mcq-option-label"><input type="radio" name="mcq10" value="a"> A) Beryllium ($Be$)</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq10" value="b"> B) Magnesium ($Mg$)</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq10" value="c"> C) Calcium ($Ca$)</label>
+        <label class="mcq-option-label"><input type="radio" name="mcq10" value="d"> D) Strontium ($Sr$)</label>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-mcq-10')">Need a hint?</button>
+        <button class="btn-submit-mark" onclick="submitMCQ('mcq10', 'b')">Submit Answer</button>
+        <span class="mark-feedback" id="feedback-mcq10" style="margin-left: 15px;"></span>
+    </div>
+    <div class="hidden-hint" id="hint-mcq-10" style="display: none;">
+        <p><strong>Hint:</strong> Mass of O = 1.60g. Moles of O = 0.1. Ratio is 1:1.</p>
+    </div>
+    <div class="hidden-solution" id="solution-mcq10" style="display: none;">
+        <h5>Worked Solution:</h5>
+        <p>$MM = 2.43 / 0.1 = 24.3$ g/mol. This is Magnesium.</p>
+        <p><strong>Correct Answer: B</strong></p>
+    </div>
+</div>
+
+<div style="margin-top: 60px; padding: 40px; border-top: 2px solid var(--accent-blue); text-align: center;">
+    <h3>Section I Complete</h3>
+    <p>Ready for the Short Answer section?</p>
+    <button class="btn-nav" onclick="navigateToSAQ()" style="background: var(--accent-blue) !important; font-size: 1.2rem; padding: 15px 40px;">
+        CONTINUE TO SECTION II (SAQs) →
+    </button>
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Quantitative Chemistry - Section IV (Hard)</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+    :root {
+        --bg-dark: #0f172a;
+        --card-bg: #1e293b;
+        --accent-blue: #0ea5e9;
+        --text-light: #f8fafc;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --success-green: #22c55e;
+        --warning-orange: #f59e0b;
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        display: flex;
+    }
+
+    /* Navigation Sidebar */
+    #sidebar {
+        width: 280px;
+        background: #1e1b4b;
+        height: 100vh;
+        position: fixed;
+        padding: 25px;
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+        z-index: 100;
+    }
+
+    .nav-header h2 { color: var(--accent-blue); margin-bottom: 5px; font-size: 1.4rem; }
+    .nav-header p { font-size: 0.85rem; opacity: 0.8; margin-bottom: 20px; }
+    .nav-list { list-style: none; padding: 0; }
+    .nav-list li { margin: 12px 0; }
+    .nav-list a { color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: 0.2s; }
+    .nav-list a:hover, .nav-list a.active { color: var(--accent-blue); padding-left: 5px; border-left: 2px solid var(--accent-blue); }
+    .nav-section-title { color: #64748b; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; margin-top: 25px; letter-spacing: 1px; }
+
+    /* Main Content Area */
+    #main-content {
+        margin-left: 320px;
+        padding: 50px;
+        width: calc(100% - 320px);
+        max-width: 1100px;
+    }
+
+    .saq-container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 40px;
+        margin-bottom: 60px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+
+    .difficulty-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #991b1b;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .question-header {
+        border-bottom: 2px solid var(--accent-blue);
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+    }
+
+    .question-header h3 { font-size: 1.5rem; color: var(--accent-blue); margin: 0; }
+
+    .sub-question {
+        background: rgba(15, 23, 42, 0.3);
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid var(--warning-orange);
+    }
+
+    /* Graphing Suite V2 */
+    .graphing-system {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        margin: 30px 0;
+        color: #334155;
+    }
+
+    .canvas-container {
+        position: relative;
+        width: 600px;
+        height: 450px;
+        margin: 0 auto;
+    }
+
+    #hard-graph-canvas {
+        border: 2px solid #334155;
+        background-color: #fafafa;
+        cursor: crosshair;
+    }
+
+    .axis-label-x { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); font-weight: bold; }
+    .axis-label-y { position: absolute; top: 50%; left: -60px; transform: rotate(-90deg) translateY(-50%); font-weight: bold; }
+
+    /* Interactive Buttons */
+    .btn-group { display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap; }
+    
+    .btn-primary {
+        background: var(--accent-blue);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-primary:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--accent-blue);
+        border: 2px solid var(--accent-blue);
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-outline:hover { background: var(--accent-blue); color: white; }
+
+    /* Solution Box */
+    .solution-reveal {
+        display: none;
+        background: #0f172a;
+        padding: 30px;
+        border-radius: 12px;
+        margin-top: 25px;
+        border: 1px solid var(--success-green);
+        line-height: 1.8;
+    }
+
+    .marking-rubric {
+        background: #1e1b4b;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--accent-blue);
+    }
+
+    .rubric-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .rubric-table th, .rubric-table td {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px;
+        text-align: left;
+    }
+
+    .rubric-table th { color: var(--accent-blue); background: rgba(14, 165, 233, 0.1); }
+
+    .marking-control {
+        background: rgba(14, 165, 233, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .mark-select {
+        background: #334155;
+        color: white;
+        border: 1px solid var(--accent-blue);
+        padding: 8px;
+        border-radius: 5px;
+    }
+
+    .worked-table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        background: #1e293b;
+    }
+
+    .worked-table th, .worked-table td {
+        border: 1px solid #475569;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+    };
+
+    let examScore = 0;
+
+    function toggleBox(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === "block") ? "none" : "block";
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function recordMark(selectId, qId) {
+        const select = document.getElementById(selectId);
+        const marks = parseInt(select.value);
+        examScore += marks;
+        document.getElementById('display-score').innerText = examScore;
+        select.disabled = true;
+        document.getElementById('btn-submit-'+qId).disabled = true;
+        document.getElementById('btn-submit-'+qId).innerText = "Marks Recorded";
+    }
+
+    // Graph Engine
+    let plotData = [];
+    function setupGraph() {
+        const canvas = document.getElementById('hard-graph-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        drawAxes(ctx);
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            plotData.push({x, y});
+            refreshCanvas(ctx);
+        });
+    }
+
+    function drawAxes(ctx) {
+        ctx.strokeStyle = "#334155";
+        ctx.lineWidth = 2;
+        ctx.font = "12px Arial";
+        
+        // Y Axis
+        ctx.beginPath();
+        ctx.moveTo(60, 20);
+        ctx.lineTo(60, 400);
+        ctx.stroke();
+
+        // X Axis
+        ctx.beginPath();
+        ctx.moveTo(60, 400);
+        ctx.lineTo(580, 400);
+        ctx.stroke();
+
+        // Ticks & Numbers (V vs T example)
+        for(let i=0; i<=10; i++) {
+            // Y-ticks (Volume 0-100 L)
+            let yPos = 400 - (i * 38);
+            ctx.moveTo(55, yPos);
+            ctx.lineTo(60, yPos);
+            ctx.fillText(i*10, 30, yPos+5);
+
+            // X-ticks (Temp 0-500 K)
+            let xPos = 60 + (i * 50);
+            ctx.moveTo(xPos, 400);
+            ctx.lineTo(xPos, 405);
+            ctx.fillText(i*50, xPos-10, 420);
+        }
+        ctx.stroke();
+    }
+
+    function refreshCanvas(ctx) {
+        ctx.clearRect(0, 0, 600, 450);
+        drawAxes(ctx);
+        
+        ctx.fillStyle = "#ef4444";
+        plotData.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
+            ctx.fill();
+        });
+
+        if(plotData.length > 1) {
+            ctx.strokeStyle = "#0ea5e9";
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(plotData[0].x, plotData[0].y);
+            for(let i=1; i<plotData.length; i++) {
+                ctx.lineTo(plotData[i].x, plotData[i].y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    function clearCanvas() {
+        plotData = [];
+        const canvas = document.getElementById('hard-graph-canvas');
+        const ctx = canvas.getContext('2d');
+        refreshCanvas(ctx);
+    }
+
+    window.onload = setupGraph;
+</script>
+</head>
+<body>
+
+<nav id="sidebar">
+    <div class="nav-header">
+        <h2>Module 2</h2>
+        <p>Quantitative Chemistry</p>
+        <div style="background: rgba(14, 165, 233, 0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--accent-blue);">
+            Current Score: <span id="display-score" style="font-weight:bold; color:var(--accent-blue);">0</span>
+        </div>
+    </div>
+    <ul class="nav-list">
+        <li class="nav-section-title">Exam Navigation</li>
+        <li><a href="final-exam.html">Section I: Multiple Choice</a></li>
+        <li><a href="easy-SAQs.html">Section II: Easy SAQ</a></li>
+        <li><a href="medium-SAQs.html">Section III: Medium SAQ</a></li>
+        <li><a href="hard-SAQs.html" class="active">Section IV: Hard SAQ</a></li>
+        <li><a href="extension-SAQs.html" style="color:var(--warning-orange)">Section V: Extension</a></li>
+    </ul>
+</nav>
+
+<main id="main-content">
+    <header style="margin-bottom: 50px;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Section IV: Hard SAQs</h1>
+        <p style="font-size: 1.1rem; opacity: 0.8;">These questions require multi-stage logic, integration of multiple gas laws, and rigorous stoichiometric proof. All answers must include balanced equations with states.</p>
+    </header>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">HARD</div>
+        <div class="question-header">
+            <h3>Question 1: Hydrocarbon Analysis [10 Marks]</h3>
+        </div>
+        <p>A gaseous hydrocarbon $C_xH_y$ is burned in excess oxygen. When $2.50 \text{ L}$ of the hydrocarbon reacts, it produces $7.50 \text{ L}$ of Carbon Dioxide gas and $10.0 \text{ L}$ of water vapour (all volumes measured at the same temperature and pressure).</p>
+        
+        <div class="sub-question">
+            <p><strong>a)</strong> Using Gay-Lussac's Law of Combining Volumes, determine the values of $x$ and $y$ and provide the molecular formula. [4 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Write the complete balanced chemical equation for this combustion reaction, including states. [2 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Calculate the mass of the hydrocarbon sample if the reaction took place at $100 \text{ kPa}$ and $25^\circ C$. [4 Marks]</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-outline" onclick="toggleBox('hint-1')">View Hint</button>
+            <button class="btn-primary" onclick="toggleBox('sol-1')">Reveal Solution & Rubric</button>
+        </div>
+
+        <div id="hint-1" class="solution-reveal" style="border-color: var(--warning-orange);">
+            <p><strong>Hint:</strong> According to Avogadro's hypothesis, at constant T and P, the volume ratio of gases is equal to their mole ratio. Start by dividing all volumes by the volume of the hydrocarbon ($2.50 \text{ L}$) to find the coefficients of the balanced equation.</p>
+        </div>
+
+        <div id="sol-1" class="solution-reveal">
+            <div class="marking-rubric">
+                <table class="rubric-table">
+                    <tr><th>Marks</th><th>Criteria</th></tr>
+                    <tr><td>9-10</td><td>Correct MF ($C_3H_8$), full equation with states, correct mass using $PV=nRT$ or $V_m$.</td></tr>
+                    <tr><td>5-8</td><td>Correct MF, but errors in the mass calculation or missing states in the equation.</td></tr>
+                    <tr><td>1-4</td><td>Identification of volume ratios only.</td></tr>
+                </table>
+            </div>
+
+            <h4>Worked Solution:</h4>
+            <p><strong>a) Finding $x$ and $y$:</strong><br>
+            Volume Ratio $C_xH_y : CO_2 : H_2O$<br>
+            $2.50 : 7.50 : 10.0$<br>
+            Divide by $2.50$:<br>
+            $1 : 3 : 4$<br>
+            From the conservation of Carbon: $1 \text{ molecule of } C_x \rightarrow 3 \text{ molecules of } CO_2$, therefore $x = 3$.<br>
+            From the conservation of Hydrogen: $1 \text{ molecule of } C_y \rightarrow 4 \text{ molecules of } H_2O$ (which contains 8 atoms of H), therefore $y = 8$.<br>
+            <strong>Molecular Formula: $C_3H_8$ (Propane)</strong></p>
+
+            <p><strong>b) Balanced Equation:</strong><br>
+            $C_3H_8(g) + 5O_2(g) \rightarrow 3CO_2(g) + 4H_2O(g)$</p>
+
+            <p><strong>c) Mass Calculation:</strong><br>
+            At $25^\circ C$ ($298.15 \text{ K}$) and $100 \text{ kPa}$ ($1 \text{ bar}$):<br>
+            $V = 2.50 \text{ L}$<br>
+            $n = \frac{PV}{RT} = \frac{100 \times 2.50}{8.314 \times 298.15} = 0.1008 \text{ mol}$<br>
+            $MM(C_3H_8) = (3 \times 12.01) + (8 \times 1.008) = 44.09 \text{ g/mol}$<br>
+            $m = n \times MM = 0.1008 \times 44.09 = 4.44 \text{ g}$ (to 3 sig figs).</p>
+
+            <div class="marking-control">
+                <span>Award yourself:</span>
+                <select id="mark-select-1" class="mark-select">
+                    <option value="0">0 Marks</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                </select>
+                <button class="btn-primary" id="btn-submit-1" onclick="recordMark('mark-select-1', '1')">Submit Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">HARD</div>
+        <div class="question-header">
+            <h3>Question 2: Non-Ideal Gas Behavior [8 Marks]</h3>
+        </div>
+        <p>A $1.0 \text{ mol}$ sample of an unknown gas was measured for pressure at various volumes at a constant temperature of $300 \text{ K}$.</p>
+        
+        <div class="graphing-system">
+            <div class="canvas-container">
+                <canvas id="hard-graph-canvas" width="600" height="450"></canvas>
+                <div class="axis-label-x">Temperature (K)</div>
+                <div class="axis-label-y">Volume (L)</div>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <button class="btn-outline" onclick="clearCanvas()">Clear Plot</button>
+            </div>
+        </div>
+
+        <div class="sub-question">
+            <p><strong>a)</strong> Plot the following data for an Ideal Gas: $(50 \text{ K}, 4.15 \text{ L}), (150 \text{ K}, 12.47 \text{ L}), (300 \text{ K}, 24.94 \text{ L}), (500 \text{ K}, 41.57 \text{ L})$. Connect with a line of best fit. [3 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Calculate the gradient of this line and relate it to the Ideal Gas Law ($PV=nRT$) where $P = 100 \text{ kPa}$ and $n = 1.0 \text{ mol}$. [5 Marks]</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="toggleBox('sol-2')">Reveal Solution</button>
+        </div>
+
+        <div id="sol-2" class="solution-reveal">
+            <h4>Worked Solution:</h4>
+            <p><strong>a) Plotting:</strong> The graph should be a perfectly straight line passing through the origin $(0,0)$.</p>
+            <p><strong>b) Gradient Logic:</strong><br>
+            The Ideal Gas Law is $PV = nRT$. Rearranging for Volume as the Y-axis: $V = (\frac{nR}{P})T$.<br>
+            This matches the form $y = mx + c$, where the gradient $m = \frac{nR}{P}$.<br>
+            Calculation:<br>
+            $m = \frac{(1.0 \text{ mol}) \times (8.314 \text{ J mol}^{-1}\text{ K}^{-1})}{100 \text{ kPa}} = 0.08314 \text{ L/K}$.<br>
+            Verification from data: $Gradient = \frac{41.57 - 4.15}{500 - 50} = \frac{37.42}{450} = 0.08315 \text{ L/K}$.</p>
+
+            <div class="marking-control">
+                <span>Award yourself (Max 8):</span>
+                <select id="mark-select-2" class="mark-select">
+                    <option value="0">0</option><option value="4">4</option><option value="8">8</option>
+                </select>
+                <button class="btn-primary" id="btn-submit-2" onclick="recordMark('mark-select-2', '2')">Submit Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">HARD</div>
+        <div class="question-header">
+            <h3>Question 3: Industrial Fertiliser Synthesis [12 Marks]</h3>
+        </div>
+        <p>Ammonium sulfate, a common fertiliser, is produced by reacting ammonia with sulfuric acid. A reactor is charged with $500 \text{ g}$ of ammonia gas and $1.20 \text{ kg}$ of sulfuric acid solution.</p>
+        
+        <div class="sub-question">
+            <p><strong>a)</strong> Write the balanced chemical equation with states. [2 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Identify the limiting reagent using a formal stoichiometric comparison (mole ratio). [4 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Calculate the theoretical yield of ammonium sulfate in grams. [3 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>d)</strong> If $1.35 \text{ kg}$ of ammonium sulfate is actually recovered, calculate the percentage yield. [3 Marks]</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-outline" onclick="toggleBox('hint-3')">Hint</button>
+            <button class="btn-primary" onclick="toggleBox('sol-3')">Reveal Solution</button>
+        </div>
+
+        <div id="hint-3" class="solution-reveal" style="border-color: var(--warning-orange);">
+            <p><strong>Hint:</strong> Ammonia is $NH_3$ and Sulfuric Acid is $H_2SO_4$. The salt produced is $(NH_4)_2SO_4$. Be careful with the 2:1 mole ratio when checking for the limiting reagent!</p>
+        </div>
+
+        <div id="sol-3" class="solution-reveal">
+            <h4>Worked Solution:</h4>
+            <p><strong>a) Equation:</strong><br>
+            $2NH_3(g) + H_2SO_4(aq) \rightarrow (NH_4)_2SO_4(aq)$</p>
+
+            <p><strong>b) Limiting Reagent:</strong><br>
+            $n(NH_3) = \frac{500}{17.031} = 29.36 \text{ mol}$<br>
+            $n(H_2SO_4) = \frac{1200}{98.08} = 12.23 \text{ mol}$<br>
+            Ratio check: $n(NH_3)$ required for all acid $= 12.23 \times 2 = 24.46 \text{ mol}$.<br>
+            We have $29.36 \text{ mol}$ of $NH_3$, which is more than required.<br>
+            <strong>Limiting Reagent: $H_2SO_4$</strong></p>
+
+            <p><strong>c) Theoretical Yield:</strong><br>
+            $n((NH_4)_2SO_4) = n(H_2SO_4) = 12.23 \text{ mol}$<br>
+            $MM((NH_4)_2SO_4) = 132.14 \text{ g/mol}$<br>
+            $Mass = 12.23 \times 132.14 = 1616 \text{ g} = 1.616 \text{ kg}$</p>
+
+            <p><strong>d) % Yield:</strong><br>
+            $\% \text{ Yield} = \frac{1.35 \text{ kg}}{1.616 \text{ kg}} \times 100 = 83.5\%$</p>
+
+            <div class="marking-control">
+                <span>Award yourself (Max 12):</span>
+                <select id="mark-select-3" class="mark-select">
+                    <option value="0">0</option><option value="6">6</option><option value="12">12</option>
+                </select>
+                <button class="btn-primary" id="btn-submit-3" onclick="recordMark('mark-select-3', '3')">Submit Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">HARD</div>
+        <div class="question-header">
+            <h3>Question 4: Determination of Hydrate Formula [10 Marks]</h3>
+        </div>
+        <p>A $5.00 \text{ g}$ sample of hydrated barium chloride ($BaCl_2 \cdot xH_2O$) is heated until all water is driven off. The remaining anhydrous salt weighs $4.26 \text{ g}$.</p>
+        
+        <div class="sub-question">
+            <p><strong>a)</strong> Calculate the mass and moles of water lost. [2 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Complete the following stoichiometric table to find $x$. [6 Marks]</p>
+            <table class="worked-table">
+                <tr><th>Substance</th><th>Mass (g)</th><th>Molar Mass</th><th>Moles ($n$)</th><th>Ratio</th></tr>
+                <tr><td>$BaCl_2$</td><td>?</td><td>208.23</td><td>?</td><td>?</td></tr>
+                <tr><td>$H_2O$</td><td>?</td><td>18.016</td><td>?</td><td>?</td></tr>
+            </table>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> State the full formula and the name of the hydrate. [2 Marks]</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="toggleBox('sol-4')">Reveal Solution</button>
+        </div>
+
+        <div id="sol-4" class="solution-reveal">
+            <h4>Worked Solution:</h4>
+            <p><strong>a) Water Lost:</strong><br>
+            $Mass(H_2O) = 5.00 - 4.26 = 0.74 \text{ g}$<br>
+            $n(H_2O) = 0.74 / 18.016 = 0.04107 \text{ mol}$</p>
+
+            <p><strong>b) Stoichiometric Table:</strong></p>
+            <table class="worked-table">
+                <tr><th>Substance</th><th>Mass (g)</th><th>MM</th><th>Moles</th><th>Ratio</th></tr>
+                <tr><td>$BaCl_2$</td><td>4.26</td><td>208.23</td><td>0.02046</td><td>1</td></tr>
+                <tr><td>$H_2O$</td><td>0.74</td><td>18.016</td><td>0.04107</td><td>2.007 $\approx 2$</td></tr>
+            </table>
+
+            <p><strong>c) Formula:</strong> $BaCl_2 \cdot 2H_2O$.<br>
+            <strong>Name:</strong> Barium chloride dihydrate.</p>
+
+            <div class="marking-control">
+                <span>Award yourself (Max 10):</span>
+                <select id="mark-select-4" class="mark-select">
+                    <option value="0">0</option><option value="5">5</option><option value="10">10</option>
+                </select>
+                <button class="btn-primary" id="btn-submit-4" onclick="recordMark('mark-select-4', '4')">Submit Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="saq-container">
+        <div class="difficulty-badge">HARD</div>
+        <div class="question-header">
+            <h3>Question 5: Back-Titration Concept [10 Marks]</h3>
+        </div>
+        <p>A $0.500 \text{ g}$ sample of impure limestone (impure $CaCO_3$) is reacted with $50.0 \text{ mL}$ of $0.200 \text{ M}$ $HCl$ (excess). The unreacted $HCl$ then required $12.5 \text{ mL}$ of $0.100 \text{ M}$ $NaOH$ for neutralisation.</p>
+        
+        <div class="sub-question">
+            <p><strong>a)</strong> Write balanced equations for both reactions with states. [4 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>b)</strong> Calculate the moles of $HCl$ that actually reacted with the $CaCO_3$. [3 Marks]</p>
+        </div>
+        <div class="sub-question">
+            <p><strong>c)</strong> Determine the percentage purity of the limestone. [3 Marks]</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-outline" onclick="toggleBox('hint-5')">Hint</button>
+            <button class="btn-primary" onclick="toggleBox('sol-5')">Reveal Solution</button>
+        </div>
+
+        <div id="hint-5" class="solution-reveal" style="border-color: var(--warning-orange);">
+            <p><strong>Hint:</strong> Moles of $HCl_{initial} = Moles of HCl_{reacted with CaCO3} + Moles of HCl_{reacted with NaOH}$. Calculate the total initial moles and the moles neutralised by $NaOH$ first.</p>
+        </div>
+
+        <div id="sol-5" class="solution-reveal">
+            <h4>Worked Solution:</h4>
+            <p><strong>a) Equations:</strong><br>
+            1. $CaCO_3(s) + 2HCl(aq) \rightarrow CaCl_2(aq) + CO_2(g) + H_2O(l)$<br>
+            2. $HCl(aq) + NaOH(aq) \rightarrow NaCl(aq) + H_2O(l)$</p>
+
+            <p><strong>b) Moles of $HCl$ Reacted:</strong><br>
+            $n(HCl_{initial}) = 0.050 \times 0.200 = 0.0100 \text{ mol}$<br>
+            $n(NaOH) = 0.0125 \times 0.100 = 0.00125 \text{ mol}$<br>
+            $n(HCl_{excess}) = n(NaOH) = 0.00125 \text{ mol}$ (from 1:1 ratio)<br>
+            $n(HCl_{reacted}) = 0.0100 - 0.00125 = 0.00875 \text{ mol}$</p>
+
+            <p><strong>c) % Purity:</strong><br>
+            $n(CaCO_3) = n(HCl_{reacted}) / 2 = 0.004375 \text{ mol}$ (from 1:2 ratio)<br>
+            $Mass(CaCO_3) = 0.004375 \times 100.09 = 0.4379 \text{ g}$<br>
+            $\% \text{ Purity} = (0.4379 / 0.500) \times 100 = \mathbf{87.6\%}$</p>
+
+            <div class="marking-control">
+                <span>Award yourself (Max 10):</span>
+                <select id="mark-select-5" class="mark-select">
+                    <option value="0">0</option><option value="5">5</option><option value="10">10</option>
+                </select>
+                <button class="btn-primary" id="btn-submit-5" onclick="recordMark('mark-select-5', '5')">Submit Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 100px; padding-bottom: 50px;">
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 40px;">
+        <h2 style="color: var(--warning-orange);">Ready for the final challenge?</h2>
+        <p>Section V contains university-entry level problems and olympiad-style extensions.</p>
+        <button class="btn-primary" style="font-size: 1.2rem; padding: 20px 50px; background: #991b1b;" onclick="window.location.href='extension-SAQs.html'">
+            PROCEED TO EXTENSION SAQs →
+        </button>
+    </div>
+</main>
+
+</body>
+</html>

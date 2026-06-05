@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 11: Mass-Mass Conversions</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* =========================================================
+           LESSON 11 SPECIFIC STYLES
+           ========================================================= */
+
+        /* The 3-Step Theory Box */
+        .golden-rule-box {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, rgba(176, 38, 255, 0.05) 100%);
+            border: 2px solid var(--accent-cyan);
+            border-left: 8px solid var(--accent-purple);
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2.5rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .golden-rule-box::before {
+            content: '1-2-3';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10rem;
+            color: rgba(255, 255, 255, 0.02);
+            font-weight: 900;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .golden-rule-box h3 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stoich-step {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--accent-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 0 15px rgba(176,38,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stoich-step:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0,240,255,0.3);
+        }
+
+        .step-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .arrow-right {
+            font-size: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* Warning Box */
+        .exam-warning {
+            background: rgba(255, 51, 102, 0.1);
+            border: 2px dashed #ff3366;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .exam-warning h4 {
+            color: #ff3366;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .exam-warning h4::before {
+            content: '⚠️';
+            font-size: 1.5rem;
+        }
+
+        /* =========================================================
+           INTERACTIVITY 1: The 3-Step Stoich-O-Matic Pipeline
+           ========================================================= */
+        .pipeline-wrapper {
+            background: #0f0f1a;
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 3rem 0;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pipeline-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--accent-cyan);
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        .pipeline-system {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .vat {
+            width: 220px;
+            background: linear-gradient(180deg, rgba(30,30,50,0.9), rgba(10,10,20,0.9));
+            border: 3px solid var(--accent-purple);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+        }
+
+        .vat.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 30px rgba(0,240,255,0.3);
+        }
+
+        .vat-title {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .vat-value {
+            font-size: 2.5rem;
+            font-family: monospace;
+            color: var(--success-green);
+            text-shadow: 0 0 10px var(--success-green);
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+
+        .vat-unit {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .pipe-connector {
+            flex-grow: 1;
+            height: 40px;
+            background: repeating-linear-gradient(
+                90deg,
+                #222,
+                #222 10px,
+                #111 10px,
+                #111 20px
+            );
+            border-top: 2px solid #555;
+            border-bottom: 2px solid #555;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pipe-label {
+            position: absolute;
+            top: -40px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--accent-purple);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+        }
+
+        .pipe-particle {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan);
+            opacity: 0;
+        }
+
+        .controls-panel {
+            margin-top: 40px;
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 80%;
+            background: transparent;
+            margin: 20px 0;
+        }
+
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 25px;
+            width: 25px;
+            border-radius: 50%;
+            background: var(--success-green);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 15px var(--success-green);
+        }
+
+        .custom-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #333;
+            border-radius: 4px;
+        }
+
+        /* =========================================================
+           INTERACTIVITY 2: Exam Simulator: The Cauldron
+           ========================================================= */
+        .cauldron-wrapper {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a10 100%);
+            border: 2px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 3rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .exam-panel {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .exam-panel h4 {
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+        }
+
+        .equation-balancer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .coeff-input {
+            width: 50px;
+            height: 50px;
+            background: #000;
+            border: 2px solid var(--accent-purple);
+            color: #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        .coeff-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .molecule { color: #ccc; }
+        .state { font-size: 1rem; color: #777; }
+
+        .cauldron-graphics {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            min-height: 250px;
+        }
+
+        .flask {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.05);
+            border: 4px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border-top: none;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            box-shadow: inset 0 -20px 30px rgba(0,0,0,0.5);
+            transition: all 0.5s;
+        }
+
+        .flask-neck {
+            width: 40px;
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid rgba(255,255,255,0.2);
+            border-right: 4px solid rgba(255,255,255,0.2);
+            margin-bottom: -4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(180deg, #ff3366, #990033);
+            transition: height 1s ease-in-out, background 1s;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            bottom: -10px;
+            animation: rise 2s infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
+        .burner {
+            width: 100px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .flame {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(ellipse at bottom, #00f0ff 0%, transparent 70%);
+            border-radius: 50% 50% 20% 20%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1); }
+        }
+
+        .mass-input-group {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mass-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .btn-synthesise {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: #000;
+            border: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-synthesise:hover {
+            box-shadow: 0 0 20px rgba(0,240,255,0.5);
+            transform: scale(1.02);
+        }
+
+        #cauldron-feedback {
+            margin-top: 15px;
+            min-height: 50px;
+            font-family: monospace;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html" class="active">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>11. Mass-Mass Conversions</h1>
+            <p class="subtitle">The Classic "Gram-to-Gram" Three-Step Method</p>
+        </header>
+
+        <section class="content-section">
+            <h2>You Can't Compare Apples to Oranges (or Grams to Grams)</h2>
+            <p>In the previous lesson, we built the "Stoichiometric Bridge" using mole ratios. But there is a massive problem: in a real laboratory, you cannot measure out "moles" on an electronic scale. You can only measure <strong>mass (grams)</strong>.</p>
+            
+            <p>If $1 \text{ mole}$ of Carbon reacts with $1 \text{ mole}$ of Oxygen to make $CO_2$, it does <strong>not</strong> mean $1 \text{ gram}$ of Carbon reacts with $1 \text{ gram}$ of Oxygen! Why? Because atoms have different masses. One mole of Carbon is $\approx 12 \text{ g}$, but one mole of $O_2$ is $\approx 32 \text{ g}$.</p>
+            
+            
+
+            <p>To solve this, we must always convert our starting mass into moles, cross the mole ratio bridge, and then convert the new moles back into mass. We call this the <strong>Golden Three-Step Rule</strong>.</p>
+
+            <div class="golden-rule-box">
+                <h3>The 3-Step Stoichiometry Method</h3>
+                <div class="step-container">
+                    <div class="stoich-step">
+                        <div class="step-number">1</div>
+                        <p><strong>Mass $\rightarrow$ Moles</strong></p>
+                        <p>Convert the mass of the <em>Known</em> substance (A) into moles.</p>
+                        <p style="color:var(--accent-cyan); font-family:monospace;">$n(A) = \frac{m(A)}{MM(A)}$</p>
+                    </div>
+                    <div class="arrow-right">&#8594;</div>
+                    <div class="stoich-step">
+                        <div class="step-number">2</div>
+                        <p><strong>The Bridge</strong></p>
+                        <p>Use the balanced equation to find the moles of the <em>Unknown</em> (B).</p>
+                        <p style="color:var(--accent-cyan); font-family:monospace;">$n(B) = n(A) \times \frac{\text{Want}}{\text{Have}}$</p>
+                    </div>
+                    <div class="arrow-right">&#8594;</div>
+                    <div class="stoich-step">
+                        <div class="step-number">3</div>
+                        <p><strong>Moles $\rightarrow$ Mass</strong></p>
+                        <p>Convert the moles of the <em>Unknown</em> (B) back into mass.</p>
+                        <p style="color:var(--accent-cyan); font-family:monospace;">$m(B) = n(B) \times MM(B)$</p>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div class="exam-warning">
+                <h4>Crucial Exam Warning!</h4>
+                <p>In your HSC or final exams, examiners will rarely hold your hand. Often, a question will say: <em>"Calculate the mass of precipitate formed when 5.0g of silver nitrate is added to sodium chloride solution."</em></p>
+                <p>They will <strong>NOT</strong> give you the equation. You are expected to:</p>
+                <ol style="margin-left: 20px; margin-top: 10px; color: #fff;">
+                    <li>Predict the products yourself (e.g., precipitation, combustion, acid-base rules).</li>
+                    <li>Write the correct standard states $(s, l, g, aq)$.</li>
+                    <li><strong>Balance the equation perfectly.</strong> (If your equation is unbalanced, Step 2 of your stoichiometry will be completely wrong, losing you most of the marks!)</li>
+                </ol>
+                <p><em>Note: For the sake of practising the maths in this specific lesson, we will provide the reactants, products, and states. However, the equations will be <strong>unbalanced</strong>. You must balance them before doing the math!</em></p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Stoich-O-Matic Pipeline</h2>
+            <p>Let's look at the combustion of Methane: $\mathbf{CH_4(g) + 2O_2(g) \rightarrow CO_2(g) + 2H_2O(g)}$.</p>
+            <p>If you start with a certain mass of Methane ($CH_4$), how much Water ($H_2O$) will you produce? Adjust the starting mass and watch the pipeline automatically perform the 3-step conversion!</p>
+            
+            <div class="pipeline-wrapper">
+                <div class="pipeline-header">
+                    Target Reaction: $CH_4 + 2O_2 \rightarrow CO_2 + 2H_2O$<br>
+                    Goal: Calculate mass of $H_2O$ produced from $CH_4$.
+                </div>
+
+                <div class="pipeline-system" id="pipeline-system">
+                    <div class="vat" id="vat-mass-a">
+                        <div class="vat-title">Step 0: Start</div>
+                        <div style="color: #aaa; font-size:0.9rem;">Mass of CH₄ (Have)</div>
+                        <div class="vat-value" id="val-mass-a">16.04</div>
+                        <div class="vat-unit">grams (g)</div>
+                    </div>
+
+                    <div class="pipe-connector" id="pipe-1">
+                        <div class="pipe-label">Step 1: ÷ MM (16.04)</div>
+                    </div>
+
+                    <div class="vat" id="vat-moles" style="border-color: var(--accent-purple);">
+                        <div class="vat-title">Step 2: The Bridge</div>
+                        <div style="color: #aaa; font-size:0.9rem;">Moles of H₂O (Want)</div>
+                        <div class="vat-value" id="val-moles-b" style="color: var(--accent-cyan);">2.00</div>
+                        <div class="vat-unit">moles (mol)<br><span style="font-size:0.7rem; color:#888;">(Ratio: 2/1)</span></div>
+                    </div>
+
+                    <div class="pipe-connector" id="pipe-2">
+                        <div class="pipe-label">Step 3: × MM (18.016)</div>
+                    </div>
+
+                    <div class="vat" id="vat-mass-b">
+                        <div class="vat-title">Final Result</div>
+                        <div style="color: #aaa; font-size:0.9rem;">Mass of H₂O (Produce)</div>
+                        <div class="vat-value" id="val-mass-b" style="color: #ff3366; text-shadow: 0 0 10px #ff3366;">36.03</div>
+                        <div class="vat-unit">grams (g)</div>
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <label style="color:#fff; font-size:1.1rem;">Input Mass of $CH_4$: <strong id="slider-readout" style="color:var(--success-green);">16.04 g</strong></label><br>
+                    <input type="range" id="mass-slider" class="custom-slider" min="1.00" max="100.00" step="1.00" value="16.04" oninput="runPipeline()">
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: Lab Bench Reactor</h2>
+            <p><strong>Your Mission:</strong> Synthesise exactly $102.0 \text{ g}$ of Aluminium Oxide ($Al_2O_3$) for an industrial client.</p>
+            <p><strong>Step A:</strong> Balance the synthesis equation. <br><strong>Step B:</strong> Calculate and input the exact mass of solid Aluminium ($Al$) required to achieve this target.</p>
+            
+            <div class="cauldron-wrapper">
+                <div class="exam-panel">
+                    <h4>Step A: Balance Equation</h4>
+                    <div class="equation-balancer">
+                        <input type="number" id="coeff-al" class="coeff-input" min="1" max="9" placeholder="?">
+                        <span class="molecule">Al<span class="state">(s)</span></span>
+                        <span>+</span>
+                        <input type="number" id="coeff-o2" class="coeff-input" min="1" max="9" placeholder="?">
+                        <span class="molecule">O₂<span class="state">(g)</span></span>
+                        <span>&#8594;</span>
+                        <input type="number" id="coeff-al2o3" class="coeff-input" min="1" max="9" placeholder="?">
+                        <span class="molecule">Al₂O₃<span class="state">(s)</span></span>
+                    </div>
+
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+
+                    <h4>Step B: Synthesise $102.0\text{g}$ of $Al_2O_3$</h4>
+                    <p style="font-size: 0.9rem; color: #aaa;">Molar Masses:<br>$Al = 26.98 \text{ g/mol}$<br>$Al_2O_3 = 101.96 \text{ g/mol}$</p>
+                    
+                    <div class="mass-input-group">
+                        <label style="color:#fff;">Mass of Aluminium ($Al$) Required:</label>
+                        <input type="number" id="input-mass-al" class="mass-input" placeholder="Enter mass in grams (e.g. 50.5)">
+                        <button class="btn-synthesise" onclick="igniteReaction()">Ignite Reaction!</button>
+                    </div>
+                </div>
+
+                <div class="cauldron-graphics">
+                    <div class="flask-neck"></div>
+                    <div class="flask" id="reaction-flask">
+                        <div class="liquid" id="flask-liquid"></div>
+                        </div>
+                    <div class="burner">
+                        <div class="flame" id="burner-flame"></div>
+                    </div>
+                    <div id="cauldron-feedback">Awaiting input...</div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Worked Examples</h2>
+            
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: The Standard 3-Step (Easy)</h4>
+                </div>
+                <p>Solid sodium reacts with chlorine gas to produce solid sodium chloride. <br>Equation: $\_Na(s) + \_Cl_2(g) \rightarrow \_NaCl(s)$<br>If you start with $11.5 \text{ g}$ of sodium, calculate the mass of sodium chloride produced.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 0: Balance the Equation</strong></p>
+                    <p>$$ 2Na(s) + Cl_2(g) \rightarrow 2NaCl(s) $$</p>
+
+                    <p><strong>Step 1: Mass $\rightarrow$ Moles (of Known)</strong></p>
+                    <p>Known = $Na$. Mass = $11.5 \text{ g}$. $MM(Na) = 22.99 \text{ g/mol}$.</p>
+                    <p>$$ n(Na) = \frac{11.5}{22.99} = 0.5002 \text{ mol} $$</p>
+                    
+                    <p><strong>Step 2: The Stoichiometric Bridge</strong></p>
+                    <p>Want = $NaCl$ (coeff 2). Have = $Na$ (coeff 2). Ratio = $\frac{2}{2} = 1$.</p>
+                    <p>$$ n(NaCl) = 0.5002 \times 1 = 0.5002 \text{ mol} $$</p>
+
+                    <p><strong>Step 3: Moles $\rightarrow$ Mass (of Unknown)</strong></p>
+                    <p>$MM(NaCl) = 22.99 + 35.45 = 58.44 \text{ g/mol}$.</p>
+                    <p>$$ m(NaCl) = 0.5002 \times 58.44 = \mathbf{29.2 \text{ g}} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Fractional Ratios (Medium)</h4>
+                </div>
+                <p>Propane burns in oxygen to produce carbon dioxide and water vapour. <br>Equation: $\_C_3H_8(g) + \_O_2(g) \rightarrow \_CO_2(g) + \_H_2O(g)$<br>What mass of oxygen is required to completely combust $44.1 \text{ g}$ of propane?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 0: Balance the Equation</strong></p>
+                    <p>$$ C_3H_8(g) + 5O_2(g) \rightarrow 3CO_2(g) + 4H_2O(g) $$</p>
+
+                    <p><strong>Step 1: Mass $\rightarrow$ Moles (of Known)</strong></p>
+                    <p>Known = $C_3H_8$. Mass = $44.1 \text{ g}$. $MM = (3 \times 12.01) + (8 \times 1.008) = 44.094 \text{ g/mol}$.</p>
+                    <p>$$ n(C_3H_8) = \frac{44.1}{44.094} = 1.000 \text{ mol} $$</p>
+                    
+                    <p><strong>Step 2: The Stoichiometric Bridge</strong></p>
+                    <p>Want = $O_2$ (coeff 5). Have = $C_3H_8$ (coeff 1). Ratio = $\frac{5}{1} = 5$.</p>
+                    <p>$$ n(O_2) = 1.000 \times 5 = 5.000 \text{ mol} $$</p>
+
+                    <p><strong>Step 3: Moles $\rightarrow$ Mass (of Unknown)</strong></p>
+                    <p>$MM(O_2) = 2 \times 16.00 = 32.00 \text{ g/mol}$.</p>
+                    <p>$$ m(O_2) = 5.000 \times 32.00 = \mathbf{160.0 \text{ g}} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Thermal Decomposition (Hard)</h4>
+                </div>
+                <p>Calcium carbonate decomposes when heated strongly to produce solid calcium oxide and carbon dioxide gas. <br>Equation: $\_CaCO_3(s) \rightarrow \_CaO(s) + \_CO_2(g)$<br>If $50.0 \text{ g}$ of carbon dioxide gas is collected, what mass of calcium carbonate was decomposed?</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                <div id="ws-3" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 0: Balance the Equation</strong></p>
+                    <p>$$ CaCO_3(s) \rightarrow CaO(s) + CO_2(g) $$ <em>(Already balanced! $1:1:1$)</em></p>
+
+                    <p><strong>Step 1: Mass $\rightarrow$ Moles (of Known)</strong></p>
+                    <p>Known = $CO_2$. Mass = $50.0 \text{ g}$. $MM = 12.01 + (2 \times 16.00) = 44.01 \text{ g/mol}$.</p>
+                    <p>$$ n(CO_2) = \frac{50.0}{44.01} = 1.136 \text{ mol} $$</p>
+                    
+                    <p><strong>Step 2: The Stoichiometric Bridge</strong></p>
+                    <p>Want = $CaCO_3$. Ratio = $\frac{1}{1} = 1$.</p>
+                    <p>$$ n(CaCO_3) = 1.136 \text{ mol} $$</p>
+
+                    <p><strong>Step 3: Moles $\rightarrow$ Mass (of Unknown)</strong></p>
+                    <p>$MM(CaCO_3) = 40.08 + 12.01 + (3 \times 16.00) = 100.09 \text{ g/mol}$.</p>
+                    <p>$$ m(CaCO_3) = 1.136 \times 100.09 = \mathbf{113.7 \text{ g}} $$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Hydrated Salts (Extension)</h4>
+                </div>
+                <p>Copper(II) sulfate pentahydrate ($CuSO_4 \cdot 5H_2O$) is heated to remove all water, leaving anhydrous $CuSO_4(s)$ and driving off $H_2O(g)$.<br>If you start with $24.97 \text{ g}$ of the blue hydrated crystals, calculate the mass of the white anhydrous powder remaining.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                <div id="ws-4" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 0: Write and Balance the Equation</strong></p>
+                    <p>$$ CuSO_4 \cdot 5H_2O(s) \rightarrow CuSO_4(s) + 5H_2O(g) $$</p>
+
+                    <p><strong>Step 1: Mass $\rightarrow$ Moles (of Hydrate)</strong></p>
+                    <p>$MM(CuSO_4 \cdot 5H_2O) = 63.55 + 32.07 + (4 \times 16.00) + 5 \times (18.016) = 249.7 \text{ g/mol}$.</p>
+                    <p>$$ n(\text{hydrate}) = \frac{24.97}{249.7} = 0.1000 \text{ mol} $$</p>
+                    
+                    <p><strong>Step 2: The Stoichiometric Bridge</strong></p>
+                    <p>Want = $CuSO_4$ (anhydrous). Have = Hydrate. Ratio = $\frac{1}{1} = 1$.</p>
+                    <p>$$ n(CuSO_4) = 0.1000 \text{ mol} $$</p>
+
+                    <p><strong>Step 3: Moles $\rightarrow$ Mass (of Anhydrous)</strong></p>
+                    <p>$MM(CuSO_4) = 63.55 + 32.07 + 64.00 = 159.62 \text{ g/mol}$.</p>
+                    <p>$$ m(CuSO_4) = 0.1000 \times 159.62 = \mathbf{15.96 \text{ g}} $$</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Practice Questions</h2>
+            <p><em>Remember: Balance the equation first!</em></p>
+
+            <div class="practise-question" id="q-mass-1">
+                <div class="question-header">
+                    <h4>Question 1: Easy</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Magnesium burns in oxygen: $\_Mg(s) + \_O_2(g) \rightarrow \_MgO(s)$</p>
+                    <p>Calculate the mass of Magnesium Oxide ($MgO$) produced when $6.00 \text{ g}$ of Magnesium ($Mg$) is completely burnt.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mass-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mass-1')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-mass-1" style="display: none;">
+                    <p><strong>Hint:</strong> The balanced equation is $2Mg + O_2 \rightarrow 2MgO$. The ratio of $Mg$ to $MgO$ is $2:2$, which simplifies to $1:1$.</p>
+                </div>
+                <div class="hidden-solution" id="sol-mass-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>1. Eq: $2Mg + O_2 \rightarrow 2MgO$</p>
+                        <p>2. $n(Mg) = \frac{6.00}{24.31} = 0.2468 \text{ mol}$</p>
+                        <p>3. Ratio $1:1$, so $n(MgO) = 0.2468 \text{ mol}$</p>
+                        <p>4. $m(MgO) = n \times MM = 0.2468 \times (24.31 + 16.00) = 0.2468 \times 40.31 = \mathbf{9.95 \text{ g}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly balances equation and calculates moles of Mg.</li>
+                            <li><strong>1 Mark:</strong> Correct application of stoichiometric ratio.</li>
+                            <li><strong>1 Mark:</strong> Correct final mass ($9.95 \text{ g}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mass-1" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mass-1')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mass-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mass-2">
+                <div class="question-header">
+                    <h4>Question 2: Medium</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Nitrogen gas reacts with hydrogen gas to form ammonia: $\_N_2(g) + \_H_2(g) \rightarrow \_NH_3(g)$</p>
+                    <p>Calculate the mass of hydrogen gas ($H_2$) required to fully react with $14.0 \text{ g}$ of Nitrogen gas ($N_2$).</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mass-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mass-2')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-mass-2" style="display: none;">
+                    <p><strong>Hint:</strong> Balance the equation ($1:3:2$). Calculate moles of $N_2$ using its diatomic mass ($28.02$). The ratio of Want/Have is $3/1$.</p>
+                </div>
+                <div class="hidden-solution" id="sol-mass-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>1. Eq: $N_2 + 3H_2 \rightarrow 2NH_3$</p>
+                        <p>2. $n(N_2) = \frac{14.0}{28.02} = 0.4996 \text{ mol}$</p>
+                        <p>3. $n(H_2) = 0.4996 \times \frac{3}{1} = 1.4989 \text{ mol}$</p>
+                        <p>4. $m(H_2) = 1.4989 \times 2.016 = \mathbf{3.02 \text{ g}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly balances the equation.</li>
+                            <li><strong>1 Mark:</strong> Correct moles of $N_2$ ($0.4996 \text{ mol}$).</li>
+                            <li><strong>1 Mark:</strong> Correct moles of $H_2$ using $3:1$ ratio.</li>
+                            <li><strong>1 Mark:</strong> Correct final mass ($3.02 \text{ g}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mass-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mass-2')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mass-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mass-3">
+                <div class="question-header">
+                    <h4>Question 3: Hard</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Aluminium dissolves in hydrochloric acid: $\_Al(s) + \_HCl(aq) \rightarrow \_AlCl_3(aq) + \_H_2(g)$</p>
+                    <p>If an experiment requires $5.00 \text{ g}$ of hydrogen gas ($H_2$) to fill a balloon, what mass of solid Aluminium must be reacted?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mass-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mass-3')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-mass-3" style="display: none;">
+                    <p><strong>Hint:</strong> Balancing this is tricky. Start with the $Cl$ and $H$. The balanced equation is $2Al + 6HCl \rightarrow 2AlCl_3 + 3H_2$.</p>
+                </div>
+                <div class="hidden-solution" id="sol-mass-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>1. Eq: $2Al(s) + 6HCl(aq) \rightarrow 2AlCl_3(aq) + 3H_2(g)$</p>
+                        <p>2. $n(H_2) = \frac{5.00}{2.016} = 2.480 \text{ mol}$</p>
+                        <p>3. Ratio (Want $Al$ / Have $H_2$) = $\frac{2}{3}$. <br> $n(Al) = 2.480 \times \frac{2}{3} = 1.653 \text{ mol}$</p>
+                        <p>4. $m(Al) = 1.653 \times 26.98 = \mathbf{44.6 \text{ g}}$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct balanced equation ($2,6,2,3$).</li>
+                            <li><strong>1 Mark:</strong> Correct moles of $H_2$ ($2.48 \text{ mol}$).</li>
+                            <li><strong>1 Mark:</strong> Correct stoichiometric ratio ($\times 2/3$).</li>
+                            <li><strong>1 Mark:</strong> Correct final mass of Aluminium ($44.6 \text{ g}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mass-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mass-3')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mass-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mass-4">
+                <div class="question-header">
+                    <h4>Question 4: Extension</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Octane ($C_8H_{18}$) undergoes complete combustion. $\_C_8H_{18}(l) + \_O_2(g) \rightarrow \_CO_2(g) + \_H_2O(g)$</p>
+                    <p>If $1.00 \text{ kg}$ ($1000 \text{ g}$) of octane is burnt in a car engine, calculate the total combined mass of the greenhouse gases ($CO_2$ and $H_2O$) emitted from the exhaust.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mass-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mass-4')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-mass-4" style="display: none;">
+                    <p><strong>Hint:</strong> Balance the equation ($2:25:16:18$). Calculate moles of octane. Then you have to do the bridge and mass calculation TWICE (once for $CO_2$, once for $H_2O$), then add the final masses together.</p>
+                </div>
+                <div class="hidden-solution" id="sol-mass-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>1. Eq: $2C_8H_{18} + 25O_2 \rightarrow 16CO_2 + 18H_2O$</p>
+                        <p>2. $MM(C_8H_{18}) = (8 \times 12.01) + (18 \times 1.008) = 114.224 \text{ g/mol}$</p>
+                        <p>$n(C_8H_{18}) = \frac{1000}{114.224} = 8.755 \text{ mol}$</p>
+                        
+                        <p>3. Calculate $CO_2$:</p>
+                        <p>$n(CO_2) = 8.755 \times \frac{16}{2} = 70.04 \text{ mol}$</p>
+                        <p>$m(CO_2) = 70.04 \times 44.01 = 3082.5 \text{ g}$</p>
+                        
+                        <p>4. Calculate $H_2O$:</p>
+                        <p>$n(H_2O) = 8.755 \times \frac{18}{2} = 78.795 \text{ mol}$</p>
+                        <p>$m(H_2O) = 78.795 \times 18.016 = 1419.6 \text{ g}$</p>
+
+                        <p>5. Total Mass:</p>
+                        <p>Total $= 3082.5 + 1419.6 = \mathbf{4502.1 \text{ g}}$ (or $4.50 \text{ kg}$)</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct balanced equation ($2,25,16,18$).</li>
+                            <li><strong>1 Mark:</strong> Correct moles of Octane ($8.755 \text{ mol}$).</li>
+                            <li><strong>1 Mark:</strong> Correct mass of $CO_2$ ($\approx 3.08 \text{ kg}$).</li>
+                            <li><strong>1 Mark:</strong> Correct mass of $H_2O$ ($\approx 1.42 \text{ kg}$).</li>
+                            <li><strong>1 Mark:</strong> Correct total mass summed up.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-mass-4" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mass-4')">Submit</button>
+                        <span class="mark-feedback" id="feedback-mass-4"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="intro-limiting-reagents.html" class="btn-next">Proceed to Lesson 12: Intro to Limiting Reagents &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // ==========================================
+        // UI & SCORING LOGIC
+        // ==========================================
+        function toggleHint(hintId) {
+            const h = document.getElementById(hintId);
+            h.style.display = h.style.display === "none" ? "block" : "none";
+        }
+
+        function toggleSolution(solId) {
+            const s = document.getElementById(solId);
+            s.style.display = s.style.display === "none" ? "block" : "none";
+            if (window.MathJax) {
+                MathJax.typesetPromise([s]);
+            }
+        }
+
+        function submitMark(id) {
+            const val = parseInt(document.getElementById('mark-selector-' + id).value, 10);
+            localStorage.setItem('chem_mod2_q_' + id, val);
+            const fb = document.getElementById('feedback-' + id);
+            fb.innerHTML = `<strong> Saved: ${val} mark(s)</strong>`;
+            fb.style.color = "var(--success-green)";
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            let total = 0;
+            for(let i=0; i<localStorage.length; i++){
+                let key = localStorage.key(i);
+                if(key.startsWith('chem_mod2_q_')) {
+                    total += parseInt(localStorage.getItem(key));
+                }
+            }
+            document.getElementById('total-marks').innerText = total;
+        }
+
+        window.addEventListener('load', () => {
+            updateTotalMarksDisplay();
+            ['mass-1', 'mass-2', 'mass-3', 'mass-4'].forEach(id => {
+                const saved = localStorage.getItem('chem_mod2_q_' + id);
+                if(saved !== null) {
+                    document.getElementById('mark-selector-' + id).value = saved;
+                    document.getElementById('feedback-' + id).innerHTML = `<em> Saved: ${saved} mark(s)</em>`;
+                }
+            });
+            
+            // Init Interactive 1
+            runPipeline();
+        });
+
+        // ==========================================
+        // INTERACTIVITY 1: The Pipeline Logic
+        // Equation: 1 CH4 + 2 O2 -> 1 CO2 + 2 H2O
+        // Mass -> Moles -> Moles -> Mass
+        // MM(CH4) = 16.04, MM(H2O) = 18.016
+        // ==========================================
+        let isAnimating = false;
+
+        function runPipeline() {
+            const massA = parseFloat(document.getElementById('mass-slider').value);
+            document.getElementById('slider-readout').innerText = massA.toFixed(2) + " g";
+            
+            // Step 1: Mass A -> Moles A
+            const mmA = 16.04;
+            const molesA = massA / mmA;
+            
+            // Step 2: Bridge (Ratio CH4 to H2O is 1 to 2) -> Moles B
+            const molesB = molesA * 2;
+            
+            // Step 3: Moles B -> Mass B
+            const mmB = 18.016;
+            const massB = molesB * mmB;
+
+            // Update UI instantly
+            document.getElementById('val-mass-a').innerText = massA.toFixed(2);
+            document.getElementById('val-moles-b').innerText = molesB.toFixed(3);
+            document.getElementById('val-mass-b').innerText = massB.toFixed(2);
+
+            // Optional: visual highlighting
+            highlightVats();
+            if(!isAnimating) {
+                spawnPipeParticles();
+            }
+        }
+
+        function highlightVats() {
+            const vats = ['vat-mass-a', 'vat-moles', 'vat-mass-b'];
+            vats.forEach(id => {
+                const v = document.getElementById(id);
+                v.classList.add('active');
+                setTimeout(() => v.classList.remove('active'), 300);
+            });
+        }
+
+        function spawnPipeParticles() {
+            isAnimating = true;
+            const p1 = document.getElementById('pipe-1');
+            const p2 = document.getElementById('pipe-2');
+            
+            createParticleForPipe(p1);
+            setTimeout(() => {
+                createParticleForPipe(p2);
+                isAnimating = false;
+            }, 600);
+        }
+
+        function createParticleForPipe(pipeElement) {
+            const p = document.createElement('div');
+            p.className = 'pipe-particle';
+            p.style.left = '0px';
+            p.style.top = '50%';
+            p.style.transform = 'translateY(-50%)';
+            pipeElement.appendChild(p);
+
+            const anim = p.animate([
+                { left: '0%', opacity: 1 },
+                { left: '100%', opacity: 1 }
+            ], {
+                duration: 600,
+                easing: 'linear'
+            });
+
+            anim.onfinish = () => p.remove();
+        }
+
+
+        // ==========================================
+        // INTERACTIVITY 2: Cauldron Logic
+        // Eq: 4 Al + 3 O2 -> 2 Al2O3
+        // Target: 102.0g Al2O3. MM(Al2O3) = 101.96.
+        // Moles Al2O3 = 102.0 / 101.96 = 1.00 mol
+        // Ratio Al:Al2O3 = 4:2 = 2:1
+        // Moles Al = 2.00 mol
+        // Mass Al = 2.00 * 26.98 = 53.96g
+        // ==========================================
+        function igniteReaction() {
+            const cAl = document.getElementById('coeff-al').value;
+            const cO2 = document.getElementById('coeff-o2').value;
+            const cAl2O3 = document.getElementById('coeff-al2o3').value;
+            const inputMass = parseFloat(document.getElementById('input-mass-al').value);
+            const feedback = document.getElementById('cauldron-feedback');
+            
+            const flask = document.getElementById('reaction-flask');
+            const liquid = document.getElementById('flask-liquid');
+            const flame = document.getElementById('burner-flame');
+
+            // Reset UI
+            feedback.style.color = "#fff";
+            liquid.style.height = "0%";
+            flame.style.opacity = "0";
+            flask.style.borderColor = "rgba(255,255,255,0.2)";
+            flask.innerHTML = '<div class="liquid" id="flask-liquid"></div>'; // clear old bubbles
+
+            // Validate inputs exist
+            if(!cAl || !cO2 || !cAl2O3 || isNaN(inputMass)) {
+                feedback.innerText = "Error: Fill in all balancing coefficients and the mass input.";
+                feedback.style.color = "#ff3366";
+                return;
+            }
+
+            // Step A Check: Is equation balanced? (4, 3, 2)
+            if(cAl !== "4" || cO2 !== "3" || cAl2O3 !== "2") {
+                feedback.innerHTML = "<strong>Synthesis Failed!</strong><br>The equation is not balanced correctly. Try again.";
+                feedback.style.color = "#ff3366";
+                triggerExplosion(flask);
+                return;
+            }
+
+            // Step B Check: Is the mass calculation correct?
+            // Acceptable range for rounding: 53.9 to 54.0
+            if(inputMass >= 53.9 && inputMass <= 54.0) {
+                feedback.innerHTML = "<strong>Success!</strong><br>Perfect Stoichiometry. $102.0\\text{g}$ of $Al_2O_3$ synthesised.";
+                feedback.style.color = "var(--success-green)";
+                triggerSuccessAnimation(liquid, flame, flask);
+                if(window.MathJax) MathJax.typesetPromise([feedback]);
+            } else {
+                feedback.innerHTML = `<strong>Synthesis Failed!</strong><br>Incorrect mass. You need exactly $\\sim 53.96\\text{g}$. You entered ${inputMass}g.`;
+                feedback.style.color = "#ff3366";
+                triggerExplosion(flask);
+                if(window.MathJax) MathJax.typesetPromise([feedback]);
+            }
+        }
+
+        function triggerSuccessAnimation(liquid, flame, flask) {
+            // Turn on burner
+            flame.style.opacity = "1";
+            
+            // Fill liquid green
+            liquid.style.background = "linear-gradient(180deg, #00ff00, #008800)";
+            setTimeout(() => {
+                liquid.style.height = "70%";
+            }, 100);
+
+            // Glow flask
+            flask.style.borderColor = "var(--success-green)";
+            flask.style.boxShadow = "0 0 30px var(--success-green), inset 0 -20px 30px rgba(0,255,0,0.5)";
+
+            // Add bubbles
+            for(let i=0; i<15; i++) {
+                setTimeout(() => {
+                    let b = document.createElement('div');
+                    b.className = 'bubble';
+                    let size = Math.random() * 15 + 5;
+                    b.style.width = size + 'px';
+                    b.style.height = size + 'px';
+                    b.style.left = (Math.random() * 80 + 10) + '%';
+                    b.style.animationDuration = (Math.random() * 1 + 1) + 's';
+                    flask.appendChild(b);
+                }, i * 200);
+            }
+        }
+
+        function triggerExplosion(flask) {
+            flask.style.borderColor = "#ff3366";
+            flask.style.boxShadow = "0 0 50px #ff3366, inset 0 0 50px #ff3366";
+            
+            // Shake animation
+            let shakes = [
+                { transform: 'translate(5px, 5px)' },
+                { transform: 'translate(-5px, -5px)' },
+                { transform: 'translate(-5px, 5px)' },
+                { transform: 'translate(5px, -5px)' },
+                { transform: 'translate(0px, 0px)' }
+            ];
+            
+            flask.animate(shakes, { duration: 100, iterations: 5 });
+            
+            setTimeout(() => {
+                flask.style.borderColor = "rgba(255,255,255,0.2)";
+                flask.style.boxShadow = "inset 0 -20px 30px rgba(0,0,0,0.5)";
+            }, 600);
+        }
+    </script>
+</body>
+</html>

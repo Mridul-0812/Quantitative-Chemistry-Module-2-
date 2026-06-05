@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2: Molar Mass Basics</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html" class="active">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>2. Molar Mass Basics</h1>
+            <p class="subtitle">Translating the Periodic Table into Grams</p>
+        </header>
+
+        <section class="content-section" id="theory">
+            <h2>What is Molar Mass ($MM$)?</h2>
+            <p>In the previous lesson, we explored Relative Atomic Mass ($A_r$), which gives us the average mass of an atom in atomic mass units (amu). However, you cannot measure 'amu' on a laboratory scale. We need a way to translate these microscopic masses into macroscopic, measurable quantities.</p>
+            <p>Enter the <strong>Molar Mass</strong> (denoted as $MM$ or simply $M$). The molar mass is defined as the mass of exactly one mole of a substance. The beauty of the chemical system is that the numerical value of the relative atomic mass is exactly equal to the molar mass.</p>
+            
+            <ul class="feature-list">
+                <li><strong>Relative Atomic Mass ($A_r$) of Carbon:</strong> $12.01 \text{ amu}$</li>
+                <li><strong>Molar Mass ($MM$) of Carbon:</strong> $12.01 \text{ g/mol}$</li>
+            </ul>
+
+            <p>The standard SI unit for molar mass is <strong>grams per mole ($\text{g/mol}$ or $\text{g mol}^{-1}$)</strong>.</p>
+
+            <hr class="section-divider">
+
+            <h2>Using the Periodic Table</h2>
+            <p>To find the molar mass of any element, you simply read the atomic weight given on your NESA Periodic Table. To find the molar mass of a <em>compound</em>, you sum the molar masses of all the constituent atoms present in the chemical formula.</p>
+            
+            <div class="hidden-solution" style="display: block; background: rgba(0,240,255,0.05); border-left: 4px solid #00f0ff; padding: 1.5rem; border-radius: 8px;">
+                <h4>The Golden Rule for Compounds:</h4>
+                <p>1. Identify the quantity of each element in the formula using the subscripts.</p>
+                <p>2. Multiply the quantity of each element by its atomic mass from the periodic table.</p>
+                <p>3. Add them all together.</p>
+                <p><em>Beware of brackets! A subscript immediately outside a bracket multiplies everything inside the bracket.</em></p>
+            </div>
+            
+        </section>
+
+        <section class="content-section" id="interactivity">
+            <h2>Interactive: The Alchemist's Flask</h2>
+            <p>Construct your own molecule by adding atoms to the flask. Watch how the chemical formula updates and the total Molar Mass ($MM$) calculates in real-time. Can you build Ethanol ($C_2H_6O$)?</p>
+            
+            <div class="practise-question" style="background: rgba(176,38,255,0.05); border-color: rgba(176,38,255,0.3); text-align: center;">
+                <div class="question-header" style="justify-content: center;">
+                    <h4>🧪 Molecule Builder</h4>
+                </div>
+                
+                <div style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                    <button class="btn-hint" onclick="addAtom('C')" style="background: #333; color: #fff;">+ Carbon (C)</button>
+                    <button class="btn-hint" onclick="addAtom('H')" style="background: #e0e0e0; color: #000;">+ Hydrogen (H)</button>
+                    <button class="btn-hint" onclick="addAtom('O')" style="background: #ff5252; color: #fff;">+ Oxygen (O)</button>
+                    <button class="btn-hint" onclick="addAtom('N')" style="background: #448aff; color: #fff;">+ Nitrogen (N)</button>
+                    <button class="btn-hint" onclick="addAtom('Na')" style="background: #ab47bc; color: #fff;">+ Sodium (Na)</button>
+                    <button class="btn-hint" onclick="addAtom('Cl')" style="background: #69f0ae; color: #000;">+ Chlorine (Cl)</button>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <button class="btn-submit-mark" onclick="clearFlask()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Empty Flask (Reset)</button>
+                </div>
+
+                <div style="padding: 2rem; background: rgba(0,0,0,0.5); border-radius: 12px; border: 1px inset var(--glass-border); position: relative; overflow: hidden;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: linear-gradient(to top, rgba(0,240,255,0.2), transparent); z-index: 0;"></div>
+                    
+                    <div style="position: relative; z-index: 1;">
+                        <h5 style="color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;">Current Formula</h5>
+                        <h2 id="dynamic-formula" style="font-size: 3rem; margin: 1rem 0; color: #fff; letter-spacing: 2px;">Empty</h2>
+                        
+                        <h5 style="color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;">Total Molar Mass</h5>
+                        <h3 style="margin-bottom: 0; font-size: 2.5rem; color: var(--success-green);"><span id="dynamic-mm">0.00</span> <span style="font-size: 1.2rem; color: var(--text-muted);">g/mol</span></h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Review these examples before attempting the practice questions. Click to expand each step-by-step solution.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: Easy (Diatomic Molecules)</h4>
+                </div>
+                <p>Calculate the molar mass of Chlorine gas ($Cl_2$).</p>
+                <p><em>Data: Atomic weight of Cl = $35.45$</em></p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Identify the elements and quantities.</strong></p>
+                    <p>The formula $Cl_2$ indicates there are exactly 2 atoms of Chlorine.</p>
+                    <p><strong>Step 2: Multiply by atomic mass.</strong></p>
+                    <p>$$MM(Cl_2) = 2 \times 35.45$$</p>
+                    <p>$$MM(Cl_2) = 70.90 \text{ g/mol}$$</p>
+                    <p><em>Note: Always remember that elements like Hydrogen, Nitrogen, Oxygen, and the Halogens (F, Cl, Br, I) exist naturally as diatomic molecules. If a question asks for the mass of "oxygen gas", it means $O_2$, not $O$.</em></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Medium (Simple Compounds)</h4>
+                </div>
+                <p>Calculate the molar mass of Carbon Dioxide ($CO_2$).</p>
+                <p><em>Data: C = $12.01$, O = $16.00$</em></p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Break down the formula.</strong></p>
+                    <p>The molecule contains 1 Carbon atom and 2 Oxygen atoms.</p>
+                    <p><strong>Step 2: Sum the atomic weights.</strong></p>
+                    <p>$$MM(CO_2) = (1 \times 12.01) + (2 \times 16.00)$$</p>
+                    <p>$$MM(CO_2) = 12.01 + 32.00$$</p>
+                    <p>$$MM(CO_2) = 44.01 \text{ g/mol}$$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Hard (Compounds with Brackets)</h4>
+                </div>
+                <p>Calculate the molar mass of Aluminium Sulfate ($Al_2(SO_4)_3$).</p>
+                <p><em>Data: Al = $26.98$, S = $32.07$, O = $16.00$</em></p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                <div id="ws-3" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Distribute the subscript outside the brackets.</strong></p>
+                    <p>The subscript $3$ outside the bracket multiplies everything inside by 3.</p>
+                    <ul>
+                        <li>Aluminium (Al): 2</li>
+                        <li>Sulfur (S): $1 \times 3 = 3$</li>
+                        <li>Oxygen (O): $4 \times 3 = 12$</li>
+                    </ul>
+                    <p><strong>Step 2: Sum the multiplied atomic weights.</strong></p>
+                    <p>$$MM(Al_2(SO_4)_3) = (2 \times 26.98) + (3 \times 32.07) + (12 \times 16.00)$$</p>
+                    <p>$$MM(Al_2(SO_4)_3) = 53.96 + 96.21 + 192.00$$</p>
+                    <p>$$MM(Al_2(SO_4)_3) = 342.17 \text{ g/mol}$$</p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Extension (Hydrated Salts)</h4>
+                </div>
+                <p>Calculate the molar mass of Copper(II) Sulfate Pentahydrate ($CuSO_4 \cdot 5H_2O$).</p>
+                <p><em>Data: Cu = $63.55$, S = $32.07$, O = $16.00$, H = $1.008$</em></p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                <div id="ws-4" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Understand the dot ($\cdot$) notation.</strong></p>
+                    <p>In chemistry, the dot does <strong>not</strong> mean multiply. It indicates that 5 water molecules are crystallised within the ionic lattice for every 1 formula unit of $CuSO_4$. You must <strong>add</strong> the mass of 5 whole water molecules to the mass of the salt.</p>
+                    <p><strong>Step 2: Calculate the mass of the anhydrous salt ($CuSO_4$).</strong></p>
+                    <p>$$MM(CuSO_4) = 63.55 + 32.07 + (4 \times 16.00) = 159.62 \text{ g/mol}$$</p>
+                    <p><strong>Step 3: Calculate the mass of 5 waters ($5H_2O$).</strong></p>
+                    <p>$$MM(H_2O) = (2 \times 1.008) + 16.00 = 18.016 \text{ g/mol}$$</p>
+                    <p>$$Mass\ of\ 5H_2O = 5 \times 18.016 = 90.08 \text{ g/mol}$$</p>
+                    <p><strong>Step 4: Add them together.</strong></p>
+                    <p>$$Total\ MM = 159.62 + 90.08 = 249.70 \text{ g/mol}$$</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise">
+            <h2>Practice Questions</h2>
+            <p>Attempt the questions below. Ensure you use the atomic weights provided on the NESA Periodic Table for accuracy. Once completed, reveal the criteria to self-assess.</p>
+
+            <div class="practise-question" id="q-mm-1">
+                <div class="question-header">
+                    <h4>Question 1</h4>
+                    <span class="marks-allocated">[1 Mark]</span>
+                </div>
+                <div class="question-body">
+                    <p>Define the term <em>molar mass</em> and state its standard SI unit.</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mm-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mm-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-mm-1" style="display: none;">
+                    <p><strong>Hint:</strong> Think about the relationship between one "mole" and measuring mass on a balance scale.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-mm-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Model Answer:</h5>
+                        <p>Molar mass is the mass of exactly one mole of a specific substance. Its standard SI unit is grams per mole ($\text{g/mol}$ or $\text{g mol}^{-1}$).</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly defines the term and states the correct unit ($\text{g/mol}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-mm-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-mm-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mm-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-mm-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mm-2">
+                <div class="question-header">
+                    <h4>Question 2</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the molar mass of Sulfuric Acid ($H_2SO_4$).</p>
+                    <p><em>(Atomic weights: H = $1.008$, S = $32.07$, O = $16.00$)</em></p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mm-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mm-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-mm-2" style="display: none;">
+                    <p><strong>Hint:</strong> Ensure you are multiplying Hydrogen by 2, Sulfur by 1, and Oxygen by 4 before adding them all together.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-mm-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$MM(H_2SO_4) = (2 \times 1.008) + (1 \times 32.07) + (4 \times 16.00)$$</p>
+                        <p>$$MM(H_2SO_4) = 2.016 + 32.07 + 64.00$$</p>
+                        <p>$$MM(H_2SO_4) = 98.086 \text{ g/mol}$$</p>
+                        <p><em>(Acceptable rounding: $98.09 \text{ g/mol}$)</em></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly identifies the number of atoms of each element and their respective atomic weights.</li>
+                            <li><strong>2 Marks:</strong> Correct final calculation with the correct units ($\text{g/mol}$).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-mm-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-mm-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mm-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-mm-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mm-3">
+                <div class="question-header">
+                    <h4>Question 3</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the molar mass of Calcium Phosphate, $Ca_3(PO_4)_2$.</p>
+                    <p><em>(Atomic weights: Ca = $40.08$, P = $30.97$, O = $16.00$)</em></p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mm-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mm-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-mm-3" style="display: none;">
+                    <p><strong>Hint:</strong> The subscript '2' outside the brackets applies to both the Phosphorus and the Oxygen inside. You will have 2 Phosphorus atoms and 8 Oxygen atoms.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-mm-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>Number of atoms: Ca = 3, P = 2, O = 8</p>
+                        <p>$$MM(Ca_3(PO_4)_2) = (3 \times 40.08) + (2 \times 30.97) + (8 \times 16.00)$$</p>
+                        <p>$$MM(Ca_3(PO_4)_2) = 120.24 + 61.94 + 128.00$$</p>
+                        <p>$$MM(Ca_3(PO_4)_2) = 310.18 \text{ g/mol}$$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates the mass contribution of the Calcium atoms ($120.24$).</li>
+                            <li><strong>2 Marks:</strong> Correctly distributes the subscript $2$ to calculate the mass of the phosphate groups ($189.94$).</li>
+                            <li><strong>3 Marks:</strong> Arrives at the correct final molar mass ($310.18$) with units.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-mm-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-mm-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mm-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-mm-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-mm-4">
+                <div class="question-header">
+                    <h4>Question 4</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>An unknown element $X$ forms a stable oxide with the chemical formula $X_2O_3$. The total molar mass of this compound is experimentally determined to be $159.70 \text{ g/mol}$.</p>
+                    <p>Using the atomic mass of Oxygen ($16.00$), calculate the atomic mass of element $X$, and use the Periodic Table to identify the element.</p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-mm-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-mm-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-mm-4" style="display: none;">
+                    <p><strong>Hint:</strong> Set this up as an algebraic equation: $2X + 3(Oxygen) = 159.70$. Solve for $X$, then find that number on the periodic table.</p>
+                </div>
+
+                <div class="hidden-solution" id="sol-mm-4" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Set up the algebraic equation based on the formula.</strong></p>
+                        <p>$$2(X) + 3(O) = 159.70$$</p>
+                        <p><strong>Step 2: Substitute the known mass of Oxygen.</strong></p>
+                        <p>$$2X + 3(16.00) = 159.70$$</p>
+                        <p>$$2X + 48.00 = 159.70$$</p>
+                        <p><strong>Step 3: Solve for $X$.</strong></p>
+                        <p>$$2X = 159.70 - 48.00$$</p>
+                        <p>$$2X = 111.70$$</p>
+                        <p>$$X = 55.85 \text{ g/mol}$$</p>
+                        <p><strong>Step 4: Identify the element.</strong></p>
+                        <p>Looking at the periodic table, the element with an atomic mass closest to $55.85$ is Iron (Fe).</p>
+                        <p><em>Final Answer: The atomic mass is $55.85$, and the element is Iron (Fe). The compound is Iron(III) Oxide ($Fe_2O_3$).</em></p>
+                    </div>
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly sets up an equation equating the sum of the atomic masses to $159.70$.</li>
+                            <li><strong>2 Marks:</strong> Correctly substitutes the total mass of the 3 Oxygen atoms ($48.00$).</li>
+                            <li><strong>3 Marks:</strong> Accurately calculates the atomic mass of element $X$ as $55.85$.</li>
+                            <li><strong>4 Marks:</strong> Correctly identifies the unknown element as Iron (Fe).</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <label for="mark-selector-mm-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-mm-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('mm-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-mm-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="balancing-equations-rules.html" class="btn-next">Proceed to Lesson 3: Balancing Rules &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * GLOBAL SYSTEM INITIALISATION
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('mm-1');
+            checkIfQuestionAnswered('mm-2');
+            checkIfQuestionAnswered('mm-3');
+            checkIfQuestionAnswered('mm-4');
+        });
+
+        /**
+         * ALCHEMIST FLASK (MOLECULE BUILDER) LOGIC
+         */
+        let currentFlaskState = {
+            'C': 0, 'H': 0, 'O': 0, 'N': 0, 'Na': 0, 'Cl': 0
+        };
+
+        const atomicWeights = {
+            'C': 12.01, 'H': 1.008, 'O': 16.00, 'N': 14.01, 'Na': 22.99, 'Cl': 35.45
+        };
+
+        function addAtom(element) {
+            // Increment the count of the chosen element
+            if (currentFlaskState.hasOwnProperty(element)) {
+                currentFlaskState[element]++;
+                updateFlaskDisplay();
+            }
+        }
+
+        function clearFlask() {
+            // Reset all counts to zero
+            for (let el in currentFlaskState) {
+                currentFlaskState[el] = 0;
+            }
+            updateFlaskDisplay();
+        }
+
+        function updateFlaskDisplay() {
+            const formulaDisplay = document.getElementById('dynamic-formula');
+            const mmDisplay = document.getElementById('dynamic-mm');
+            
+            let htmlFormula = '';
+            let totalMass = 0;
+            let isEmpty = true;
+
+            // Define custom order for formula (e.g. Hill system roughly: C, H, then alphabetical)
+            const order = ['C', 'H', 'N', 'O', 'Na', 'Cl'];
+
+            order.forEach(el => {
+                let count = currentFlaskState[el];
+                if (count > 0) {
+                    isEmpty = false;
+                    totalMass += (atomicWeights[el] * count);
+                    
+                    if (count === 1) {
+                        htmlFormula += el; // Subscript 1 is never written
+                    } else {
+                        htmlFormula += `${el}<sub>${count}</sub>`;
+                    }
+                }
+            });
+
+            if (isEmpty) {
+                formulaDisplay.innerHTML = 'Empty';
+                mmDisplay.innerText = '0.00';
+            } else {
+                formulaDisplay.innerHTML = htmlFormula;
+                mmDisplay.innerText = totalMass.toFixed(2);
+            }
+        }
+
+        /**
+         * TOGGLE UI ELEMENTS (Hints & Solutions)
+         */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                
+                // Re-render LaTeX math if hidden initially
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        /**
+         * MARKING ENGINE LOGIC (localStorage implementation)
+         */
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "var(--success-green)";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                    feedbackSpan.style.color = "var(--text-secondary)";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

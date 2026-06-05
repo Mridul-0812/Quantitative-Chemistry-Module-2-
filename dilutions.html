@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 18: Dilutions - Quantitative Chemistry</title>
+<link rel="stylesheet" href="styles.css">
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+window.MathJax = {
+tex: {
+inlineMath: [['$', '$'], ['\\(', '\\)']],
+displayMath: [['$$', '$$'], ['\\[', '\\]']]
+}
+};
+</script>
+<style>
+/* ==========================================================================
+   CUSTOM STYLES FOR DILUTION INTERACTIVITIES
+   These styles supplement the external styles.css to render the custom 
+   laboratory simulations while maintaining the global theme.
+   ========================================================================== */
+.lab-simulator-container {
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 40px 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.beaker-visualiser {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+}
+
+.glass-beaker {
+    width: 160px;
+    height: 220px;
+    border: 4px solid rgba(255, 255, 255, 0.7);
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.beaker-rim {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 180px;
+    height: 20px;
+    border: 4px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.beaker-liquid {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(147, 51, 234, 1); /* Deep purple for concentrated */
+    transition: height 0.4s ease-in-out, background-color 0.4s ease-in-out;
+    box-shadow: inset 0 5px 15px rgba(255,255,255,0.2);
+}
+
+.particle-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+}
+
+.solute-spec {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #fff;
+    animation: float 4s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(10px, -15px); }
+}
+
+.simulator-controls {
+    flex: 1;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slider-group {
+    margin-bottom: 20px;
+}
+
+.slider-group label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 8px;
+}
+
+.val-highlight {
+    color: #38bdf8;
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+input[type=range] {
+    width: 100%;
+    accent-color: #38bdf8;
+    cursor: pointer;
+}
+
+.formula-display {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px dashed #38bdf8;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 1.2rem;
+    color: #f8fafc;
+    margin-top: 20px;
+}
+
+/* Serial Dilution Workbench */
+.serial-workbench {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 40px 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.flask-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    margin-top: 30px;
+    min-height: 200px;
+}
+
+.volumetric-flask {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.flask-neck {
+    width: 20px;
+    height: 60px;
+    border: 3px solid rgba(255,255,255,0.6);
+    border-bottom: none;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+    z-index: 2;
+}
+
+.calibration-mark {
+    position: absolute;
+    top: 30px;
+    width: 30px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    left: -5px;
+}
+
+.flask-bulb {
+    width: 80px;
+    height: 80px;
+    border: 3px solid rgba(255,255,255,0.6);
+    border-top: none;
+    border-radius: 40px 40px 10px 10px;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+    margin-top: -5px;
+}
+
+.bulb-liquid {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 0%;
+    transition: height 0.5s ease, background-color 0.5s ease;
+}
+
+.flask-label {
+    margin-top: 15px;
+    text-align: center;
+    color: #e2e8f0;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+.transfer-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #38bdf8;
+    font-weight: bold;
+}
+
+.transfer-btn {
+    background: transparent;
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.transfer-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.transfer-btn:disabled {
+    border-color: #475569;
+    color: #475569;
+    cursor: not-allowed;
+    background: transparent;
+    box-shadow: none;
+}
+
+.callout-box {
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid #f59e0b;
+    padding: 20px;
+    margin: 30px 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.callout-box h4 {
+    color: #f59e0b;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Theory box styling */
+.theory-block {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.theory-block h3 {
+    color: #38bdf8;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar" class="navigation-bar">
+<div class="nav-header">
+<h2>Module 2</h2>
+<p>Quantitative Chemistry</p>
+<div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+</div>
+<ul class="nav-list">
+<li class="nav-section-title">Introduction</li>
+<li><a href="index.html">Home & Guide</a></li>
+<li class="nav-section-title">Phase A: Foundations</li>
+<li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+<li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+<li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+<li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+<li class="nav-section-title">Phase B: The Mole</li>
+<li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+<li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+<li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+<li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+<li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+<li class="nav-section-title">Phase C: Stoichiometry</li>
+<li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+<li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+<li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+<li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+<li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+<li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+<li class="nav-section-title">Phase D: Concentration</li>
+<li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+<li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+<li><a href="dilutions.html" class="active">18. Dilutions</a></li>
+<li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+<li class="nav-section-title">Phase E: Gas Laws</li>
+<li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+<li><a href="boyles-law.html">21. Boyle's Law</a></li>
+<li><a href="charles-law.html">22. Charles' Law</a></li>
+<li><a href="amontons-law.html">23. Amontons' Law</a></li>
+<li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+<li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+<li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+<li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+<li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+<li class="nav-section-title">Phase F: Assessment</li>
+<li><a href="module-2-summary.html">29. Formula Summary</a></li>
+<li><a href="final-exam.html">30. Final Exam</a></li>
+<li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+</ul>
+</nav>
+
+<main id="main-content">
+<header class="page-header">
+<h1>Lesson 18: Dilutions</h1>
+<p class="subtitle">Applying the $C_1V_1 = C_2V_2$ Principle</p>
+</header>
+
+<section class="content-section" id="introduction">
+<h2>The Concept of Dilution</h2>
+<p>In a chemical laboratory, it is highly impractical (and often dangerous) to store large volumes of dilute solutions. Instead, chemical suppliers ship highly concentrated <strong>stock solutions</strong> (e.g., $10.0 \text{ M}$ Hydrochloric Acid). When a chemist needs a weaker solution for an experiment, they perform a <strong>dilution</strong>.</p>
+<p>Dilution is the process of decreasing the concentration of a solute in a solution by adding more solvent (usually distilled water). The critical concept to understand here is the conservation of matter:</p>
+
+<div class="theory-block" style="text-align: center; font-size: 1.3rem;">
+    <p><em>When you add water to a solution, the volume increases, and the concentration decreases, but <strong>the total number of moles of solute remains exactly the same.</strong></em></p>
+</div>
+
+<p>Think of it like adding more hot water to a cup of strong tea. The volume of the liquid in the cup increases, and the tea tastes weaker (less concentrated). However, the actual number of tea leaves (the solute particles) floating around in the cup hasn't changed at all!</p>
+</section>
+
+<section class="content-section" id="mathematics">
+<h2>The Mathematical Bridge: $C_1V_1 = C_2V_2$</h2>
+<p>Because the number of moles ($n$) does not change during a dilution, we can establish a mathematical relationship. Recall from the previous lesson that $n = C \times V$.</p>
+
+<div class="theory-block">
+    <h3>The Derivation</h3>
+    <p>Let state 1 be the initial concentrated stock solution, and state 2 be the final diluted solution.</p>
+    <ul>
+        <li>Moles before dilution: $n_1 = C_1 \times V_1$</li>
+        <li>Moles after dilution: $n_2 = C_2 \times V_2$</li>
+    </ul>
+    <p>Since the moles of solute are conserved ($n_1 = n_2$), we can equate the two expressions:</p>
+    <div style="font-size: 2.5rem; text-align: center; margin: 20px 0; color: #38bdf8;">
+        $$C_1V_1 = C_2V_2$$
+    </div>
+    <p>Where:</p>
+    <ul>
+        <li><strong>$C_1$</strong> = Initial Concentration (Molarity of stock)</li>
+        <li><strong>$V_1$</strong> = Initial Volume (How much stock you extract to use)</li>
+        <li><strong>$C_2$</strong> = Final Concentration (Molarity of diluted solution)</li>
+        <li><strong>$V_2$</strong> = Final Volume (Total volume after water is added)</li>
+    </ul>
+</div>
+
+<div class="callout-box">
+    <h4>⚠️ The "Volume Added" Trap</h4>
+    <p>The variable $V_2$ in the formula is the <strong>Total Final Volume</strong> of the solution. It is <em>not</em> the volume of water added. This is the most common mistake students make in HSC Chemistry exams.</p>
+    <p>If you need to calculate the volume of distilled water that must be added to achieve the dilution, you must use the following logic:</p>
+    <p style="font-family: monospace; font-size: 1.1rem; text-align: center; margin-top: 10px;">$$V_{\text{water added}} = V_2 - V_1$$</p>
+</div>
+</section>
+
+<section class="content-section" id="interactive-1">
+<h2>Interactive: The Dilution Simulator</h2>
+<p>Experiment with the simulator below to visualise the dilution process. You start with a highly concentrated stock solution of Potassium Permanganate ($KMnO_4$). Add distilled water and watch how the concentration and colour change dynamically.</p>
+
+<div class="lab-simulator-container">
+    <div class="beaker-visualiser">
+        <div class="glass-beaker">
+            <div class="beaker-rim"></div>
+            <div class="beaker-liquid" id="sim1-liquid" style="height: 20%; background-color: rgba(147, 51, 234, 1);">
+                <div class="particle-layer" id="sim1-particles">
+                    </div>
+            </div>
+        </div>
+        <div style="margin-top: 15px; font-family: monospace; color: #cbd5e1;">Total Volume: <span id="sim1-v2-display">10.0</span> mL</div>
+    </div>
+
+    <div class="simulator-controls">
+        <div class="slider-group">
+            <label>
+                <span>Initial Stock Concentration ($C_1$):</span>
+                <span class="val-highlight" id="sim1-c1-val">2.0 M</span>
+            </label>
+            <input type="range" disabled value="2" min="2" max="2">
+        </div>
+
+        <div class="slider-group">
+            <label>
+                <span>Initial Stock Volume ($V_1$):</span>
+                <span class="val-highlight" id="sim1-v1-val">10.0 mL</span>
+            </label>
+            <input type="range" disabled value="10" min="10" max="10">
+        </div>
+
+        <div class="slider-group" style="margin-top: 30px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 20px;">
+            <label>
+                <span>Add Distilled Water ($V_{\text{added}}$):</span>
+                <span class="val-highlight" id="sim1-vadded-val">0.0 mL</span>
+            </label>
+            <input type="range" id="sim1-vadded-slider" min="0" max="90" step="5" value="0" oninput="updateDilutionSim()">
+        </div>
+
+        <div class="formula-display">
+            Final Concentration ($C_2$):<br>
+            <span id="sim1-c2-display" style="font-size: 2rem; color: #38bdf8; font-weight: bold; display: block; margin-top: 10px;">2.00 M</span>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="content-section" id="interactive-2">
+<h2>Interactive: Serial Dilution Workbench</h2>
+<p>A <strong>Serial Dilution</strong> is a stepwise dilution of a substance in solution. It allows chemists to create highly dilute solutions accurately without needing massively large volumetric flasks. By transferring $10 \text{ mL}$ of solution into $90 \text{ mL}$ of water ($V_2 = 100 \text{ mL}$), you achieve a 1 in 10 dilution factor, dividing the concentration by 10 each time.</p>
+<p>Perform the serial dilution below by clicking the transfer buttons.</p>
+
+<div class="serial-workbench">
+    <div class="flask-row">
+        <div class="volumetric-flask">
+            <div class="flask-neck"><div class="calibration-mark"></div></div>
+            <div class="flask-bulb">
+                <div class="bulb-liquid" id="flask1-liquid" style="height: 100%; background-color: rgba(239, 68, 68, 1);"></div>
+            </div>
+            <div class="flask-label">
+                <strong>Stock</strong><br>
+                <span id="flask1-conc">1.000 M</span>
+            </div>
+        </div>
+
+        <div class="transfer-arrow">
+            <span>&#10142;</span>
+            <span style="font-size: 0.8rem;">Move 10mL</span>
+            <button class="transfer-btn" id="btn-transfer1" onclick="performTransfer(1)">Transfer</button>
+        </div>
+
+        <div class="volumetric-flask">
+            <div class="flask-neck"><div class="calibration-mark"></div></div>
+            <div class="flask-bulb">
+                <div class="bulb-liquid" id="flask2-liquid" style="height: 90%; background-color: rgba(255, 255, 255, 0.1);"></div>
+            </div>
+            <div class="flask-label">
+                <strong>Dilution 1</strong><br>
+                <span id="flask2-conc">0.000 M</span>
+            </div>
+        </div>
+
+        <div class="transfer-arrow">
+            <span>&#10142;</span>
+            <span style="font-size: 0.8rem;">Move 10mL</span>
+            <button class="transfer-btn" id="btn-transfer2" onclick="performTransfer(2)" disabled>Transfer</button>
+        </div>
+
+        <div class="volumetric-flask">
+            <div class="flask-neck"><div class="calibration-mark"></div></div>
+            <div class="flask-bulb">
+                <div class="bulb-liquid" id="flask3-liquid" style="height: 90%; background-color: rgba(255, 255, 255, 0.1);"></div>
+            </div>
+            <div class="flask-label">
+                <strong>Dilution 2</strong><br>
+                <span id="flask3-conc">0.000 M</span>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <button class="transfer-btn" onclick="resetSerialDilution()" style="border-color: #ef4444; color: #ef4444;">Reset Workbench</button>
+    </div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<section class="content-section" id="worked-solutions">
+<h2>Worked Solutions</h2>
+<p>Study these exemplary worked solutions. They demonstrate the rigorous step-by-step mathematical communication expected by NESA markers in the HSC. Note the explicit stating of the formula, the substitution of values, and the final unit and significant figure checks.</p>
+
+<div class="practise-question">
+    <div class="question-header">
+        <h4>Example 1: Finding the Final Concentration (Easy)</h4>
+    </div>
+    <div class="question-body">
+        <p>A student uses a volumetric pipette to extract $25.0 \text{ mL}$ of a $0.500 \text{ M}$ Sodium Hydroxide ($NaOH$) stock solution. This aliquot is placed into a $250.0 \text{ mL}$ volumetric flask, and distilled water is added to the calibration mark. Calculate the final concentration of the diluted solution.</p>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-reveal" onclick="toggleSolution('we-sol-1')">View Solution</button>
+    </div>
+    <div class="hidden-solution" id="we-sol-1" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><strong>Step 1: Extract the data</strong><br>
+            $C_1 = 0.500 \text{ M}$<br>
+            $V_1 = 25.0 \text{ mL}$<br>
+            $C_2 = \text{ ? (Unknown)}$<br>
+            $V_2 = 250.0 \text{ mL}$</p>
+            
+            <p><em>Note: Because we are using the $C_1V_1 = C_2V_2$ ratio, we do not need to convert millilitres to Litres, provided the volume units are identical on both sides of the equation.</em></p>
+
+            <p><strong>Step 2: Apply the formula</strong><br>
+            $$C_1V_1 = C_2V_2$$
+            $$0.500 \times 25.0 = C_2 \times 250.0$$
+            $$12.5 = 250.0 \times C_2$$</p>
+
+            <p><strong>Step 3: Rearrange to solve for $C_2$</strong><br>
+            $$C_2 = \frac{12.5}{250.0}$$
+            $$C_2 = 0.0500 \text{ M}$$</p>
+
+            <p><strong>Final Answer:</strong> The concentration of the diluted solution is $\mathbf{0.0500 \text{ M}}$ (to 3 sig figs).</p>
+        </div>
+    </div>
+</div>
+
+<div class="practise-question">
+    <div class="question-header">
+        <h4>Example 2: Finding the Required Stock Volume (Medium)</h4>
+    </div>
+    <div class="question-body">
+        <p>A laboratory technician needs to prepare $2.00 \text{ L}$ of a $0.150 \text{ M}$ Sulfuric Acid ($H_2SO_4$) solution for an undergraduate experiment. The only concentrated stock solution available in the chemical store is $18.0 \text{ M}$. Calculate the volume of concentrated stock solution required to prepare this dilution.</p>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-reveal" onclick="toggleSolution('we-sol-2')">View Solution</button>
+    </div>
+    <div class="hidden-solution" id="we-sol-2" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><strong>Step 1: Extract the data</strong><br>
+            $C_1 = 18.0 \text{ M}$ (The concentrated stock)<br>
+            $V_1 = \text{ ? (Unknown)}$<br>
+            $C_2 = 0.150 \text{ M}$ (The target dilute solution)<br>
+            $V_2 = 2.00 \text{ L}$</p>
+
+            <p><strong>Step 2: Apply the formula and substitute</strong><br>
+            $$C_1V_1 = C_2V_2$$
+            $$18.0 \times V_1 = 0.150 \times 2.00$$
+            $$18.0 \times V_1 = 0.300$$</p>
+
+            <p><strong>Step 3: Rearrange to solve for $V_1$</strong><br>
+            $$V_1 = \frac{0.300}{18.0}$$
+            $$V_1 = 0.01666... \text{ L}$$</p>
+
+            <p><strong>Step 4: Convert to practical laboratory units</strong><br>
+            $0.01666... \text{ L} \times 1000 = 16.66... \text{ mL}$</p>
+
+            <p><strong>Final Answer:</strong> The technician must extract $\mathbf{16.7 \text{ mL}}$ of the $18.0 \text{ M}$ stock solution (to 3 sig figs) to make the dilution.</p>
+        </div>
+    </div>
+</div>
+
+<div class="practise-question">
+    <div class="question-header">
+        <h4>Example 3: The "Volume of Water Added" Trap (Hard)</h4>
+    </div>
+    <div class="question-body">
+        <p>A student has $50.0 \text{ mL}$ of a $1.20 \text{ M}$ solution of Potassium Permanganate ($KMnO_4$). The student wishes to dilute this solution down to a concentration of $0.0800 \text{ M}$. Calculate the exact volume of distilled water that the student must <strong>add</strong> to the existing solution to achieve this concentration.</p>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-reveal" onclick="toggleSolution('we-sol-3')">View Solution</button>
+    </div>
+    <div class="hidden-solution" id="we-sol-3" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><strong>Step 1: Extract the data</strong><br>
+            $C_1 = 1.20 \text{ M}$<br>
+            $V_1 = 50.0 \text{ mL}$<br>
+            $C_2 = 0.0800 \text{ M}$<br>
+            $V_2 = \text{ ? (This is the total final volume)}$</p>
+
+            <p><strong>Step 2: Solve for $V_2$</strong><br>
+            $$C_1V_1 = C_2V_2$$
+            $$1.20 \times 50.0 = 0.0800 \times V_2$$
+            $$60.0 = 0.0800 \times V_2$$
+            $$V_2 = \frac{60.0}{0.0800}$$
+            $$V_2 = 750 \text{ mL}$$</p>
+
+            <p><strong>Step 3: Calculate the volume of water ADDED</strong><br>
+            The total final volume ($V_2$) required is $750 \text{ mL}$. However, the student already has $50.0 \text{ mL}$ of solution sitting in the beaker ($V_1$).<br>
+            $$V_{\text{water added}} = V_2 - V_1$$
+            $$V_{\text{water added}} = 750 \text{ mL} - 50.0 \text{ mL}$$
+            $$V_{\text{water added}} = 700 \text{ mL}$$</p>
+
+            <p><strong>Final Answer:</strong> The student must add exactly $\mathbf{700 \text{ mL}}$ of distilled water.</p>
+        </div>
+    </div>
+</div>
+
+<div class="practise-question">
+    <div class="question-header">
+        <h4>Example 4: Mass Dissolution followed by Dilution (Extension)</h4>
+    </div>
+    <div class="question-body">
+        <p>A chemist dissolves $5.844 \text{ g}$ of pure Sodium Chloride ($NaCl$) crystals in water and transfers it to a $100 \text{ mL}$ volumetric flask, making it up to the mark. A $10.0 \text{ mL}$ aliquot of this solution is then transferred to a $250 \text{ mL}$ volumetric flask, and distilled water is added to the mark. Calculate the final molarity of the $250 \text{ mL}$ solution.</p>
+    </div>
+    <div class="interaction-controls">
+        <button class="btn-reveal" onclick="toggleSolution('we-sol-4')">View Solution</button>
+    </div>
+    <div class="hidden-solution" id="we-sol-4" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><em>This is a two-part problem. Part A: Find the concentration of the initial stock solution from the mass. Part B: Perform the dilution calculation.</em></p>
+
+            <p><strong>Part A: Finding the Stock Concentration ($C_1$)</strong><br>
+            Moles of $NaCl$:<br>
+            $MM(NaCl) = 22.99 + 35.45 = 58.44 \text{ g/mol}$<br>
+            $n = \frac{m}{MM} = \frac{5.844}{58.44} = 0.1000 \text{ mol}$</p>
+            <p>Molarity of Stock ($C_1$):<br>
+            The stock volume is $100 \text{ mL} = 0.100 \text{ L}$.<br>
+            $C_1 = \frac{n}{V} = \frac{0.1000}{0.100} = 1.000 \text{ M}$</p>
+
+            <p><strong>Part B: The Dilution Calculation</strong><br>
+            Extract data for the dilution:<br>
+            $C_1 = 1.000 \text{ M}$<br>
+            $V_1 = 10.0 \text{ mL}$ (The volume of the aliquot extracted)<br>
+            $V_2 = 250 \text{ mL}$ (The new volumetric flask)<br>
+            $C_2 = \text{ ?}$</p>
+
+            <p>Apply $C_1V_1 = C_2V_2$:<br>
+            $$1.000 \times 10.0 = C_2 \times 250$$
+            $$10.0 = 250 \times C_2$$
+            $$C_2 = \frac{10.0}{250}$$
+            $$C_2 = 0.0400 \text{ M}$$</p>
+
+            <p><strong>Final Answer:</strong> The final diluted concentration is $\mathbf{0.0400 \text{ M}}$.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<section class="content-section" id="practise-questions">
+<h2>Practise Questions</h2>
+<p>Test your understanding. Write down your mathematical working, then use the self-marking engine to evaluate your accuracy against strict HSC-style marking criteria.</p>
+
+<div class="practise-question" id="question-dil-1">
+    <div class="question-header">
+        <h4>Question 1: Standard Dilution (Easy)</h4>
+        <span class="marks-allocated">[2 Marks]</span>
+    </div>
+    <div class="question-body">
+        <p>Calculate the final concentration if $40.0 \text{ mL}$ of a $2.50 \text{ M}$ Nitric Acid ($HNO_3$) solution is diluted to a final total volume of $500.0 \text{ mL}$.</p>
+    </div>
+
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-dil-1')">Need a hint?</button>
+        <button class="btn-reveal" onclick="toggleSolution('solution-dil-1')">Reveal Answer & Criteria</button>
+    </div>
+
+    <div class="hidden-hint" id="hint-dil-1" style="display: none;">
+        <p><strong>Hint:</strong> Identify your variables: $C_1 = 2.50$, $V_1 = 40.0$, $V_2 = 500.0$. Plug these directly into $C_1V_1 = C_2V_2$ and solve algebraically for $C_2$.</p>
+    </div>
+
+    <div class="hidden-solution" id="solution-dil-1" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p>$$C_1V_1 = C_2V_2$$</p>
+            <p>$$2.50 \times 40.0 = C_2 \times 500.0$$</p>
+            <p>$$100 = 500.0 \times C_2$$</p>
+            <p>$$C_2 = \frac{100}{500.0} = \mathbf{0.200 \text{ M}}$$</p>
+        </div>
+        
+        <div class="marking-criteria">
+            <h5>Marking Criteria:</h5>
+            <ul>
+                <li><strong>1 Mark:</strong> Correctly substitutes variables into the dilution formula ($2.50 \times 40.0 = C_2 \times 500.0$).</li>
+                <li><strong>2 Marks:</strong> Correctly isolates $C_2$ and calculates the final concentration as $0.200 \text{ M}$ (or $mol \ L^{-1}$).</li>
+            </ul>
+        </div>
+
+        <div class="self-assessment">
+            <label for="mark-selector-dil-1">Assign yourself a mark:</label>
+            <select id="mark-selector-dil-1" class="mark-dropdown">
+                <option value="0">0 Marks</option>
+                <option value="1">1 Mark</option>
+                <option value="2">2 Marks</option>
+            </select>
+            <button class="btn-submit-mark" onclick="submitMark('dil-1')">Submit Mark</button>
+            <span class="mark-feedback" id="feedback-dil-1"></span>
+        </div>
+    </div>
+</div>
+
+<div class="practise-question" id="question-dil-2">
+    <div class="question-header">
+        <h4>Question 2: Water Added Calculation (Medium)</h4>
+        <span class="marks-allocated">[3 Marks]</span>
+    </div>
+    <div class="question-body">
+        <p>A researcher has $15.0 \text{ mL}$ of a $6.00 \text{ M}$ Hydrochloric Acid ($HCl$) solution. They wish to create a $0.400 \text{ M}$ solution. Calculate the volume of distilled water (in mL) they must add to the original $15.0 \text{ mL}$ sample.</p>
+    </div>
+
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-dil-2')">Need a hint?</button>
+        <button class="btn-reveal" onclick="toggleSolution('solution-dil-2')">Reveal Answer & Criteria</button>
+    </div>
+
+    <div class="hidden-hint" id="hint-dil-2" style="display: none;">
+        <p><strong>Hint:</strong> First, use $C_1V_1 = C_2V_2$ to find the Total Final Volume ($V_2$). Then, remember the trap: to find the water added, you must subtract the initial volume ($V_1$) from the final volume ($V_2$).</p>
+    </div>
+
+    <div class="hidden-solution" id="solution-dil-2" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><strong>Find Total Volume ($V_2$):</strong></p>
+            <p>$$6.00 \times 15.0 = 0.400 \times V_2$$</p>
+            <p>$$90.0 = 0.400 \times V_2$$</p>
+            <p>$$V_2 = \frac{90.0}{0.400} = 225 \text{ mL}$$</p>
+            <p><strong>Find Water Added:</strong></p>
+            <p>$$V_{\text{added}} = V_2 - V_1$$</p>
+            <p>$$V_{\text{added}} = 225 - 15.0 = \mathbf{210 \text{ mL}}$$</p>
+        </div>
+        
+        <div class="marking-criteria">
+            <h5>Marking Criteria:</h5>
+            <ul>
+                <li><strong>1 Mark:</strong> Correctly sets up the initial equation to solve for $V_2$.</li>
+                <li><strong>2 Marks:</strong> Correctly calculates the total final volume ($V_2 = 225 \text{ mL}$).</li>
+                <li><strong>3 Marks:</strong> Correctly subtracts the initial volume to find the volume of water added ($210 \text{ mL}$).</li>
+            </ul>
+        </div>
+
+        <div class="self-assessment">
+            <label for="mark-selector-dil-2">Assign yourself a mark:</label>
+            <select id="mark-selector-dil-2" class="mark-dropdown">
+                <option value="0">0 Marks</option>
+                <option value="1">1 Mark</option>
+                <option value="2">2 Marks</option>
+                <option value="3">3 Marks</option>
+            </select>
+            <button class="btn-submit-mark" onclick="submitMark('dil-2')">Submit Mark</button>
+            <span class="mark-feedback" id="feedback-dil-2"></span>
+        </div>
+    </div>
+</div>
+
+<div class="practise-question" id="question-dil-3">
+    <div class="question-header">
+        <h4>Question 3: Synthesis to Dilution Integration (Hard)</h4>
+        <span class="marks-allocated">[4 Marks]</span>
+    </div>
+    <div class="question-body">
+        <p>A chemist dissolves $4.20 \text{ g}$ of Sodium Bicarbonate ($NaHCO_3$) into a small beaker and transfers it to a $250 \text{ mL}$ volumetric flask, filling it to the calibration mark with water. An $20.0 \text{ mL}$ aliquot of this solution is extracted and placed into a secondary $500 \text{ mL}$ volumetric flask, which is then filled to the mark.</p>
+        <p>Calculate the molarity of the final solution in the $500 \text{ mL}$ flask. <em>(Molar Mass of $NaHCO_3 = 84.01 \text{ g/mol}$)</em></p>
+    </div>
+
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-dil-3')">Need a hint?</button>
+        <button class="btn-reveal" onclick="toggleSolution('solution-dil-3')">Reveal Answer & Criteria</button>
+    </div>
+
+    <div class="hidden-hint" id="hint-dil-3" style="display: none;">
+        <p><strong>Hint:</strong> Step 1: Calculate moles of $NaHCO_3$ using $n = m/MM$. Step 2: Find the concentration of the first flask ($C_1$) using $c = n/V$ (ensure volume is in Litres). Step 3: Use $C_1V_1 = C_2V_2$ using the $20.0 \text{ mL}$ aliquot as $V_1$ and $500 \text{ mL}$ as $V_2$.</p>
+    </div>
+
+    <div class="hidden-solution" id="solution-dil-3" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><strong>Part 1: Concentration of Stock Flask</strong></p>
+            <p>$$n = \frac{m}{MM} = \frac{4.20}{84.01} = 0.0500 \text{ mol}$$</p>
+            <p>$$C_1 = \frac{n}{V} = \frac{0.0500}{0.250 \text{ L}} = 0.200 \text{ M}$$</p>
+            <p><strong>Part 2: Dilution Calculation</strong></p>
+            <p>The aliquot taken is $20.0 \text{ mL}$ ($V_1$), from the $0.200 \text{ M}$ stock ($C_1$). The final volume is $500 \text{ mL}$ ($V_2$).</p>
+            <p>$$C_1V_1 = C_2V_2$$</p>
+            <p>$$0.200 \times 20.0 = C_2 \times 500$$</p>
+            <p>$$4.00 = 500 \times C_2$$</p>
+            <p>$$C_2 = \frac{4.00}{500} = \mathbf{0.00800 \text{ M}}$$</p>
+        </div>
+        
+        <div class="marking-criteria">
+            <h5>Marking Criteria:</h5>
+            <ul>
+                <li><strong>1 Mark:</strong> Correctly calculates the moles of $NaHCO_3$ ($0.0500 \text{ mol}$).</li>
+                <li><strong>2 Marks:</strong> Correctly calculates the concentration of the primary $250 \text{ mL}$ flask ($0.200 \text{ M}$).</li>
+                <li><strong>3 Marks:</strong> Correctly identifies $V_1 = 20.0 \text{ mL}$ and sets up the dilution formula.</li>
+                <li><strong>4 Marks:</strong> Correct final concentration of the secondary flask ($0.00800 \text{ M}$).</li>
+            </ul>
+        </div>
+
+        <div class="self-assessment">
+            <label for="mark-selector-dil-3">Assign yourself a mark:</label>
+            <select id="mark-selector-dil-3" class="mark-dropdown">
+                <option value="0">0 Marks</option>
+                <option value="1">1 Mark</option>
+                <option value="2">2 Marks</option>
+                <option value="3">3 Marks</option>
+                <option value="4">4 Marks</option>
+            </select>
+            <button class="btn-submit-mark" onclick="submitMark('dil-3')">Submit Mark</button>
+            <span class="mark-feedback" id="feedback-dil-3"></span>
+        </div>
+    </div>
+</div>
+
+<div class="practise-question" id="question-dil-4">
+    <div class="question-header">
+        <h4>Question 4: Serial Dilution & Ion Concentration (Extension)</h4>
+        <span class="marks-allocated">[5 Marks]</span>
+    </div>
+    <div class="question-body">
+        <p>A stock solution of Aluminium Sulfate, $Al_2(SO_4)_3$, has a concentration of $2.50 \text{ M}$. A technician performs a serial dilution by taking a $10.0 \text{ mL}$ aliquot of the stock and diluting it to $100.0 \text{ mL}$ in Flask A. Then, a $25.0 \text{ mL}$ aliquot is taken from Flask A and diluted to $250.0 \text{ mL}$ in Flask B.</p>
+        <p>Calculate the final concentration of <strong>Sulfate ions</strong> ($[SO_4^{2-}]$) present in Flask B.</p>
+    </div>
+
+    <div class="interaction-controls">
+        <button class="btn-hint" onclick="toggleHint('hint-dil-4')">Need a hint?</button>
+        <button class="btn-reveal" onclick="toggleSolution('solution-dil-4')">Reveal Answer & Criteria</button>
+    </div>
+
+    <div class="hidden-hint" id="hint-dil-4" style="display: none;">
+        <p><strong>Hint:</strong> Work systematically. Calculate the concentration of the compound in Flask A. Then use that concentration as $C_1$ to calculate the concentration of the compound in Flask B. Finally, write the dissociation equation for Aluminium Sulfate to find the ratio of compound to Sulfate ions.</p>
+    </div>
+
+    <div class="hidden-solution" id="solution-dil-4" style="display: none;">
+        <div class="worked-solution">
+            <h5>Worked Solution:</h5>
+            <p><strong>Part 1: First Dilution (Flask A)</strong></p>
+            <p>$$C_{A} \times 100.0 = 2.50 \times 10.0$$</p>
+            <p>$$C_{A} = \frac{25.0}{100.0} = 0.250 \text{ M}$$</p>
+            
+            <p><strong>Part 2: Second Dilution (Flask B)</strong></p>
+            <p>The aliquot taken is $25.0 \text{ mL}$ from Flask A.</p>
+            <p>$$C_{B} \times 250.0 = 0.250 \times 25.0$$</p>
+            <p>$$C_{B} = \frac{6.25}{250.0} = 0.0250 \text{ M}$$ (This is the concentration of the $Al_2(SO_4)_3$ compound).</p>
+
+            <p><strong>Part 3: Ion Concentration</strong></p>
+            <p>Dissociation equation: $Al_2(SO_4)_3 \rightarrow 2Al^{3+} + 3SO_4^{2-}$</p>
+            <p>Because there are 3 sulfate ions per formula unit, the concentration of the ion is triple the compound concentration.</p>
+            <p>$$[SO_4^{2-}] = 0.0250 \times 3 = \mathbf{0.0750 \text{ M}}$$</p>
+        </div>
+        
+        <div class="marking-criteria">
+            <h5>Marking Criteria:</h5>
+            <ul>
+                <li><strong>1 Mark:</strong> Correctly sets up the first dilution calculation.</li>
+                <li><strong>2 Marks:</strong> Correctly determines the concentration of Flask A ($0.250 \text{ M}$).</li>
+                <li><strong>3 Marks:</strong> Correctly determines the concentration of the entire compound in Flask B ($0.0250 \text{ M}$).</li>
+                <li><strong>4 Marks:</strong> Recognises the $1:3$ stoichiometric ratio between the compound and the sulfate ions.</li>
+                <li><strong>5 Marks:</strong> Correct final ion concentration ($0.0750 \text{ M}$).</li>
+            </ul>
+        </div>
+
+        <div class="self-assessment">
+            <label for="mark-selector-dil-4">Assign yourself a mark:</label>
+            <select id="mark-selector-dil-4" class="mark-dropdown">
+                <option value="0">0 Marks</option>
+                <option value="1">1 Mark</option>
+                <option value="2">2 Marks</option>
+                <option value="3">3 Marks</option>
+                <option value="4">4 Marks</option>
+                <option value="5">5 Marks</option>
+            </select>
+            <button class="btn-submit-mark" onclick="submitMark('dil-4')">Submit Mark</button>
+            <span class="mark-feedback" id="feedback-dil-4"></span>
+        </div>
+    </div>
+</div>
+
+</section>
+
+<footer class="page-footer">
+<div class="footer-nav">
+<a href="standard-solutions.html" class="btn-next">Proceed to Lesson 19: Standard Solutions &rarr;</a>
+</div>
+</footer>
+</main>
+
+<script>
+/**
+* INITIALISATION
+* Runs when the page loads to display any previously saved marks.
+*/
+document.addEventListener("DOMContentLoaded", function() {
+    updateTotalMarksDisplay();
+    checkIfQuestionAnswered('dil-1');
+    checkIfQuestionAnswered('dil-2');
+    checkIfQuestionAnswered('dil-3');
+    checkIfQuestionAnswered('dil-4');
+    
+    // Initialise Simulation Data
+    initDilutionSim();
+});
+
+/**
+* Toggles the visibility of a hint element.
+*/
+function toggleHint(hintId) {
+    const hintElement = document.getElementById(hintId);
+    if (hintElement.style.display === "none") {
+        hintElement.style.display = "block";
+    } else {
+        hintElement.style.display = "none";
+    }
+}
+
+/**
+* Toggles the visibility of a solution and marking criteria element.
+*/
+function toggleSolution(solutionId) {
+    const solutionElement = document.getElementById(solutionId);
+    if (solutionElement.style.display === "none") {
+        solutionElement.style.display = "block";
+        // Trigger MathJax to typeset the newly revealed equations
+        if (window.MathJax) {
+            MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                console.error('MathJax error:', err.message);
+            });
+        }
+    } else {
+        solutionElement.style.display = "none";
+    }
+}
+
+/**
+* Handles the submission of a student's self-assessed mark.
+*/
+function submitMark(questionId) {
+    const dropdown = document.getElementById('mark-selector-' + questionId);
+    const selectedMark = parseInt(dropdown.value, 10);
+    const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+    const storageKey = 'chem_mod2_q_' + questionId;
+    const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+    localStorage.setItem(storageKey, selectedMark);
+
+    feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+    feedbackSpan.style.color = "#38bdf8"; // Updated to match blue neon theme
+
+    updateGlobalScore(previousMark, selectedMark);
+}
+
+/**
+* Updates the global score in localStorage and refreshes the UI.
+*/
+function updateGlobalScore(previousMark, newMark) {
+    let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+    totalScore = totalScore - previousMark + newMark;
+    localStorage.setItem('chem_mod2_total_score', totalScore);
+    updateTotalMarksDisplay();
+}
+
+/**
+* Reads the total score from localStorage and updates the sidebar.
+*/
+function updateTotalMarksDisplay() {
+    const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+    const displayElement = document.getElementById('total-marks');
+    if (displayElement) {
+        displayElement.innerText = totalScore;
+    }
+}
+
+/**
+* Checks if a question was previously answered and updates the dropdown.
+*/
+function checkIfQuestionAnswered(questionId) {
+    const storageKey = 'chem_mod2_q_' + questionId;
+    const savedMark = localStorage.getItem(storageKey);
+    if (savedMark !== null) {
+        const dropdown = document.getElementById('mark-selector-' + questionId);
+        const feedbackSpan = document.getElementById('feedback-' + questionId);
+        if (dropdown && feedbackSpan) {
+            dropdown.value = savedMark;
+            feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+        }
+    }
+}
+
+/**
+* ==========================================
+* INTERACTIVITY 1: DILUTION SIMULATOR LOGIC
+* ==========================================
+*/
+const SIM1_C1 = 2.0;
+const SIM1_V1 = 10.0;
+const SIM1_MAX_HEIGHT = 90; // percentage max height of liquid inside beaker
+
+function initDilutionSim() {
+    // Generate some static particles to represent moles (moles are conserved, so particles don't change)
+    const particleLayer = document.getElementById('sim1-particles');
+    for(let i=0; i < 40; i++) {
+        let p = document.createElement('div');
+        p.className = 'solute-spec';
+        p.style.left = (Math.random() * 90 + 5) + '%';
+        p.style.bottom = (Math.random() * 90 + 5) + '%';
+        // Randomise animation slightly to look natural
+        p.style.animationDelay = (Math.random() * 2) + 's';
+        particleLayer.appendChild(p);
+    }
+    updateDilutionSim();
+}
+
+function updateDilutionSim() {
+    const vAdded = parseFloat(document.getElementById('sim1-vadded-slider').value);
+    document.getElementById('sim1-vadded-val').innerText = vAdded.toFixed(1) + " mL";
+    
+    // Mathematics
+    const vTotal = SIM1_V1 + vAdded;
+    document.getElementById('sim1-v2-display').innerText = vTotal.toFixed(1);
+    
+    const cFinal = (SIM1_C1 * SIM1_V1) / vTotal;
+    document.getElementById('sim1-c2-display').innerText = cFinal.toFixed(2) + " M";
+    
+    // Visuals (Volume mapping 10mL -> 20%, 100mL -> 90%)
+    const heightPercent = 20 + (vAdded / 90) * 70;
+    const liquidDiv = document.getElementById('sim1-liquid');
+    liquidDiv.style.height = heightPercent + '%';
+    
+    // Visuals (Colour fade: Alpha goes from 1.0 down to ~0.2 based on concentration)
+    const alpha = Math.max(cFinal / SIM1_C1, 0.2); // Base purple: 147, 51, 234
+    liquidDiv.style.backgroundColor = `rgba(147, 51, 234, ${alpha})`;
+}
+
+/**
+* ==========================================
+* INTERACTIVITY 2: SERIAL DILUTION LOGIC
+* ==========================================
+*/
+let serialState = 0; // 0=init, 1=first transfer, 2=second transfer
+const serialData = {
+    c1: 1.000,
+    c2: 0.000,
+    c3: 0.000
+};
+
+function performTransfer(step) {
+    if (step === 1) {
+        // Transfer 10mL from F1 to F2 (which has 90mL water). V2 total = 100mL. Dilution factor = 10.
+        serialData.c2 = serialData.c1 / 10;
+        
+        // Update DOM
+        document.getElementById('flask2-conc').innerText = serialData.c2.toFixed(3) + " M";
+        document.getElementById('flask2-liquid').style.backgroundColor = "rgba(239, 68, 68, 0.5)"; // Lighter red
+        
+        // Manage Buttons
+        document.getElementById('btn-transfer1').disabled = true;
+        document.getElementById('btn-transfer1').innerText = "Done";
+        document.getElementById('btn-transfer2').disabled = false;
+        
+        serialState = 1;
+        
+    } else if (step === 2) {
+        // Transfer 10mL from F2 to F3. Dilution factor = 10 again.
+        serialData.c3 = serialData.c2 / 10;
+        
+        // Update DOM
+        document.getElementById('flask3-conc').innerText = serialData.c3.toFixed(3) + " M";
+        document.getElementById('flask3-liquid').style.backgroundColor = "rgba(239, 68, 68, 0.15)"; // Very light red
+        
+        // Manage Buttons
+        document.getElementById('btn-transfer2').disabled = true;
+        document.getElementById('btn-transfer2').innerText = "Done";
+        
+        serialState = 2;
+    }
+}
+
+function resetSerialDilution() {
+    serialState = 0;
+    serialData.c2 = 0.000;
+    serialData.c3 = 0.000;
+    
+    document.getElementById('flask2-conc').innerText = "0.000 M";
+    document.getElementById('flask3-conc').innerText = "0.000 M";
+    
+    document.getElementById('flask2-liquid').style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+    document.getElementById('flask3-liquid').style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+    
+    document.getElementById('btn-transfer1').disabled = false;
+    document.getElementById('btn-transfer1').innerText = "Transfer";
+    document.getElementById('btn-transfer2').disabled = true;
+    document.getElementById('btn-transfer2').innerText = "Transfer";
+}
+</script>
+
+</body>
+</html>

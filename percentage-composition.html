@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7: Percentage Composition</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* Specific Styles for Lesson 7 Elements */
+
+        /* 1. Formula Callout */
+        .formula-box {
+            background: rgba(176, 38, 255, 0.05);
+            border: 2px solid var(--accent-purple);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 0 20px rgba(176, 38, 255, 0.1);
+        }
+
+        .formula-box h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        /* 2. Interactive Molecule Smasher */
+        .smasher-interactivity {
+            background: linear-gradient(180deg, #0f0f1a 0%, #05050a 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            margin-top: 2rem;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .smasher-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .styled-select {
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .styled-select:hover {
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .btn-smash {
+            background: linear-gradient(135deg, #ff2a5f, #ff7b2a);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(255, 42, 95, 0.4);
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+
+        .btn-smash:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 5px rgba(255, 42, 95, 0.4);
+        }
+
+        .btn-smash:disabled {
+            background: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #smasher-canvas {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+            border-radius: 10px;
+            width: 100%;
+            height: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: crosshair;
+        }
+
+        .stats-panel {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .element-stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .element-stat-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-symbol {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-percent {
+            font-size: 1.5rem;
+            font-family: monospace;
+        }
+
+        .stat-mass {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* 3. Real-world applications grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .app-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+        }
+
+        .app-card h4 {
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        /* 4. Pie Chart CSS Fallback / Illustration */
+        .pie-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html" class="active">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>7. Percentage Composition</h1>
+            <p class="subtitle">Slicing the Chemical Pie by Mass</p>
+        </header>
+
+        <section class="content-section">
+            <h2>What is Percentage Composition?</h2>
+            <p>Imagine you have a bag of mixed lollies. You could count them to find the percentage of jelly beans vs. snakes. But in chemistry, atoms have vastly different weights. A single Uranium atom weighs more than 200 Hydrogen atoms combined! Therefore, chemists don't care about the percentage by <em>number</em> of atoms; we care about the percentage by <strong>mass</strong>.</p>
+            
+            <p>Percentage composition tells us the percentage of a compound's total mass that is contributed by each specific element. 
+
+[Image of percentage composition pie chart for water]
+</p>
+
+            <div class="formula-box">
+                <h3>$$ \% \text{ Element} = \frac{\text{Mass of Element in 1 mole}}{\text{Molar Mass of Compound}} \times 100 $$</h3>
+                <p style="color: var(--text-secondary); margin-top: 10px;">Always calculate values to the number of significant figures provided by your periodic table (usually 4 s.f.).</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Molecule Smasher</h2>
+            <p>Select a molecule and smash it! Watch the atoms physically break apart. Once the dust settles, the engine will sweep them into separate piles and calculate the mass percentage of each element based on their atomic weights.</p>
+            
+            <div class="smasher-interactivity">
+                <div class="smasher-controls">
+                    <select id="molecule-select" class="styled-select" onchange="resetSmasher()">
+                        <option value="water">Water (H₂O)</option>
+                        <option value="co2">Carbon Dioxide (CO₂)</option>
+                        <option value="glucose">Glucose (C₆H₁₂O₆)</option>
+                        <option value="sulfuric">Sulfuric Acid (H₂SO₄)</option>
+                        <option value="rust">Rust / Iron(III) Oxide (Fe₂O₃)</option>
+                    </select>
+                    <button class="btn-smash" id="btn-smash" onclick="triggerSmash()">Smash Molecule</button>
+                </div>
+                
+                <canvas id="smasher-canvas"></canvas>
+
+                <div class="stats-panel" id="stats-panel">
+                    </div>
+            </div>
+            <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">*Particle count in the visualizer represents atomic ratios, sizes represent relative atomic radii.</p>
+        </section>
+
+        <section class="content-section">
+            <h2>Why do we care about this?</h2>
+            <p>Percentage composition isn't just a mathematical exercise; it drives massive global industries.</p>
+            
+            <div class="app-grid">
+                <div class="app-card">
+                    <h4>Mining & Metallurgy</h4>
+                    <p>If a mining company finds Bauxite ore ($Al_2O_3$), they need to know exactly what percentage of that rock is actually usable Aluminium before they spend millions extracting it.</p>
+                </div>
+                <div class="app-card">
+                    <h4>Agriculture</h4>
+                    <p>Fertilisers are rated by their N-P-K value. Farmers calculate the percentage composition of Nitrogen in compounds like Ammonium Nitrate ($NH_4NO_3$) to ensure optimal crop growth.</p>
+                </div>
+                <div class="app-card">
+                    <h4>Analytical Chemistry</h4>
+                    <p>When forensic scientists or pharmaceutical chemists synthesize a new drug, they burn a small sample to find its percentage composition. This proves they made the correct molecule.</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Worked Examples</h2>
+            
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: The Basics (Water)</h4>
+                </div>
+                <p>Calculate the percentage composition by mass of Hydrogen and Oxygen in Water ($H_2O$).</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Calculate the Molar Mass ($MM$) of the compound.</strong></p>
+                    <p>$MM(H_2O) = (2 \times 1.008) + 16.00 = 18.016 \text{ g/mol}$</p>
+                    
+                    <p><strong>Step 2: Apply the formula for Hydrogen.</strong></p>
+                    <p>$$ \%H = \frac{\text{Mass of H}}{\text{Total Mass}} \times 100 $$</p>
+                    <p>$$ \%H = \frac{(2 \times 1.008)}{18.016} \times 100 = 11.19\% $$</p>
+                    
+                    <p><strong>Step 3: Apply the formula for Oxygen.</strong></p>
+                    <p>$$ \%O = \frac{16.00}{18.016} \times 100 = 88.81\% $$</p>
+                    <p><em>Check: $11.19\% + 88.81\% = 100.00\%$. Perfect.</em></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: Hydrated Ionic Compounds (Hard)</h4>
+                </div>
+                <p>Calculate the percentage of water by mass in hydrated Copper(II) Sulfate ($CuSO_4 \cdot 5H_2O$).</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Understand the dot notation.</strong></p>
+                    <p>The "$\cdot 5H_2O$" means 5 distinct water molecules are trapped inside the crystal lattice for every 1 Copper Sulfate unit. We treat the 5 waters as one unified chunk for this calculation.</p>
+                    
+                    <p><strong>Step 2: Calculate Molar Masses.</strong></p>
+                    <p>$MM(CuSO_4) = 63.55 + 32.07 + (4 \times 16.00) = 159.62 \text{ g/mol}$</p>
+                    <p>$MM(5H_2O) = 5 \times 18.016 = 90.08 \text{ g/mol}$</p>
+                    <p>Total Compound $MM = 159.62 + 90.08 = 249.70 \text{ g/mol}$</p>
+                    
+                    <p><strong>Step 3: Calculate Percentage of Water.</strong></p>
+                    <p>$$ \%H_2O = \frac{90.08}{249.70} \times 100 = 36.08\% $$</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Practice Questions</h2>
+            <p>Have your periodic table ready. Keep an eye on significant figures and always double-check that your percentages add up to approximately 100%.</p>
+
+            <div class="practise-question" id="q-perc-1">
+                <div class="question-header">
+                    <h4>Question 1</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the percentage composition by mass of Carbon in Carbon Dioxide ($CO_2$).</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-perc-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-perc-1')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-perc-1" style="display: none;">
+                    <p><strong>Hint:</strong> Find the molar mass of $CO_2$ first. Then divide the mass of the <em>single</em> Carbon atom by the total mass and multiply by 100.</p>
+                </div>
+                <div class="hidden-solution" id="sol-perc-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$MM(CO_2) = 12.01 + (2 \times 16.00) = 44.01 \text{ g/mol}$</p>
+                        <p>$$ \%C = \frac{12.01}{44.01} \times 100 $$</p>
+                        <p>$$ \%C = 27.29\% $$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates total molar mass as $44.01 \text{ g/mol}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates $27.29\%$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-perc-1" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('perc-1')">Submit</button>
+                        <span class="mark-feedback" id="feedback-perc-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-perc-2">
+                <div class="question-header">
+                    <h4>Question 2</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A farmer is deciding between two nitrogen-based fertilisers: Urea ($CH_4N_2O$) and Ammonium Sulfate ($(NH_4)_2SO_4$). Calculate the percentage composition of Nitrogen in both to determine which provides more Nitrogen per gram.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-perc-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-perc-2')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-perc-2" style="display: none;">
+                    <p><strong>Hint:</strong> Be very careful with the brackets in Ammonium Sulfate! There are 2 Nitrogen atoms in that formula.</p>
+                </div>
+                <div class="hidden-solution" id="sol-perc-2" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>For Urea ($CH_4N_2O$):</strong></p>
+                        <p>$MM = 12.01 + (4 \times 1.008) + (2 \times 14.01) + 16.00 = 60.062 \text{ g/mol}$</p>
+                        <p>$$ \%N = \frac{(2 \times 14.01)}{60.062} \times 100 = 46.65\% $$</p>
+                        
+                        <p><strong>For Ammonium Sulfate ($(NH_4)_2SO_4$):</strong></p>
+                        <p>$MM = (2 \times 14.01) + (8 \times 1.008) + 32.07 + (4 \times 16.00) = 132.154 \text{ g/mol}$</p>
+                        <p>$$ \%N = \frac{(2 \times 14.01)}{132.154} \times 100 = 21.20\% $$</p>
+                        
+                        <p><strong>Conclusion:</strong> Urea provides more Nitrogen per gram.</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates %N in Urea ($46.65\%$).</li>
+                            <li><strong>2 Marks:</strong> Correctly accounts for 2 Nitrogens and calculates %N in Ammonium Sulfate ($21.20\%$).</li>
+                            <li><strong>3 Marks:</strong> Clearly states that Urea is the better source.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-perc-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('perc-2')">Submit</button>
+                        <span class="mark-feedback" id="feedback-perc-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-perc-3">
+                <div class="question-header">
+                    <h4>Question 3</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $50.0 \text{ g}$ sample of pure Iron(III) Oxide ($Fe_2O_3$) is smelted in a blast furnace to extract pure iron. Assuming 100% efficiency, what mass of pure iron can be extracted?</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-perc-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('sol-perc-3')">Reveal Answer & Criteria</button>
+                </div>
+                <div class="hidden-hint" id="hint-perc-3" style="display: none;">
+                    <p><strong>Hint:</strong> This is a two-step problem. First, find the percentage of Iron in $Fe_2O_3$. Second, find that percentage of your $50.0 \text{ g}$ sample.</p>
+                </div>
+                <div class="hidden-solution" id="sol-perc-3" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: % of Fe in $Fe_2O_3$</strong></p>
+                        <p>$MM(Fe_2O_3) = (2 \times 55.85) + (3 \times 16.00) = 159.70 \text{ g/mol}$</p>
+                        <p>$$ \%Fe = \frac{(2 \times 55.85)}{159.70} \times 100 = 69.94\% $$</p>
+                        
+                        <p><strong>Step 2: Find Mass in Sample</strong></p>
+                        <p>Mass of Fe $= 69.94\% \text{ of } 50.0 \text{ g}$</p>
+                        <p>$$ \text{Mass} = 0.6994 \times 50.0 = 34.97 \text{ g} $$</p>
+                    </div>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates the percentage composition of Iron as $69.94\%$.</li>
+                            <li><strong>2 Marks:</strong> Correctly applies the percentage to the $50.0\text{g}$ mass to find $34.97\text{g}$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-perc-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('perc-3')">Submit</button>
+                        <span class="mark-feedback" id="feedback-perc-3"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="empirical-formula.html" class="btn-next">Proceed to Lesson 8: Empirical Formula &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // ==========================================
+        // MOLECULE SMASHER ENGINE (Canvas Physics)
+        // ==========================================
+        const canvas = document.getElementById('smasher-canvas');
+        const ctx = canvas.getContext('2d');
+        const btnSmash = document.getElementById('btn-smash');
+        const statsPanel = document.getElementById('stats-panel');
+        
+        let width, height;
+        let particles = [];
+        let engineState = 'idle'; // idle, falling, smashed, grouping, done
+        let currentMolecule = null;
+        let animationFrameId;
+        
+        // Element Data (Color, Radius scale, Name)
+        const ELEMENT_DATA = {
+            'H': { color: '#ffffff', r: 8, name: 'Hydrogen' },
+            'O': { color: '#ff2a2a', r: 16, name: 'Oxygen' },
+            'C': { color: '#444444', r: 18, name: 'Carbon' },
+            'S': { color: '#fcdb03', r: 22, name: 'Sulfur' },
+            'Fe':{ color: '#b85e23', r: 25, name: 'Iron' }
+        };
+
+        // Molecule Definitions
+        const MOLECULES = {
+            'water': {
+                name: 'Water', formula: 'H₂O', totalMass: 18.016,
+                makeup: [ {sym: 'H', count: 2, mass: 1.008}, {sym: 'O', count: 1, mass: 16.00} ]
+            },
+            'co2': {
+                name: 'Carbon Dioxide', formula: 'CO₂', totalMass: 44.01,
+                makeup: [ {sym: 'C', count: 1, mass: 12.01}, {sym: 'O', count: 2, mass: 16.00} ]
+            },
+            'glucose': {
+                name: 'Glucose', formula: 'C₆H₁₂O₆', totalMass: 180.156,
+                makeup: [ {sym: 'C', count: 6, mass: 12.01}, {sym: 'H', count: 12, mass: 1.008}, {sym: 'O', count: 6, mass: 16.00} ]
+            },
+            'sulfuric': {
+                name: 'Sulfuric Acid', formula: 'H₂SO₄', totalMass: 98.07,
+                makeup: [ {sym: 'H', count: 2, mass: 1.008}, {sym: 'S', count: 1, mass: 32.07}, {sym: 'O', count: 4, mass: 16.00} ]
+            },
+            'rust': {
+                name: 'Iron(III) Oxide', formula: 'Fe₂O₃', totalMass: 159.70,
+                makeup: [ {sym: 'Fe', count: 2, mass: 55.85}, {sym: 'O', count: 3, mass: 16.00} ]
+            }
+        };
+
+        function resizeCanvas() {
+            // Check if element is visible and has physical dimensions before setting width/height
+            const rect = canvas.getBoundingClientRect();
+            width = rect.width || canvas.clientWidth;
+            height = rect.height || canvas.clientHeight;
+            
+            // If the canvas is completely hidden, supply fallback dimensions
+            if (width === 0) width = 800;
+            if (height === 0) height = 450;
+            
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+
+        class AtomParticle {
+            constructor(sym, x, y, isBonded = true) {
+                this.sym = sym;
+                this.data = ELEMENT_DATA[sym];
+                this.r = this.data.r;
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.isBonded = isBonded; // if bonded, stays in center
+                this.targetX = null;
+                this.targetY = null;
+            }
+
+            draw() {
+                // Glow
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r + 4, 0, Math.PI*2);
+                ctx.fillStyle = this.data.color + '44'; // Hex with alpha
+                ctx.fill();
+
+                // Solid atom
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+                
+                // Gradient for 3D effect
+                let grad = ctx.createRadialGradient(this.x - this.r/3, this.y - this.r/3, this.r/10, this.x, this.y, this.r);
+                grad.addColorStop(0, '#ffffff');
+                grad.addColorStop(0.3, this.data.color);
+                grad.addColorStop(1, '#000000');
+                
+                ctx.fillStyle = grad;
+                ctx.fill();
+                
+                // Symbol text
+                ctx.fillStyle = (this.sym === 'H') ? '#000' : '#fff';
+                ctx.font = `bold ${this.r}px monospace`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.sym, this.x, this.y);
+            }
+
+            update() {
+                if (engineState === 'idle') {
+                    // Gentle bobbing
+                    this.y += Math.sin(Date.now() / 300 + this.x) * 0.2;
+                } else if (engineState === 'smashed') {
+                    // Explosion physics
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += 0.4; // Gravity
+                    
+                    // Bounce off walls
+                    if (this.x - this.r < 0) { this.x = this.r; this.vx *= -0.8; }
+                    if (this.x + this.r > width) { this.x = width - this.r; this.vx *= -0.8; }
+                    if (this.y + this.r > height) { this.y = height - this.r; this.vy *= -0.6; this.vx *= 0.95; } // Friction
+                } else if (engineState === 'grouping') {
+                    // Move towards target zone for bar chart
+                    const dx = this.targetX - this.x;
+                    const dy = this.targetY - this.y;
+                    this.x += dx * 0.05;
+                    this.y += dy * 0.05;
+                }
+            }
+        }
+
+        function initMolecule(molKey) {
+            currentMolecule = MOLECULES[molKey];
+            particles = [];
+            
+            // Build the molecule visually in the center
+            let currentX = width / 2;
+            let currentY = height / 3;
+            let angleOffset = 0;
+
+            currentMolecule.makeup.forEach((element) => {
+                for(let i=0; i<element.count; i++) {
+                    // Arrange loosely in a cluster
+                    let r = Math.random() * 30 + 10;
+                    let theta = angleOffset + Math.random() * Math.PI * 2;
+                    let x = currentX + r * Math.cos(theta);
+                    let y = currentY + r * Math.sin(theta);
+                    
+                    particles.push(new AtomParticle(element.sym, x, y, true));
+                    angleOffset += 0.5;
+                }
+            });
+            
+            // Draw connecting bonds (just lines between nearby atoms for visual flair)
+            // Done in the draw loop
+        }
+
+        function drawBonds() {
+            if (engineState !== 'idle') return;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 3;
+            
+            for (let i=0; i<particles.length; i++) {
+                for (let j=i+1; j<particles.length; j++) {
+                    let p1 = particles[i];
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                    if (dist < 80) { // Connect close atoms
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function triggerSmash() {
+            if (engineState !== 'idle') return;
+            btnSmash.disabled = true;
+            
+            // 1. Smash State: apply explosive velocity
+            engineState = 'smashed';
+            particles.forEach(p => {
+                p.isBonded = false;
+                let angle = Math.random() * Math.PI * 2;
+                let force = Math.random() * 15 + 10;
+                p.vx = Math.cos(angle) * force;
+                p.vy = Math.sin(angle) * force - 5; // Slight upward bias
+            });
+
+            // 2. Clear stats panel
+            statsPanel.innerHTML = '';
+
+            // 3. After 2 seconds of bouncing, transition to 'grouping'
+            setTimeout(() => {
+                engineState = 'grouping';
+                calculateAndAssignTargets();
+            }, 2000);
+        }
+
+        function calculateAndAssignTargets() {
+            const types = currentMolecule.makeup.map(e => e.sym);
+            const slotWidth = width / types.length;
+            
+            // Build the stat cards while we do this
+            types.forEach((sym, index) => {
+                const elData = currentMolecule.makeup.find(e => e.sym === sym);
+                const massContributed = elData.count * elData.mass;
+                const percentage = (massContributed / currentMolecule.totalMass) * 100;
+                
+                // Grouping targets for particles
+                let atomsOfType = particles.filter(p => p.sym === sym);
+                atomsOfType.forEach((p, i) => {
+                    // Stack them up
+                    p.targetX = (index * slotWidth) + (slotWidth / 2) + ((Math.random() - 0.5) * 30);
+                    p.targetY = height - 50 - (i * (p.r * 1.5));
+                });
+
+                // Inject UI Stat Card
+                const card = document.createElement('div');
+                card.className = 'element-stat-card';
+                card.style.borderColor = ELEMENT_DATA[sym].color;
+                card.innerHTML = `
+                    <div class="stat-symbol" style="color: ${ELEMENT_DATA[sym].color}">${sym}</div>
+                    <div class="stat-percent">${percentage.toFixed(2)}%</div>
+                    <div class="stat-mass">Mass: ${(massContributed).toFixed(2)} g / ${currentMolecule.totalMass.toFixed(2)} g</div>
+                `;
+                statsPanel.appendChild(card);
+                
+                // Stagger reveal animation
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 300 + 1000);
+            });
+            
+            setTimeout(() => {
+                engineState = 'done';
+            }, 3000);
+        }
+
+        function resetSmasher() {
+            const sel = document.getElementById('molecule-select');
+            engineState = 'idle';
+            btnSmash.disabled = false;
+            statsPanel.innerHTML = '';
+            initMolecule(sel.value);
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw Title Text
+            if (currentMolecule) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.font = 'bold 120px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(currentMolecule.formula, width/2, height/2);
+            }
+
+            drawBonds();
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            animationFrameId = requestAnimationFrame(animateCanvas);
+        }
+
+        // Initialize Canvas on Load
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            resetSmasher();
+            animateCanvas();
+        });
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if(engineState === 'idle') resetSmasher();
+        });
+
+        // ==========================================
+        // UI & SCORING LOGIC (Consistent with previous files)
+        // ==========================================
+        function toggleHint(hintId) {
+            const h = document.getElementById(hintId);
+            h.style.display = h.style.display === "none" ? "block" : "none";
+        }
+
+        function toggleSolution(solId) {
+            const s = document.getElementById(solId);
+            s.style.display = s.style.display === "none" ? "block" : "none";
+            if (window.MathJax) {
+                MathJax.typesetPromise([s]);
+            }
+        }
+
+        function submitMark(id) {
+            const dropdown = document.getElementById('mark-selector-' + id);
+            const val = parseInt(dropdown.value, 10);
+            const feedback = document.getElementById('feedback-' + id);
+
+            const key = 'chem_mod2_q_' + id;
+            const prev = parseInt(localStorage.getItem(key)) || 0;
+
+            localStorage.setItem(key, val);
+
+            feedback.innerHTML = `<strong> Saved: ${val} mark(s)</strong>`;
+            feedback.style.color = "var(--success-green)";
+
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - prev + val;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const total = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const display = document.getElementById('total-marks');
+            if (display) display.innerText = total;
+        }
+
+        function checkIfQuestionAnswered(id) {
+            const key = 'chem_mod2_q_' + id;
+            const saved = localStorage.getItem(key);
+            if (saved !== null) {
+                const dropdown = document.getElementById('mark-selector-' + id);
+                const feedback = document.getElementById('feedback-' + id);
+                if (dropdown && feedback) {
+                    dropdown.value = saved;
+                    feedback.innerHTML = `<em> Saved: ${saved} mark(s)</em>`;
+                    feedback.style.color = "var(--text-secondary)";
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateTotalMarksDisplay();
+            ['perc-1', 'perc-2', 'perc-3'].forEach(id => checkIfQuestionAnswered(id));
+        });
+    </script>
+</body>
+</html>

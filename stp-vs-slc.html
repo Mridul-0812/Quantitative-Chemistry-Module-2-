@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 27: STP vs SLC - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY & CONTENT STYLES
+           ========================================================================== */
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .math-focus {
+            background: #111424;
+            border: 1px dashed #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        .highlight-text { color: #0ea5e9; font-weight: bold; }
+        .danger-text { color: #ef4444; font-weight: bold; }
+        .success-text { color: #22c55e; font-weight: bold; }
+        .purple-text { color: #a855f7; font-weight: bold; }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: MOLAR VOLUME PROVER
+           -------------------------------------------------------------------------- */
+        .simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: stretch;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .val-highlight {
+            color: #0ea5e9;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: #0ea5e9;
+            cursor: pointer;
+        }
+        
+        .preset-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+        
+        .preset-btn {
+            background: #334155;
+            border: 1px solid #475569;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #f8fafc;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        
+        .preset-btn:hover {
+            background: #0ea5e9;
+            color: #000;
+            border-color: #0ea5e9;
+        }
+
+        .gauge-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 280px;
+        }
+
+        .gauge-metric {
+            font-size: 3rem;
+            color: #22c55e;
+            font-family: monospace;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+            margin: 10px 0;
+        }
+        
+        .equation-live {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: BALLOON COMPARATOR
+           -------------------------------------------------------------------------- */
+        .balloon-comparator {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            background: #0f172a;
+            border: 1px solid #3f4a75;
+            border-radius: 12px;
+            padding: 40px 20px;
+            margin: 30px 0;
+            min-height: 350px;
+        }
+
+        .balloon-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .balloon {
+            position: relative;
+            background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.9), rgba(2, 132, 199, 0.9));
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.2rem;
+            transition: all 0.5s ease;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 12px;
+            background: #0284c7;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+        }
+
+        .balloon-stp {
+            width: 150px;
+            height: 170px;
+            background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.9), rgba(126, 34, 206, 0.9));
+        }
+
+        .balloon-stp::after { background: #7e22ce; }
+
+        .balloon-slc {
+            width: 165px;
+            height: 185px;
+        }
+
+        .condition-label {
+            background: #1e293b;
+            border: 1px solid #475569;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .condition-title {
+            color: #f8fafc;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .condition-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* --------------------------------------------------------------------------
+           STANDARD EDUCATIONAL UI
+           -------------------------------------------------------------------------- */
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: #22c55e; color: #000; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-hard { background: #ef4444; color: #fff; }
+        .badge-extension { background: #a855f7; color: #fff; }
+
+        .practise-question {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .question-header h4 { margin: 0; font-size: 1.3rem; color: #f8fafc; }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #ec4899;
+            font-weight: bold;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .interaction-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        
+        .btn-hint, .btn-reveal, .btn-submit-mark {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover { background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b; }
+        .btn-reveal:hover { background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981; }
+        .btn-submit-mark { background: #0ea5e9; color: #000; border: none; }
+        .btn-submit-mark:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+
+        .hidden-hint {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            color: #cbd5e1;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .worked-solution h5 { color: #0ea5e9; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-size: 1.2rem; }
+        .marking-criteria { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .marking-criteria h5 { color: #10b981; margin-bottom: 1rem; font-size: 1.1rem; }
+        .marking-criteria ul { list-style-type: none; margin-left: 0; }
+        .marking-criteria li { padding-left: 2rem; position: relative; margin-bottom: 0.8rem; color: #cbd5e1; }
+        .marking-criteria li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; font-size: 1.1rem; }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            background: #2a2f4c;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #3f4a75;
+        }
+
+        .mark-dropdown {
+            background: #111424;
+            color: #f8fafc;
+            border: 1px solid #3f4a75;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html" class="active">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>27. STP vs SLC</h1>
+            <p class="subtitle">The Molar Volume Shortcuts ($22.71 \text{ L/mol}$ and $24.79 \text{ L/mol}$)</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Need for Standardised Conditions</h2>
+            <p>In Lesson 26, we learned that the Ideal Gas Law ($PV = nRT$) can calculate any variable of a gas system. However, typing out the full $PV = nRT$ formula every time you need to convert between moles and volume is tedious, especially in stoichiometry problems where gas volume is just one step in a larger calculation.</p>
+            
+            <p>To speed up calculations, chemists define specific, standard laboratory environments. Because Avogadro's Law tells us that equal volumes of <em>any</em> ideal gas contain the same number of moles, we can calculate the exact volume that precisely $1 \text{ mole}$ of <em>any</em> gas will occupy under these strict conditions. We call this the <strong>Molar Volume ($V_m$)</strong>.</p>
+
+            <div class="theory-box">
+                <h3>The Two Standard Conditions</h3>
+                <ul>
+                    <li><span class="highlight-text">STP (Standard Temperature and Pressure):</span> Represents freezing conditions. Defined precisely as $0 \ ^\circ\text{C}$ ($273.15 \text{ K}$) and $100 \text{ kPa}$.</li>
+                    <li><span class="highlight-text">SLC (Standard Laboratory Conditions):</span> Represents a typical room temperature lab. Defined precisely as $25 \ ^\circ\text{C}$ ($298.15 \text{ K}$) and $100 \text{ kPa}$.</li>
+                </ul>
+            </div>
+            
+            <div class="callout-box" style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 0 8px 8px 0;">
+                <h4 style="color: #10b981; margin-top: 0;">The Shortcut Formula</h4>
+                <p>If (and only if) a gas is held precisely at STP or SLC, you can bypass $PV = nRT$ entirely and use the simple Molar Volume shortcut:</p>
+                <p style="font-size: 2rem; text-align: center; margin: 15px 0; font-family: monospace;">$$ n = \frac{V}{V_m} $$</p>
+                <p style="margin-bottom: 0;">Where $V$ is the volume of the gas in Litres, and $V_m$ is the Molar Volume constant for that specific condition.</p>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-prover">
+            <h2>Interactive: Proving the Constants</h2>
+            <p>We do not just magically invent the numbers $22.71$ and $24.79$. They are mathematically derived directly from the Ideal Gas Law! By setting $n = 1 \text{ mole}$, we can solve for $V$ to find the Molar Volume ($V_m$).</p>
+            <p>Use the presets below to automatically plug the standard conditions into $V = \frac{nRT}{P}$ and prove the constants yourself.</p>
+            
+            <div class="simulator-container">
+                <div class="sim-controls">
+                    <p style="color: #94a3b8; margin: 0 0 10px 0; text-align: center; font-size: 0.9rem;">QUICK SET CONDITIONS:</p>
+                    <div class="preset-group">
+                        <button class="preset-btn" onclick="setConditions(273.15, 100)">STP (0°C, 100 kPa)</button>
+                        <button class="preset-btn" onclick="setConditions(298.15, 100)">SLC (25°C, 100 kPa)</button>
+                    </div>
+                    
+                    <hr style="border: 1px dashed #334155; margin: 15px 0;">
+
+                    <div class="slider-group">
+                        <label><span>Temperature ($T$):</span> <span class="val-highlight" id="val-T">273.15 K</span></label>
+                        <input type="range" id="range-T" min="200" max="400" value="273.15" step="0.05" oninput="calculateVm()">
+                    </div>
+
+                    <div class="slider-group">
+                        <label><span>Pressure ($P$):</span> <span class="val-highlight" id="val-P">100.0 kPa</span></label>
+                        <input type="range" id="range-P" min="50" max="200" value="100" step="1" oninput="calculateVm()">
+                    </div>
+                    
+                    <p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 10px;">
+                        $n = 1.00 \text{ mol}$ exactly.<br>
+                        $R = 8.314 \text{ J K}^{-1}\text{mol}^{-1}$
+                    </p>
+                </div>
+
+                <div class="gauge-panel">
+                    <span style="color: #94a3b8; text-transform: uppercase; font-size: 0.9rem;">Resulting Molar Volume ($V_m$)</span>
+                    <div class="gauge-metric" id="result-Vm">22.71</div>
+                    <span style="color: #22c55e; font-weight: bold; font-size: 1.2rem;">L/mol</span>
+                    
+                    <div class="equation-live" id="result-eq">
+                        $$ V = \frac{1 \times 8.314 \times 273.15}{100} $$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-balloons">
+            <h2>Interactive: Visualising $1 \text{ Mole}$ of Gas</h2>
+            <p>A common misconception is that a mole of gas always takes up the same amount of space. However, Charles' Law states that gases expand when heated. Because SLC ($25 \ ^\circ\text{C}$) is warmer than STP ($0 \ ^\circ\text{C}$), $1 \text{ mole}$ of gas at SLC will physically take up more space than $1 \text{ mole}$ of gas at STP.</p>
+            
+            <div class="balloon-comparator">
+                <div class="balloon-wrapper">
+                    <div class="balloon balloon-stp">1 MOLE<br>ANY GAS</div>
+                    <div class="condition-label">
+                        <div class="condition-title">STP</div>
+                        <div class="condition-details">$0 \ ^\circ\text{C} \ | \ 100 \text{ kPa}$<br><span style="color: #a855f7; font-weight: bold; font-size: 1.1rem;">22.71 L</span></div>
+                    </div>
+                </div>
+
+                <div class="balloon-wrapper">
+                    <div class="balloon balloon-slc">1 MOLE<br>ANY GAS</div>
+                    <div class="condition-label">
+                        <div class="condition-title">SLC</div>
+                        <div class="condition-details">$25 \ ^\circ\text{C} \ | \ 100 \text{ kPa}$<br><span style="color: #0ea5e9; font-weight: bold; font-size: 1.1rem;">24.79 L</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Review the application of the $n = \frac{V}{V_m}$ shortcut. Notice how much faster these calculations are compared to using the full $PV = nRT$ formula. However, always verify that the conditions match STP or SLC before using the shortcut!</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Example 1: Volume to Moles</h4>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the number of moles of Carbon Dioxide gas ($CO_2$) present in a $50.0 \text{ L}$ container at Standard Laboratory Conditions (SLC).</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-stpslc-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-stpslc-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Identify the Conditions</strong><br>
+                        The question explicitly states SLC. Therefore, we can use the shortcut where $V_m = 24.79 \text{ L/mol}$.</p>
+
+                        <p><strong>Step 2: Apply the Formula</strong><br>
+                        $$ n = \frac{V}{V_m} $$
+                        $$ n = \frac{50.0}{24.79} $$
+                        $$ n = 2.0169... \text{ mol} $$</p>
+
+                        <p><strong>Final Answer:</strong> There are $\mathbf{2.02 \text{ moles}}$ of $CO_2$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Example 2: Mass to Volume</h4>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the volume in Litres that $15.5 \text{ g}$ of pure Oxygen gas ($O_2$) would occupy at Standard Temperature and Pressure (STP).</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-stpslc-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-stpslc-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert Mass to Moles</strong><br>
+                        $MM(O_2) = 2 \times 16.00 = 32.00 \text{ g/mol}$<br>
+                        $n = \frac{m}{MM} = \frac{15.5}{32.00} = 0.484375 \text{ mol}$</p>
+
+                        <p><strong>Step 2: Identify Conditions and Apply Shortcut</strong><br>
+                        The conditions are STP, so $V_m = 22.71 \text{ L/mol}$.<br>
+                        Rearrange $n = \frac{V}{V_m}$ to solve for Volume ($V$):<br>
+                        $$ V = n \times V_m $$
+                        $$ V = 0.484375 \times 22.71 $$
+                        $$ V = 11.0001... \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The Oxygen gas occupies $\mathbf{11.0 \text{ L}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Example 3: The "Non-Standard" Trap</h4>
+                </div>
+                <div class="question-body">
+                    <p>A chemist wishes to find the volume occupied by $0.850 \text{ mol}$ of Helium gas. The laboratory is held at a comfortable $25 \ ^\circ\text{C}$, but a storm system has caused the atmospheric pressure to drop significantly to $96.5 \text{ kPa}$. Calculate the volume of the gas.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-stpslc-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-stpslc-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Identify the Trap!</strong><br>
+                        Although the temperature is $25 \ ^\circ\text{C}$ (which matches SLC), the pressure is $96.5 \text{ kPa}$ (which does NOT match the $100 \text{ kPa}$ requirement for SLC). Because the conditions are not perfectly standard, <strong>you cannot use the $24.79 \text{ L/mol}$ shortcut!</strong> You must fall back to the master equation: $PV = nRT$.</p>
+
+                        <p><strong>Step 2: Setup Ideal Gas Law</strong><br>
+                        $P = 96.5 \text{ kPa}$<br>
+                        $n = 0.850 \text{ mol}$<br>
+                        $R = 8.314$<br>
+                        $T = 25 + 273.15 = 298.15 \text{ K}$</p>
+
+                        <p><strong>Step 3: Solve for Volume</strong><br>
+                        $$ V = \frac{nRT}{P} $$
+                        $$ V = \frac{0.850 \times 8.314 \times 298.15}{96.5} $$
+                        $$ V = \frac{2106.99...}{96.5} = 21.834... \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The volume is $\mathbf{21.8 \text{ L}}$. <em>(Note: If you had incorrectly used the shortcut $V = n \times 24.79$, you would have gotten $21.1 \text{ L}$, losing marks!)</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Example 4: Gas Stoichiometry at SLC</h4>
+                </div>
+                <div class="question-body">
+                    <p>Propane gas ($C_3H_8$) undergoes complete combustion in the presence of Oxygen gas according to the equation:<br>
+                    $C_3H_8(g) + 5O_2(g) \rightarrow 3CO_2(g) + 4H_2O(l)$</p>
+                    <p>Calculate the volume of Carbon Dioxide gas produced at SLC when $100 \text{ g}$ of Propane is completely combusted.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-stpslc-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-stpslc-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Calculate moles of reactant (Propane)</strong><br>
+                        $MM(C_3H_8) = (3 \times 12.01) + (8 \times 1.008) = 44.094 \text{ g/mol}$<br>
+                        $n(C_3H_8) = \frac{m}{MM} = \frac{100}{44.094} = 2.2678... \text{ mol}$</p>
+
+                        <p><strong>Step 2: Molar Ratio (Stoichiometry)</strong><br>
+                        Ratio of $C_3H_8 : CO_2$ is $1 : 3$.<br>
+                        $$ n(CO_2) = n(C_3H_8) \times 3 $$
+                        $$ n(CO_2) = 2.2678... \times 3 = 6.8036... \text{ mol} $$</p>
+
+                        <p><strong>Step 3: Convert moles of product to Volume at SLC</strong><br>
+                        Because the question specifies SLC, we can use the $V_m = 24.79 \text{ L/mol}$ shortcut directly on the product.<br>
+                        $$ V = n \times V_m $$
+                        $$ V = 6.8036... \times 24.79 $$
+                        $$ V = 168.66... \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The combustion produces $\mathbf{169 \text{ L}}$ of $CO_2$ gas (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply your understanding of STP and SLC. Remember to check whether the conditions allow for the shortcut or if you must fall back to the Ideal Gas Law. Write your working out on paper, reveal the solutions, and self-assess using the criteria.</p>
+
+            <div class="practise-question" id="q-stp-1">
+                <div class="question-header">
+                    <h4>Question 1: Shortcut Moles (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the number of moles in a $125 \text{ L}$ sample of Hydrogen gas held strictly at Standard Temperature and Pressure (STP).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stp-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-stp-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-stp-1">
+                    <p><strong>Hint:</strong> Since it is STP, use $n = V / V_m$ where $V_m = 22.71 \text{ L/mol}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-stp-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$ n = \frac{V}{V_m} $$</p>
+                        <p>$$ n = \frac{125}{22.71} $$</p>
+                        <p>$$ n = \mathbf{5.504... \text{ mol}} $$</p>
+                        <p>Rounding to 3 sig figs: $\mathbf{5.50 \text{ mol}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly selects the STP molar volume ($22.71 \text{ L/mol}$) and sets up the division.</li>
+                            <li><strong>2 Marks:</strong> Correct final mole calculation ($\approx 5.50 \text{ mol}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-stp-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-stp-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stp-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-stp-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-stp-2">
+                <div class="question-header">
+                    <h4>Question 2: Shortcut Mass (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A balloon is inflated with $8.50 \text{ L}$ of Helium gas at Standard Laboratory Conditions (SLC). Calculate the mass of the Helium gas inside the balloon.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stp-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-stp-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-stp-2">
+                    <p><strong>Hint:</strong> Step 1: Use the SLC shortcut ($V_m = 24.79$) to find the moles of Helium. Step 2: Convert moles to mass using the Molar Mass of Helium from the periodic table ($m = n \times MM$).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-stp-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Calculate Moles:</strong><br>
+                        $$ n = \frac{V}{24.79} = \frac{8.50}{24.79} = 0.34288... \text{ mol} $$</p>
+                        
+                        <p><strong>2. Calculate Mass:</strong><br>
+                        $MM(He) = 4.003 \text{ g/mol}$<br>
+                        $$ m = n \times MM $$
+                        $$ m = 0.34288... \times 4.003 = \mathbf{1.3725... \text{ g}} $$
+                        Rounding to 3 sig figs: $\mathbf{1.37 \text{ g}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly uses the $24.79$ SLC constant to find moles.</li>
+                            <li><strong>2 Mark:</strong> Correctly identifies the Molar Mass of Helium ($4.003$).</li>
+                            <li><strong>3 Marks:</strong> Correct final mass calculation ($\approx 1.37 \text{ g}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-stp-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-stp-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stp-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-stp-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-stp-3">
+                <div class="question-header">
+                    <h4>Question 3: Density Comparison (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the density of Chlorine gas ($Cl_2$) in $\text{g/L}$ at STP, and compare it to its density at SLC. State at which condition the gas is denser, and briefly explain why using KMT.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stp-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-stp-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-stp-3">
+                    <p><strong>Hint:</strong> You don't need $PV=nRT$ for this! Assume you have exactly 1 mole of gas. What is the mass of 1 mole of $Cl_2$? What is the volume of 1 mole at STP ($22.71$)? What is the volume of 1 mole at SLC ($24.79$)? Use $d = m/V$ for both.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-stp-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Determine Mass of 1 Mole:</strong><br>
+                        $MM(Cl_2) = 2 \times 35.45 = 70.90 \text{ g/mol}$<br>
+                        Let's assume exactly $1 \text{ mole}$ of gas. The mass is $70.90 \text{ g}$.</p>
+                        
+                        <p><strong>2. Density at STP:</strong><br>
+                        At STP, $1 \text{ mole}$ occupies $22.71 \text{ L}$.<br>
+                        $$ d(STP) = \frac{m}{V} = \frac{70.90 \text{ g}}{22.71 \text{ L}} = \mathbf{3.12 \text{ g/L}} $$</p>
+
+                        <p><strong>3. Density at SLC:</strong><br>
+                        At SLC, $1 \text{ mole}$ occupies $24.79 \text{ L}$.<br>
+                        $$ d(SLC) = \frac{m}{V} = \frac{70.90 \text{ g}}{24.79 \text{ L}} = \mathbf{2.86 \text{ g/L}} $$</p>
+                        
+                        <p><strong>4. Comparison & KMT:</strong><br>
+                        Chlorine is denser at STP. According to Charles' Law (KMT), the higher temperature at SLC ($25 ^\circ\text{C}$ compared to $0 ^\circ\text{C}$) gives the particles more kinetic energy, causing the gas to expand and occupy a larger volume ($24.79 \text{ L}$). Because the same mass is spread over a larger volume, the overall density decreases.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates the molar mass of $Cl_2$ ($70.90 \text{ g/mol}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates density at STP ($3.12 \text{ g/L}$).</li>
+                            <li><strong>3 Marks:</strong> Correctly calculates density at SLC ($2.86 \text{ g/L}$).</li>
+                            <li><strong>4 Marks:</strong> Connects the lower density at SLC to thermal expansion (increased volume) due to higher kinetic energy.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-stp-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-stp-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stp-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-stp-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-stp-4">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Question 4: Synthesis (Extension)</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Hydrogen Peroxide ($H_2O_2$) decomposes slowly into liquid water and Oxygen gas according to the equation:<br>
+                    $2H_2O_2(aq) \rightarrow 2H_2O(l) + O_2(g)$</p>
+                    <p>A student completely decomposes $50.0 \text{ mL}$ of a $2.50 \text{ M}$ Hydrogen Peroxide solution in a laboratory where the temperature is $25.0 \ ^\circ\text{C}$ and the atmospheric pressure is precisely $100 \text{ kPa}$. Calculate the volume of Oxygen gas collected in Litres.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-stp-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-stp-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-stp-4">
+                    <p><strong>Hint:</strong> <br>1. Find moles of $H_2O_2$ using the concentration formula $n = c \times V$.<br>2. Use the stoichiometric ratio to find moles of $O_2$ produced.<br>3. Check the conditions! The lab is at $25 \ ^\circ\text{C}$ and $100 \text{ kPa}$. What standard is this? Use the shortcut!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-stp-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Find Moles of Reactant ($H_2O_2$):</strong><br>
+                        $V = 50.0 \text{ mL} = 0.0500 \text{ L}$<br>
+                        $n(H_2O_2) = c \times V = 2.50 \times 0.0500 = 0.125 \text{ mol}$</p>
+                        
+                        <p><strong>2. Molar Ratio (Stoichiometry):</strong><br>
+                        Ratio of $H_2O_2 : O_2$ is $2 : 1$.<br>
+                        $$ n(O_2) = \frac{n(H_2O_2)}{2} = \frac{0.125}{2} = 0.0625 \text{ mol} $$</p>
+
+                        <p><strong>3. Calculate Gas Volume:</strong><br>
+                        The conditions are exactly $25 \ ^\circ\text{C}$ and $100 \text{ kPa}$. This is perfectly SLC. We can use the $24.79$ shortcut.<br>
+                        $$ V = n \times V_m $$
+                        $$ V = 0.0625 \times 24.79 $$
+                        $$ V = 1.549375 \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> $\mathbf{1.55 \text{ L}}$ of Oxygen gas is produced (to 3 sig figs).</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts $50.0 \text{ mL}$ to Litres ($0.0500 \text{ L}$).</li>
+                            <li><strong>2 Marks:</strong> Uses $c=n/V$ to find moles of $H_2O_2$ ($0.125 \text{ mol}$).</li>
+                            <li><strong>3 Marks:</strong> Applies the $2:1$ ratio to find moles of $O_2$ ($0.0625 \text{ mol}$).</li>
+                            <li><strong>4 Marks:</strong> Recognises the conditions match SLC and applies the $24.79$ molar volume multiplier.</li>
+                            <li><strong>5 Marks:</strong> Correct final volume calculated ($\approx 1.55 \text{ L}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-stp-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-stp-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('stp-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-stp-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="gas-stoichiometry.html" class="btn-next">Proceed to Lesson 28: Gas Stoichiometry &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION & CORE SYSTEM LOGIC
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('stp-1');
+            checkIfQuestionAnswered('stp-2');
+            checkIfQuestionAnswered('stp-3');
+            checkIfQuestionAnswered('stp-4');
+
+            calculateVm(); // Init the first interactivity
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: MOLAR VOLUME PROVER LOGIC
+         * ==========================================
+         */
+        const R = 8.314;
+
+        function setConditions(temp, pressure) {
+            document.getElementById('range-T').value = temp;
+            document.getElementById('range-P').value = pressure;
+            calculateVm();
+        }
+
+        function calculateVm() {
+            const T = parseFloat(document.getElementById('range-T').value);
+            const P = parseFloat(document.getElementById('range-P').value);
+            
+            document.getElementById('val-T').innerText = T.toFixed(2) + " K";
+            document.getElementById('val-P').innerText = P.toFixed(1) + " kPa";
+
+            // Calculation: V = nRT/P, where n=1
+            const Vm = (1 * R * T) / P;
+            
+            const resultVal = document.getElementById('result-Vm');
+            resultVal.innerText = Vm.toFixed(2);
+            
+            // Special highlighting if it matches a standard exactly
+            if (Math.abs(T - 273.15) < 0.1 && Math.abs(P - 100) < 0.1) {
+                resultVal.style.color = "#a855f7"; // Purple for STP
+                resultVal.style.textShadow = "0 0 15px rgba(168, 85, 247, 0.4)";
+            } else if (Math.abs(T - 298.15) < 0.1 && Math.abs(P - 100) < 0.1) {
+                resultVal.style.color = "#0ea5e9"; // Cyan for SLC
+                resultVal.style.textShadow = "0 0 15px rgba(14, 165, 233, 0.4)";
+            } else {
+                resultVal.style.color = "#22c55e"; // Default green
+                resultVal.style.textShadow = "0 0 15px rgba(34, 197, 94, 0.4)";
+            }
+
+            // Update live equation
+            const eqBox = document.getElementById('result-eq');
+            eqBox.innerHTML = `$$ V = \\frac{1 \\times 8.314 \\times ${T.toFixed(2)}}{${P.toFixed(1)}} $$`;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([eqBox]);
+            }
+        }
+    </script>
+</body>
+</html>

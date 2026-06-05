@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 25: Combined Gas Law - Quantitative Chemistry</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <style>
+        /* ==========================================================================
+           CUSTOM INTERACTIVITY & CONTENT STYLES
+           ========================================================================== */
+        .theory-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .theory-box h3 {
+            color: #0ea5e9;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+
+        .math-focus {
+            background: #111424;
+            border: 1px dashed #a855f7;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        .highlight-text { color: #0ea5e9; font-weight: bold; }
+        .danger-text { color: #ef4444; font-weight: bold; }
+        .success-text { color: #22c55e; font-weight: bold; }
+        .purple-text { color: #a855f7; font-weight: bold; }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 1: P-V-T CHAMBER SIMULATOR
+           -------------------------------------------------------------------------- */
+        .simulator-container {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .piston-assembly {
+            width: 160px;
+            height: 350px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cylinder {
+            position: absolute;
+            bottom: 30px;
+            width: 140px;
+            height: 250px;
+            border: 4px solid #94a3b8;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            background: rgba(14, 165, 233, 0.05);
+            z-index: 2;
+        }
+
+        .plunger-rod {
+            position: absolute;
+            top: 0;
+            width: 16px;
+            height: 250px; 
+            background: linear-gradient(90deg, #64748b, #94a3b8, #64748b);
+            z-index: 3;
+            transition: height 0.1s;
+        }
+
+        .plunger-head {
+            position: absolute;
+            top: 250px; 
+            width: 132px;
+            height: 20px;
+            background: #475569;
+            border-radius: 4px;
+            z-index: 3;
+            transition: top 0.1s;
+            border-bottom: 2px solid #334155;
+        }
+
+        .gas-cavity {
+            position: absolute;
+            bottom: 34px;
+            width: 132px;
+            height: 100px; 
+            background: rgba(14, 165, 233, 0.2);
+            z-index: 1;
+            overflow: hidden;
+            transition: height 0.1s, background 0.2s;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #0ea5e9;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #0ea5e9;
+        }
+        
+        .heat-source {
+            position: absolute;
+            bottom: 0px;
+            width: 140px;
+            height: 25px;
+            background: linear-gradient(0deg, #ef4444, transparent);
+            border-radius: 0 0 10px 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            color: #fca5a5;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .val-highlight {
+            color: #0ea5e9;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: #0ea5e9;
+            cursor: pointer;
+        }
+
+        .gauge-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .gauge-metric {
+            font-size: 2.5rem;
+            color: #f59e0b;
+            font-family: monospace;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+        }
+        
+        .pressure-warning {
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* --------------------------------------------------------------------------
+           INTERACTIVITY 2: EQUATION REARRANGER
+           -------------------------------------------------------------------------- */
+        .rearranger-container {
+            background: #111424;
+            border: 1px solid #3f4a75;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .base-equation {
+            font-size: 2.5rem;
+            color: #f8fafc;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 10px;
+            border: 2px solid #334155;
+        }
+        
+        .btn-variables {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .var-btn {
+            background: #2a2f4c;
+            border: 1px solid #0ea5e9;
+            color: #0ea5e9;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .var-btn:hover, .var-btn.active {
+            background: #0ea5e9;
+            color: #000;
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+        }
+        
+        .result-equation {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #a855f7;
+        }
+
+        /* --------------------------------------------------------------------------
+           STANDARD EDUCATIONAL UI
+           -------------------------------------------------------------------------- */
+        .step-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-easy { background: #22c55e; color: #000; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-hard { background: #ef4444; color: #fff; }
+        .badge-extension { background: #a855f7; color: #fff; }
+
+        .practise-question {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .practise-question:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+
+        .question-header h4 { margin: 0; font-size: 1.3rem; color: #f8fafc; }
+
+        .marks-allocated {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #ec4899;
+            font-weight: bold;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .interaction-controls { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        
+        .btn-hint, .btn-reveal, .btn-submit-mark {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-hint:hover { background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #f59e0b; }
+        .btn-reveal:hover { background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981; }
+        .btn-submit-mark { background: #0ea5e9; color: #000; border: none; }
+        .btn-submit-mark:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); }
+
+        .hidden-hint {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            display: none;
+            color: #cbd5e1;
+        }
+
+        .hidden-solution {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .worked-solution h5 { color: #0ea5e9; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-size: 1.2rem; }
+        .marking-criteria { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .marking-criteria h5 { color: #10b981; margin-bottom: 1rem; font-size: 1.1rem; }
+        .marking-criteria ul { list-style-type: none; margin-left: 0; }
+        .marking-criteria li { padding-left: 2rem; position: relative; margin-bottom: 0.8rem; color: #cbd5e1; }
+        .marking-criteria li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; font-size: 1.1rem; }
+
+        .self-assessment {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            background: #2a2f4c;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #3f4a75;
+        }
+
+        .mark-dropdown {
+            background: #111424;
+            color: #f8fafc;
+            border: 1px solid #3f4a75;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html" class="active">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>25. Combined Gas Law</h1>
+            <p class="subtitle">The Mathematical Synthesis of Pressure, Volume, and Temperature</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>Bringing It All Together</h2>
+            <p>In previous lessons, we examined the individual behaviour of gases by holding one variable strictly constant to observe the relationship between the other two. However, in the real world, conditions rarely cooperate so perfectly. Imagine a weather balloon rising through the atmosphere: as it ascends, the external pressure drops, but the atmospheric temperature drops simultaneously. Both volume and temperature are changing at the same time!</p>
+            
+            
+
+            <div class="theory-box">
+                <h3>The Synthesis of Three Laws</h3>
+                <p>We can merge the three individual gas laws into a single, comprehensive relationship. Let's trace the logic:</p>
+                <ul>
+                    <li><strong>Boyle's Law:</strong> Pressure is inversely proportional to Volume ($P \propto \frac{1}{V}$ or $PV = k$).</li>
+                    <li><strong>Charles' Law:</strong> Volume is directly proportional to Temperature ($V \propto T$ or $\frac{V}{T} = k$).</li>
+                    <li><strong>Amontons' Law:</strong> Pressure is directly proportional to Temperature ($P \propto T$ or $\frac{P}{T} = k$).</li>
+                </ul>
+                <p>When we combine these proportionalities, we find that the product of Pressure and Volume, divided by Temperature, yields a constant value for any fixed mass of gas.</p>
+            </div>
+
+            <div class="math-focus">
+                <h3 style="color: #f8fafc; margin-top: 0;">The Combined Gas Law Equation</h3>
+                <p>Because $\frac{PV}{T} = k$ (a constant), we can equate two different states of the exact same gas system. This gives us the incredibly powerful Combined Gas Law:</p>
+                
+                <div style="margin: 20px 0;">
+                    <p style="font-size: 2.2rem; font-weight: bold; color: #0ea5e9; background: #0f172a; padding: 20px; border-radius: 8px; display: inline-block; border: 1px solid #334155;">
+                        $$ \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2} $$
+                    </p>
+                </div>
+            
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; padding: 15px; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+                    <p style="color: #ef4444; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                        ⚠️ Critical Temperature Rule
+                    </p>
+                    <p style="color: #cbd5e1; margin-bottom: 10px;">
+                        Gas laws are based on the <strong>Absolute Temperature Scale</strong>. You must convert all Celsius temperatures to Kelvin before calculating:
+                    </p>
+                    <p style="font-size: 1.5rem; color: #f8fafc; font-weight: bold;">
+                        $$ T(\text{Kelvin}) = T(^\circ\text{C}) + 273.15 $$
+                    </p>
+                    <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 5px;">
+                        <em>Note: $0 \ ^\circ\text{C} = 273.15 \text{ K}$. Failure to convert will result in mathematically incorrect ratios.</em>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="ideal-gas-link">
+            <h2>The Future Link: The Universal Gas Constant</h2>
+            <p>You may be wondering why the expression $\frac{PV}{T}$ equals a constant ($k$). What is that constant?</p>
+            <p>As we transition toward Lesson 26 (The Ideal Gas Law), we can finally reveal what this constant is. If we take the master equation $PV = nRT$ and rearrange it to isolate $\frac{PV}{T}$, we get:</p>
+            
+            <p style="font-size: 1.8rem; text-align: center; margin: 15px 0;">$$ \frac{PV}{T} = nR $$</p>
+            
+            <p>Here, $n$ represents the number of moles of gas. Since the Combined Gas Law deals with a closed system (a sealed balloon, a piston), the number of moles ($n$) cannot change. The letter $R$ represents the <strong>Universal Gas Constant</strong>.</p>
+            
+            <div style="background: rgba(168, 85, 247, 0.1); border-left: 4px solid #a855f7; padding: 15px; margin: 20px 0;">
+                <p><strong>The Universal Gas Constant ($R$)</strong> is provided on your NESA Chemistry Reference Sheet. Its value is exactly:</p>
+                <p style="font-size: 1.5rem; text-align: center; font-family: monospace; color: #a855f7;">$$ R = 8.314 \text{ J K}^{-1} \text{ mol}^{-1} $$</p>
+            </div>
+            
+            <p>Because both $n$ and $R$ are completely locked constants in a sealed container, the term $nR$ evaluates to a single, unchanging number. This proves unequivocally why $\frac{P_1V_1}{T_1}$ must equal $\frac{P_2V_2}{T_2}$!</p>
+        </section>
+
+        <section class="content-section" id="interactive-pvt">
+            <h2>Interactive: The 3-Variable Chamber</h2>
+            <p>Experiment with the complex interactions of $P, V,$ and $T$. Adjust the temperature and the volume of the piston simultaneously. Observe how the pressure responds dynamically to keep the equation $\frac{PV}{T} = k$ balanced.</p>
+            
+            <div class="simulator-container">
+                <div class="piston-assembly">
+                    <div class="plunger-rod" id="sim-rod"></div>
+                    <div class="plunger-head" id="sim-head"></div>
+                    <div class="gas-cavity" id="sim-cavity">
+                        </div>
+                    <div class="cylinder"></div>
+                    <div class="heat-source" id="sim-heat">HEATING</div>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="slider-group">
+                        <label>
+                            <span>Volume ($V$):</span>
+                            <span class="val-highlight" id="sim-vol-val">100 L</span>
+                        </label>
+                        <input type="range" id="sim-vol-slider" min="40" max="100" value="100" step="1" oninput="updatePVTSim()">
+                    </div>
+
+                    <div class="slider-group" style="margin-top: 15px;">
+                        <label>
+                            <span>Temperature ($T$):</span>
+                            <span class="val-highlight" style="color: #ef4444;" id="sim-temp-val">300 K</span>
+                        </label>
+                        <input type="range" id="sim-temp-slider" min="200" max="600" value="300" step="10" oninput="updatePVTSim()" style="accent-color: #ef4444;">
+                    </div>
+
+                    <div class="gauge-panel" style="margin-top: 20px;">
+                        <span style="color: #94a3b8; text-transform: uppercase; font-size: 0.9rem;">Internal Pressure ($P$)</span>
+                        <div class="gauge-metric" id="sim-pres-val">1.00 atm</div>
+                        <div class="pressure-warning" id="sim-pres-warn">DANGER: CRITICAL PRESSURE</div>
+                    </div>
+                    
+                    <p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 10px;">
+                        $\frac{PV}{T} = \text{Constant } (0.333)$<br>
+                        Moles ($n$) are locked.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="interactive-rearranger">
+            <h2>Interactive: The Missing Variable Calculator</h2>
+            <p>The algebra required for the Combined Gas Law can be daunting. Six variables in a fraction format easily leads to cross-multiplication errors. Click on the variable you need to calculate (the "unknown") to see the correct algebraic rearrangement.</p>
+
+            <div class="rearranger-container">
+                <div class="base-equation">
+                    $$ \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2} $$
+                </div>
+                
+                <p style="color: #94a3b8; margin-bottom: 0;">Select the variable you want to solve for:</p>
+                
+                <div class="btn-variables">
+                    <button class="var-btn" onclick="rearrangeFor('P2')" id="btn-P2">Solve for P₂</button>
+                    <button class="var-btn" onclick="rearrangeFor('V2')" id="btn-V2">Solve for V₂</button>
+                    <button class="var-btn" onclick="rearrangeFor('T2')" id="btn-T2">Solve for T₂</button>
+                    <button class="var-btn" onclick="rearrangeFor('T1')" id="btn-T1">Solve for T₁</button>
+                </div>
+                
+                <div class="result-equation" id="result-display">
+                    <span style="color: #64748b; font-size: 1rem;">Click a button above</span>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="worked-solutions">
+            <h2>Worked Solutions</h2>
+            <p>Study these exemplary worked solutions. The key to mastering this equation is meticulous data extraction. Always list $P_1, V_1, T_1$ and $P_2, V_2, T_2$ on the side of your page before doing any algebra.</p>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-easy">Easy</span>
+                    <h4>Example 1: Direct Substitution</h4>
+                </div>
+                <div class="question-body">
+                    <p>A gas occupies a volume of $2.50 \text{ L}$ at a pressure of $1.50 \text{ atm}$ and a temperature of $300 \text{ K}$. If the volume is decreased to $1.20 \text{ L}$ and the temperature is raised to $400 \text{ K}$, calculate the new pressure of the gas.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-comb-1')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-comb-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Extract the data</strong><br>
+                        $P_1 = 1.50 \text{ atm} \quad \quad P_2 = \text{ ?}$<br>
+                        $V_1 = 2.50 \text{ L} \quad \quad \quad V_2 = 1.20 \text{ L}$<br>
+                        $T_1 = 300 \text{ K} \quad \quad \quad T_2 = 400 \text{ K}$</p>
+
+                        <p><strong>Step 2: Apply the Combined Gas Law</strong><br>
+                        $$ \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2} $$
+                        $$ \frac{1.50 \times 2.50}{300} = \frac{P_2 \times 1.20}{400} $$</p>
+
+                        <p><strong>Step 3: Solve algebraically</strong><br>
+                        Evaluate the left side first:<br>
+                        $$ \frac{3.75}{300} = \frac{1.20 \ P_2}{400} $$
+                        $$ 0.0125 = \frac{1.20 \ P_2}{400} $$
+                        Multiply by 400:<br>
+                        $$ 5.00 = 1.20 \ P_2 $$
+                        $$ P_2 = \frac{5.00}{1.20} = 4.166... \text{ atm} $$</p>
+
+                        <p><strong>Final Answer:</strong> The new pressure is $\mathbf{4.17 \text{ atm}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-medium">Medium</span>
+                    <h4>Example 2: Mismatched Units & Celsius</h4>
+                </div>
+                <div class="question-body">
+                    <p>A weather balloon is released from the ground where the pressure is $101.3 \text{ kPa}$, the temperature is $25.0 \ ^\circ\text{C}$, and its volume is $4.00 \text{ L}$. It rises to an altitude where the pressure drops to $0.500 \text{ atm}$ and the temperature falls to $-15.0 \ ^\circ\text{C}$. Calculate the final volume of the balloon in Litres.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-comb-2')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-comb-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Unify Units (Crucial!)</strong><br>
+                        Convert both temperatures to Kelvin:<br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$<br>
+                        $T_2 = -15.0 + 273.15 = 258.15 \text{ K}$<br><br>
+                        Unify the pressure units. Convert $P_2$ from atm to kPa ($1 \text{ atm} = 101.3 \text{ kPa}$):<br>
+                        $P_2 = 0.500 \times 101.3 = 50.65 \text{ kPa}$</p>
+
+                        <p><strong>Step 2: Extract data</strong><br>
+                        $P_1 = 101.3 \text{ kPa} \quad \quad P_2 = 50.65 \text{ kPa}$<br>
+                        $V_1 = 4.00 \text{ L} \quad \quad \quad \ \ V_2 = \text{ ?}$<br>
+                        $T_1 = 298.15 \text{ K} \quad \quad \ T_2 = 258.15 \text{ K}$</p>
+
+                        <p><strong>Step 3: Solve</strong><br>
+                        $$ \frac{101.3 \times 4.00}{298.15} = \frac{50.65 \times V_2}{258.15} $$
+                        $$ 1.359... = \frac{50.65 \ V_2}{258.15} $$
+                        $$ 350.84... = 50.65 \ V_2 $$
+                        $$ V_2 = 6.926... \text{ L} $$</p>
+
+                        <p><strong>Final Answer:</strong> The new volume is $\mathbf{6.93 \text{ L}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-hard">Hard</span>
+                    <h4>Example 3: Solving for the Denominator ($T_2$)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A gas system initially sits at $120 \text{ kPa}$, $5.00 \text{ L}$, and $20.0 \ ^\circ\text{C}$. The gas is compressed to $2.50 \text{ L}$ and the pressure spikes to $300 \text{ kPa}$. Calculate the final temperature of the gas in degrees Celsius.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-comb-3')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-comb-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Convert Initial Temp to Kelvin</strong><br>
+                        $T_1 = 20.0 + 273.15 = 293.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Setup Equation</strong><br>
+                        $$ \frac{120 \times 5.00}{293.15} = \frac{300 \times 2.50}{T_2} $$
+                        $$ \frac{600}{293.15} = \frac{750}{T_2} $$</p>
+
+                        <p><strong>Step 3: Solve for $T_2$ via Cross-Multiplication</strong><br>
+                        $$ 600 \times T_2 = 750 \times 293.15 $$
+                        $$ 600 \times T_2 = 219862.5 $$
+                        $$ T_2 = 366.4375 \text{ K} $$</p>
+
+                        <p><strong>Step 4: Convert back to Celsius</strong><br>
+                        $$ T(^\circ\text{C}) = 366.4375 - 273.15 = 93.2875 \ ^\circ\text{C} $$</p>
+
+                        <p><strong>Final Answer:</strong> The final temperature is $\mathbf{93.3 \ ^\circ\text{C}}$ (to 3 sig figs).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Example 4: Standard Temperature and Pressure (STP)</h4>
+                </div>
+                <div class="question-body">
+                    <p>A student collects $45.0 \text{ mL}$ of Hydrogen gas over water in a lab that is $25.0 \ ^\circ\text{C}$ and has an atmospheric pressure of $105 \text{ kPa}$. In chemistry, Standard Temperature and Pressure (STP) is strictly defined as $0 \ ^\circ\text{C}$ ($273.15 \text{ K}$) and $100 \text{ kPa}$.</p>
+                    <p>Calculate what the exact volume of this gas sample would be if it were mathematically moved to STP conditions.</p>
+                </div>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('we-comb-4')">View Solution</button>
+                </div>
+                <div class="hidden-solution" id="we-comb-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><em>In the HSC, calculating a gas volume at STP from laboratory conditions is a highly common requirement before calculating moles.</em></p>
+                        
+                        <p><strong>Step 1: Define State 1 (Lab Conditions)</strong><br>
+                        $P_1 = 105 \text{ kPa}$<br>
+                        $V_1 = 45.0 \text{ mL}$<br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$</p>
+
+                        <p><strong>Step 2: Define State 2 (STP Conditions)</strong><br>
+                        $P_2 = 100 \text{ kPa}$ (Standard Pressure)<br>
+                        $T_2 = 273.15 \text{ K}$ (Standard Temperature)<br>
+                        $V_2 = \text{ ?}$</p>
+
+                        <p><strong>Step 3: Solve using Combined Gas Law</strong><br>
+                        $$ \frac{105 \times 45.0}{298.15} = \frac{100 \times V_2}{273.15} $$
+                        $$ 15.8477... = \frac{100 \ V_2}{273.15} $$
+                        Multiply by 273.15:<br>
+                        $$ 4328.79... = 100 \ V_2 $$
+                        $$ V_2 = 43.287... \text{ mL} $$</p>
+
+                        <p><strong>Final Answer:</strong> At STP, the gas would occupy a volume of $\mathbf{43.3 \text{ mL}}$.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="practise-questions">
+            <h2>Practise Questions</h2>
+            <p>Apply your understanding of the Combined Gas Law. Write your working out on paper, ensure you check your units, reveal the solutions, and self-assess using the marking criteria.</p>
+
+            <div class="practise-question" id="q-cgl-1">
+                <div class="question-header">
+                    <h4>Question 1: Direct Substitution (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A gas has a volume of $8.00 \text{ L}$ at a pressure of $2.00 \text{ atm}$ and a temperature of $400 \text{ K}$. Calculate the final volume if the pressure changes to $1.50 \text{ atm}$ and the temperature decreases to $300 \text{ K}$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-cgl-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-cgl-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-cgl-1">
+                    <p><strong>Hint:</strong> The temperature is already given in Kelvin, and the pressure units match. Plug $P_1=2.00, V_1=8.00, T_1=400$ and $P_2=1.50, T_2=300$ into the formula and solve for $V_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-cgl-1">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$ \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2} $$</p>
+                        <p>$$ \frac{2.00 \times 8.00}{400} = \frac{1.50 \times V_2}{300} $$</p>
+                        <p>$$ \frac{16.00}{400} = \frac{1.50 \ V_2}{300} $$</p>
+                        <p>$$ 0.0400 = \frac{1.50 \ V_2}{300} $$</p>
+                        <p>$$ 12.0 = 1.50 \ V_2 $$</p>
+                        <p>$$ V_2 = \mathbf{8.00 \text{ L}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly substitutes all variables into the Combined Gas Law formula.</li>
+                            <li><strong>2 Marks:</strong> Correct final volume of $8.00 \text{ L}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-cgl-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-cgl-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('cgl-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-cgl-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-cgl-2">
+                <div class="question-header">
+                    <h4>Question 2: Unit Conversions (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $250 \text{ mL}$ flask contains Neon gas at $25.0 \ ^\circ\text{C}$ and $95.0 \text{ kPa}$. The gas is transferred to a $1.50 \text{ L}$ container and heated to $80.0 \ ^\circ\text{C}$. Calculate the new pressure of the gas in $kPa$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-cgl-2')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-cgl-2')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-cgl-2">
+                    <p><strong>Hint:</strong> Watch out for the traps! Temperatures must be in Kelvin ($+273.15$). Volumes must be in the same unit (convert $250 \text{ mL}$ to $0.250 \text{ L}$). Then solve for $P_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-cgl-2">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Convert Units:</strong><br>
+                        $T_1 = 25.0 + 273.15 = 298.15 \text{ K}$<br>
+                        $T_2 = 80.0 + 273.15 = 353.15 \text{ K}$<br>
+                        $V_1 = 250 \text{ mL} = 0.250 \text{ L}$ (to match $V_2$ which is $1.50 \text{ L}$)</p>
+                        
+                        <p><strong>2. Apply Formula:</strong><br>
+                        $$ \frac{95.0 \times 0.250}{298.15} = \frac{P_2 \times 1.50}{353.15} $$</p>
+
+                        <p><strong>3. Solve for $P_2$:</strong><br>
+                        $$ 0.07965... = \frac{1.50 \ P_2}{353.15} $$
+                        $$ 28.130... = 1.50 \ P_2 $$
+                        $$ P_2 = \mathbf{18.75... \text{ kPa}} $$
+                        Rounded to 3 sig figs: $\mathbf{18.8 \text{ kPa}}$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts both temperatures to Kelvin.</li>
+                            <li><strong>2 Mark:</strong> Correctly standardises volume units (both to mL or both to L).</li>
+                            <li><strong>3 Marks:</strong> Correct final pressure ($\approx 18.8 \text{ kPa}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-cgl-2">Assign yourself a mark:</label>
+                        <select id="mark-selector-cgl-2" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('cgl-2')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-cgl-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-cgl-3">
+                <div class="question-header">
+                    <h4>Question 3: Solving for Final Temperature (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A gas sample initially at $1.20 \text{ atm}$ and $10.0 \ ^\circ\text{C}$ occupies $15.0 \text{ L}$. The gas is compressed into a $5.00 \text{ L}$ tank, causing the internal pressure to spike to $4.50 \text{ atm}$. Calculate the final temperature of the gas in degrees Celsius.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-cgl-3')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-cgl-3')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-cgl-3">
+                    <p><strong>Hint:</strong> Step 1: Convert $10.0 \ ^\circ\text{C}$ to Kelvin. Step 2: Use the formula to find $T_2$ in Kelvin. Cross-multiplication is the safest algebra method here. Step 3: Convert the final answer back to Celsius.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-cgl-3">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Convert $T_1$ to Kelvin:</strong><br>
+                        $T_1 = 10.0 + 273.15 = 283.15 \text{ K}$</p>
+                        
+                        <p><strong>2. Apply Formula:</strong><br>
+                        $$ \frac{1.20 \times 15.0}{283.15} = \frac{4.50 \times 5.00}{T_2} $$
+                        $$ \frac{18.0}{283.15} = \frac{22.5}{T_2} $$</p>
+
+                        <p><strong>3. Cross-multiply and solve:</strong><br>
+                        $$ 18.0 \times T_2 = 22.5 \times 283.15 $$
+                        $$ 18.0 \times T_2 = 6370.875 $$
+                        $$ T_2 = 353.9375 \text{ K} $$</p>
+
+                        <p><strong>4. Convert back to Celsius:</strong><br>
+                        $$ T(^\circ\text{C}) = 353.9375 - 273.15 = \mathbf{80.7875 \ ^\circ\text{C}} $$
+                        Rounding to 3 sig figs: $\mathbf{80.8 \ ^\circ\text{C}}$.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Converts $T_1$ to $283.15 \text{ K}$.</li>
+                            <li><strong>2 Marks:</strong> Correct algebraic setup for the fraction.</li>
+                            <li><strong>3 Marks:</strong> Accurately isolates $T_2$ to find $\approx 353.9 \text{ K}$.</li>
+                            <li><strong>4 Marks:</strong> Correctly converts the final temperature to Celsius ($80.8 \ ^\circ\text{C}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-cgl-3">Assign yourself a mark:</label>
+                        <select id="mark-selector-cgl-3" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('cgl-3')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-cgl-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-cgl-4">
+                <div class="question-header">
+                    <span class="step-badge badge-extension">Extension</span>
+                    <h4>Question 4: Relative Percentages (Extension)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>An engineer designs an engine cylinder. During the compression stroke, the volume of the gas is reduced to exactly one-third ($1/3$) of its original volume. Simultaneously, the pressure of the gas increases to exactly five times ($5\times$) its original pressure.</p>
+                    <p>If the starting temperature of the gas was $27.0 \ ^\circ\text{C}$, prove mathematically what the final temperature must be in degrees Celsius.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-cgl-4')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-cgl-4')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-cgl-4">
+                    <p><strong>Hint:</strong> You do not need numbers for P or V. Let the initial states be $P_1$ and $V_1$. Express the final states as $P_2 = 5 P_1$ and $V_2 = (1/3)V_1$. Put these directly into the Combined Gas Law equation and the $P_1$ and $V_1$ will cancel out entirely!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-cgl-4">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Define variables:</strong><br>
+                        $T_1 = 27.0 + 273.15 = 300.15 \text{ K}$<br>
+                        $V_2 = \frac{1}{3} V_1$<br>
+                        $P_2 = 5 P_1$</p>
+                        
+                        <p><strong>2. Substitute into formula:</strong><br>
+                        $$ \frac{P_1 V_1}{300.15} = \frac{(5 P_1) \times (\frac{1}{3} V_1)}{T_2} $$</p>
+
+                        <p><strong>3. Simplify and cancel:</strong><br>
+                        Divide both sides by $(P_1 V_1)$:<br>
+                        $$ \frac{1}{300.15} = \frac{5 \times \frac{1}{3}}{T_2} $$
+                        $$ \frac{1}{300.15} = \frac{\frac{5}{3}}{T_2} $$</p>
+
+                        <p><strong>4. Solve for $T_2$:</strong><br>
+                        $$ T_2 = 300.15 \times \left(\frac{5}{3}\right) $$
+                        $$ T_2 = 500.25 \text{ K} $$</p>
+                        
+                        <p><strong>5. Convert to Celsius:</strong><br>
+                        $$ T(^\circ\text{C}) = 500.25 - 273.15 = \mathbf{227.1 \ ^\circ\text{C}} $$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly converts $T_1$ to Kelvin ($300.15 \text{ K}$).</li>
+                            <li><strong>2 Marks:</strong> Correctly defines the ratios $P_2 = 5P_1$ and $V_2 = (1/3)V_1$.</li>
+                            <li><strong>3 Marks:</strong> Successfully cancels algebraic terms to find $T_2$ ($500.25 \text{ K}$).</li>
+                            <li><strong>4 Marks:</strong> Correctly converts the final temperature back to Celsius ($227.1 \ ^\circ\text{C}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-cgl-4">Assign yourself a mark:</label>
+                        <select id="mark-selector-cgl-4" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('cgl-4')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-cgl-4"></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="ideal-gas-law.html" class="btn-next">Proceed to Lesson 26: Ideal Gas Law ($PV=nRT$) &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION & CORE SYSTEM LOGIC
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('cgl-1');
+            checkIfQuestionAnswered('cgl-2');
+            checkIfQuestionAnswered('cgl-3');
+            checkIfQuestionAnswered('cgl-4');
+
+            initPVTSim();
+        });
+
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none" || hintElement.style.display === "") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none" || solutionElement.style.display === "") {
+                solutionElement.style.display = "block";
+                if (window.MathJax) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#22c55e"; // success green
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('chem_mod2_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('chem_mod2_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'chem_mod2_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 1: P-V-T CHAMBER SIMULATOR
+         * ==========================================
+         */
+        let simParticles = [];
+        const COMBINED_CONSTANT = 0.3333; // PV/T = k. Base: (1.00 * 100) / 300 = 0.3333
+        
+        class PTParticle {
+            constructor() {
+                this.x = 10 + Math.random() * 112; // Cavity width is 132
+                this.y = 10 + Math.random() * 80; 
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.r = 3;
+                this.el = document.createElement('div');
+                this.el.className = 'particle';
+                document.getElementById('sim-cavity').appendChild(this.el);
+            }
+
+            update(maxHeight, tempMod) {
+                this.x += this.vx * tempMod;
+                this.y += this.vy * tempMod;
+
+                // Bounce X (width is 132, bounds ~ 0 to 126)
+                if (this.x <= 0 || this.x >= 126) {
+                    this.vx *= -1;
+                    this.x = this.x <= 0 ? 0 : 126;
+                }
+                
+                // Bounce Y (0 is top, maxHeight is bottom)
+                if (this.y <= 0 || this.y >= maxHeight - 6) {
+                    this.vy *= -1;
+                    this.y = this.y <= 0 ? 0 : maxHeight - 6;
+                }
+
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + 'px';
+            }
+        }
+
+        function initPVTSim() {
+            for(let i=0; i<40; i++) {
+                simParticles.push(new PTParticle());
+            }
+            updatePVTSim();
+            requestAnimationFrame(animatePVTSim);
+        }
+
+        function updatePVTSim() {
+            const vol = parseInt(document.getElementById('sim-vol-slider').value);
+            const tempK = parseInt(document.getElementById('sim-temp-slider').value);
+            
+            document.getElementById('sim-vol-val').innerText = vol + " L";
+            document.getElementById('sim-temp-val').innerText = tempK + " K";
+
+            // Math: PV/T = k => P = (k * T) / V
+            const pres = (COMBINED_CONSTANT * tempK) / vol;
+            const presDisplay = document.getElementById('sim-pres-val');
+            presDisplay.innerText = pres.toFixed(2) + " atm";
+            
+            // Warnings
+            if (pres > 3.0) {
+                document.getElementById('sim-pres-warn').style.opacity = 1;
+                presDisplay.style.color = "#ef4444";
+            } else {
+                document.getElementById('sim-pres-warn').style.opacity = 0;
+                presDisplay.style.color = "#f59e0b";
+            }
+
+            // Visual updates
+            // Map Volume to Height: 100 L -> 200px. 40 L -> 80px.
+            const cavityHeight = vol * 2; 
+            const cavityEl = document.getElementById('sim-cavity');
+            cavityEl.style.height = cavityHeight + 'px';
+            
+            // Heat visual
+            if (tempK > 350) {
+                let intensity = (tempK - 350) / 250; 
+                cavityEl.style.background = `rgba(245, 158, 11, ${intensity * 0.4 + 0.1})`;
+                document.getElementById('sim-heat').style.opacity = intensity;
+            } else {
+                cavityEl.style.background = `rgba(14, 165, 233, 0.2)`;
+                document.getElementById('sim-heat').style.opacity = 0;
+            }
+            
+            // Plunger positioning
+            // Base offset is 34px. Head bottom sits at cavity height + base offset.
+            // Using top positioning since we anchored from top for plunger
+            // Total container height 350. Top = 350 - 34 - cavityHeight - 20 (head height)
+            const headTop = 350 - 34 - cavityHeight - 20;
+            document.getElementById('sim-head').style.top = headTop + 'px';
+            document.getElementById('sim-rod').style.height = headTop + 'px';
+        }
+
+        function animatePVTSim() {
+            const vol = parseInt(document.getElementById('sim-vol-slider').value);
+            const tempK = parseInt(document.getElementById('sim-temp-slider').value);
+            
+            const cavityHeight = vol * 2;
+            const tempMod = Math.sqrt(tempK / 300);
+
+            simParticles.forEach(p => p.update(cavityHeight, tempMod));
+            requestAnimationFrame(animatePVTSim);
+        }
+
+        /**
+         * ==========================================
+         * INTERACTIVITY 2: EQUATION REARRANGER
+         * ==========================================
+         */
+        function rearrangeFor(variable) {
+            // Reset buttons
+            document.getElementById('btn-P2').className = 'var-btn';
+            document.getElementById('btn-V2').className = 'var-btn';
+            document.getElementById('btn-T2').className = 'var-btn';
+            document.getElementById('btn-T1').className = 'var-btn';
+            
+            // Activate button
+            document.getElementById('btn-' + variable).className = 'var-btn active';
+            
+            const display = document.getElementById('result-display');
+
+            // Provide rearrangement
+            if (variable === 'P2') {
+                display.innerHTML = '$$ P_2 = \\frac{P_1 V_1 T_2}{T_1 V_2} $$';
+            } else if (variable === 'V2') {
+                display.innerHTML = '$$ V_2 = \\frac{P_1 V_1 T_2}{T_1 P_2} $$';
+            } else if (variable === 'T2') {
+                display.innerHTML = '$$ T_2 = \\frac{P_2 V_2 T_1}{P_1 V_1} $$';
+            } else if (variable === 'T1') {
+                display.innerHTML = '$$ T_1 = \\frac{P_1 V_1 T_2}{P_2 V_2} $$';
+            }
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([display]);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 8: Empirical Formula - The Simplest Ratio</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        /* Specific Styles for Lesson 8: Empirical Formula */
+
+        /* 1. The Methodical Table Styling */
+        .empirical-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .empirical-table th {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent-cyan);
+        }
+
+        .empirical-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border-light);
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .empirical-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empirical-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 2. Interactive "Formula Sieve" */
+        .sieve-container {
+            background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 100%);
+            border: 1px solid var(--accent-purple);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .sieve-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        .input-panel {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px dashed var(--glass-border);
+        }
+
+        .element-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .visual-output {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid var(--glass-border);
+            padding-left: 30px;
+        }
+
+        #formula-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            margin-bottom: 1.5rem;
+            font-family: 'serif';
+        }
+
+        .molecule-preview {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(176,38,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* 3. Whimsical Decimal Rules Card */
+        .decimal-rules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 2rem 0;
+        }
+
+        .rule-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--accent-purple);
+            padding: 1rem;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 180px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            background: rgba(176,38,255,0.1);
+        }
+
+        .rule-decimal {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+            display: block;
+        }
+
+        .rule-action {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 4. Steps List */
+        .steps-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+
+        .step-num {
+            background: var(--accent-purple);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 2</h2>
+            <p>Quantitative Chemistry</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase A: Foundations</li>
+            <li><a href="relative-atomic-mass.html">1. Relative Atomic Mass</a></li>
+            <li><a href="molar-mass-basics.html">2. Molar Mass Basics</a></li>
+            <li><a href="balancing-equations-rules.html">3. Balancing Rules</a></li>
+            <li><a href="balancing-equations-pro.html">4. Advanced Balancing</a></li>
+            
+            <li class="nav-section-title">Phase B: The Mole</li>
+            <li><a href="what-is-a-mole.html">5. What is a Mole?</a></li>
+            <li><a href="mole-formula-mass.html">6. The Mole Formula (Mass)</a></li>
+            <li><a href="percentage-composition.html">7. Percentage Composition</a></li>
+            <li><a href="empirical-formula.html" class="active">8. Empirical Formula</a></li>
+            <li><a href="molecular-formula.html">9. Molecular Formula</a></li>
+            
+            <li class="nav-section-title">Phase C: Stoichiometry</li>
+            <li><a href="mole-ratios.html">10. Mole Ratios</a></li>
+            <li><a href="stoichiometry-mass-mass.html">11. Mass-to-Mass Conversions</a></li>
+            <li><a href="intro-limiting-reagents.html">12. Intro to Limiting Reagents</a></li>
+            <li><a href="limiting-reagent-calcs.html">13. Limiting Reagent Calcs</a></li>
+            <li><a href="excess-reagent-calcs.html">14. Excess Reagent Calcs</a></li>
+            <li><a href="percentage-yield.html">15. Percentage Yield</a></li>
+            
+            <li class="nav-section-title">Phase D: Concentration</li>
+            <li><a href="intro-concentration.html">16. Intro to Concentration</a></li>
+            <li><a href="molarity-formula.html">17. Molarity Formula</a></li>
+            <li><a href="dilutions.html">18. Dilutions</a></li>
+            <li><a href="standard-solutions.html">19. Standard Solutions</a></li>
+            
+            <li class="nav-section-title">Phase E: Gas Laws</li>
+            <li><a href="gas-properties.html">20. Gas Properties & KMT</a></li>
+            <li><a href="boyles-law.html">21. Boyle's Law</a></li>
+            <li><a href="charles-law.html">22. Charles' Law</a></li>
+            <li><a href="amontons-law.html">23. Amontons' Law</a></li>
+            <li><a href="avogadros-gas-law.html">24. Avogadro's Gas Law</a></li>
+            <li><a href="combined-gas-law.html">25. Combined Gas Law</a></li>
+            <li><a href="ideal-gas-law.html">26. Ideal Gas Law</a></li>
+            <li><a href="stp-vs-slc.html">27. STP vs SLC</a></li>
+            <li><a href="gas-stoichiometry.html">28. Gas Stoichiometry</a></li>
+            
+            <li class="nav-section-title">Phase F: Assessment</li>
+            <li><a href="module-2-summary.html">29. Formula Summary</a></li>
+            <li><a href="final-exam.html">30. Final Exam</a></li>
+            <li><a href="certificate.html" class="highlight-link">Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>8. Empirical Formula</h1>
+            <p class="subtitle">Reducing Molecules to their Simplest Whole-Number Ratio</p>
+        </header>
+
+        <section class="content-section">
+            <h2>The "Blueprint" of a Molecule</h2>
+            <p>While the <em>molecular formula</em> tells you exactly how many atoms are in a molecule, the <strong>Empirical Formula</strong> tells you the simplest mathematical ratio of those atoms. For example, Hydrogen Peroxide is $H_2O_2$, but its empirical formula is simply $HO$. It’s the "lowest common denominator" of the chemical world.</p>
+            
+            <p>To find the empirical formula, we follow a rigorous, step-by-step table method. This ensures you never lose a decimal point or miscalculate a molar ratio.</p>
+
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div><strong>List Elements:</strong> Identify which elements are in the compound.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div><strong>Assume 100g:</strong> If given percentages, treat them directly as mass in grams (e.g., 25% becomes 25g).</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div><strong>Find Moles ($n$):</strong> Divide the mass of each element by its relative atomic mass ($MM$) from the periodic table ($n = m/MM$).</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div><strong>Divide by Smallest:</strong> Divide all mole values by the smallest mole value calculated in Step 3.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">5</div>
+                    <div><strong>Simplify to Whole Numbers:</strong> If you have decimals like .5 or .33, multiply ALL values by the same factor to get whole numbers.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>The Master Table Layout</h2>
+            <p>When solving empirical formula problems for NESA exams, layout is everything. Use this exact table structure to keep your working meticulous and clear. It makes it nearly impossible for a marker to take away marks for "lack of working".</p>
+            
+            <table class="empirical-table">
+                <thead>
+                    <tr>
+                        <th>Element</th>
+                        <th>Mass / % ($m$)</th>
+                        <th>Atomic Mass ($MM$)</th>
+                        <th>Moles ($n = m/MM$)</th>
+                        <th>Molar Ratio ($\div$ by smallest)</th>
+                        <th>Simplified Ratio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Element 1</td>
+                        <td>Value</td>
+                        <td>From Table</td>
+                        <td>Result</td>
+                        <td>Decimal</td>
+                        <td><strong>Whole Number</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Element 2</td>
+                        <td>Value</td>
+                        <td>From Table</td>
+                        <td>Result</td>
+                        <td>Decimal</td>
+                        <td><strong>Whole Number</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="content-section">
+            <h2>Interactive: The Formula Sieve</h2>
+            <p>Input the percentages or masses of up to three elements. The sieve will automatically process the molar ratios and construct the empirical formula visually. Try inputting 40.0% Carbon, 6.7% Hydrogen, and 53.3% Oxygen!</p>
+            
+            <div class="sieve-container">
+                <div class="sieve-grid">
+                    <div class="input-panel" id="input-rows">
+                        <div class="element-input-row">
+                            <input type="text" placeholder="Symbol (e.g. C)" class="styled-select" style="width: 80px;" oninput="updateSieve()">
+                            <input type="number" placeholder="Mass/%" class="styled-select" oninput="updateSieve()">
+                        </div>
+                        <div class="element-input-row">
+                            <input type="text" placeholder="Symbol (e.g. H)" class="styled-select" style="width: 80px;" oninput="updateSieve()">
+                            <input type="number" placeholder="Mass/%" class="styled-select" oninput="updateSieve()">
+                        </div>
+                        <div class="element-input-row">
+                            <input type="text" placeholder="Symbol (e.g. O)" class="styled-select" style="width: 80px;" oninput="updateSieve()">
+                            <input type="number" placeholder="Mass/%" class="styled-select" oninput="updateSieve()">
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--accent-purple); margin-top: 10px;">*Calculation uses 4 s.f. atomic weights internally.</p>
+                    </div>
+                    <div class="visual-output">
+                        <div id="formula-display">Empirical Formula</div>
+                        <div class="molecule-preview" id="molecule-canvas-container">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Handling the "Nasty Decimals"</h2>
+            <p>Sometimes, "Divide by Smallest" leaves you with a decimal. <strong>NEVER</strong> round these off unless they are very close (e.g., 1.01 or 1.99). If they are substantial decimals, you must multiply the whole set:</p>
+            
+            <div class="decimal-rules">
+                <div class="rule-card">
+                    <span class="rule-decimal">.50</span>
+                    <span class="rule-action">Multiply by 2</span>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-decimal">.33 / .66</span>
+                    <span class="rule-action">Multiply by 3</span>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-decimal">.25 / .75</span>
+                    <span class="rule-action">Multiply by 4</span>
+                </div>
+                <div class="rule-card">
+                    <span class="rule-decimal">.20 / .40 / .60 / .80</span>
+                    <span class="rule-action">Multiply by 5</span>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Worked Solutions</h2>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 1: The Basics (Easy)</h4>
+                </div>
+                <p>A compound contains $75.0\text{%}$ Carbon and $25.0\text{%}$ Hydrogen by mass. Determine its empirical formula.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-1')">View Solution</button>
+                <div id="ws-1" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <table class="empirical-table">
+                        <thead>
+                            <tr>
+                                <th>Element</th>
+                                <th>Mass (g)</th>
+                                <th>$MM$ (g/mol)</th>
+                                <th>Moles ($n$)</th>
+                                <th>Ratio</th>
+                                <th>Simplified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>C</td>
+                                <td>75.0</td>
+                                <td>12.01</td>
+                                <td>6.244</td>
+                                <td>$6.244 / 6.244 = 1$</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>H</td>
+                                <td>25.0</td>
+                                <td>1.008</td>
+                                <td>24.801</td>
+                                <td>$24.801 / 6.244 = 3.97$</td>
+                                <td>4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Empirical Formula: $CH_4$ (Methane)</strong></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 2: The x.5 Rule (Medium)</h4>
+                </div>
+                <p>Calculate the empirical formula of an oxide of aluminium that contains $52.9\text{%}$ aluminium and $47.1\text{%}$ oxygen.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-2')">View Solution</button>
+                <div id="ws-2" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <table class="empirical-table">
+                        <thead>
+                            <tr>
+                                <th>Element</th>
+                                <th>Mass (g)</th>
+                                <th>$MM$</th>
+                                <th>Moles</th>
+                                <th>Ratio</th>
+                                <th>Simplified ($\times 2$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Al</td>
+                                <td>52.9</td>
+                                <td>26.98</td>
+                                <td>1.961</td>
+                                <td>$1.961/1.961 = 1$</td>
+                                <td><strong>2</strong></td>
+                            </tr>
+                            <tr>
+                                <td>O</td>
+                                <td>47.1</td>
+                                <td>16.00</td>
+                                <td>2.944</td>
+                                <td>$2.944/1.961 = 1.50$</td>
+                                <td><strong>3</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><em>Note: $1.5$ is too far to round. We multiply both by 2 to get whole numbers.</em></p>
+                    <p><strong>Empirical Formula: $Al_2O_3$</strong></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 3: Three Elements (Hard)</h4>
+                </div>
+                <p>A white powder consists of $32.4\text{%}$ Sodium, $22.6\text{%}$ Sulphur, and $45.0\text{%}$ Oxygen. Find its empirical formula.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-3')">View Solution</button>
+                <div id="ws-3" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <table class="empirical-table">
+                        <thead>
+                            <tr>
+                                <th>Element</th>
+                                <th>Mass (g)</th>
+                                <th>$MM$</th>
+                                <th>Moles</th>
+                                <th>Ratio</th>
+                                <th>Simplified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Na</td>
+                                <td>32.4</td>
+                                <td>22.99</td>
+                                <td>1.409</td>
+                                <td>$1.409 / 0.7047 = 2.00$</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>S</td>
+                                <td>22.6</td>
+                                <td>32.07</td>
+                                <td>0.7047</td>
+                                <td>$0.7047 / 0.7047 = 1.00$</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>O</td>
+                                <td>45.0</td>
+                                <td>16.00</td>
+                                <td>2.8125</td>
+                                <td>$2.8125 / 0.7047 = 3.99$</td>
+                                <td>4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Empirical Formula: $Na_2SO_4$ (Sodium Sulphate)</strong></p>
+                </div>
+            </div>
+
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Example 4: Combustion Analysis (Extension)</h4>
+                </div>
+                <p>Burning $1.15\text{g}$ of an unknown hydrocarbon produces $2.20\text{g}$ of $CO_2$ and $1.35\text{g}$ of $H_2O$. Find the empirical formula.</p>
+                <button class="btn-reveal" onclick="toggleSolution('ws-4')">View Solution</button>
+                <div id="ws-4" class="hidden-solution" style="display: none; margin-top: 1rem;">
+                    <p><strong>Step 1: Find mass of Carbon from $CO_2$.</strong></p>
+                    <p>$n(CO_2) = 2.20 / 44.01 = 0.0500\text{ mol}$. Since there is 1 C in $CO_2$, $n(C) = 0.0500\text{ mol}$.</p>
+                    <p>$m(C) = 0.0500 \times 12.01 = 0.6005\text{g}$.</p>
+                    
+                    <p><strong>Step 2: Find mass of Hydrogen from $H_2O$.</strong></p>
+                    <p>$n(H_2O) = 1.35 / 18.016 = 0.0749\text{ mol}$. Since there are 2 H in $H_2O$, $n(H) = 0.1498\text{ mol}$.</p>
+                    <p>$m(H) = 0.1498 \times 1.008 = 0.1510\text{g}$.</p>
+                    
+                    <table class="empirical-table">
+                        <thead>
+                            <tr>
+                                <th>Element</th>
+                                <th>Mass (g)</th>
+                                <th>Moles</th>
+                                <th>Ratio</th>
+                                <th>Simplified ($\times 3$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>C</td>
+                                <td>0.6005</td>
+                                <td>0.0500</td>
+                                <td>$1.00$</td>
+                                <td><strong>1</strong></td>
+                            </tr>
+                            <tr>
+                                <td>H</td>
+                                <td>0.1510</td>
+                                <td>0.1498</td>
+                                <td>$2.99 \approx 3.00$</td>
+                                <td><strong>3</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Empirical Formula: $CH_3$</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section">
+            <h2>Practice Questions</h2>
+
+            <div class="practise-question" id="q-emp-1">
+                <div class="question-header">
+                    <h4>Question 1: Easy</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <p>A compound contains $80\text{%}$ Carbon and $20\text{%}$ Hydrogen. Calculate the empirical formula.</p>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('sol-emp-1')">Reveal Answer</button>
+                </div>
+                <div class="hidden-solution" id="sol-emp-1" style="display: none;">
+                    <p>C: $80/12.01 = 6.66\text{ mol}$. H: $20/1.008 = 19.84\text{ mol}$.</p>
+                    <p>Ratio: C = 1, H = $19.84/6.66 = 2.98 \approx 3$.</p>
+                    <p><strong>Answer: $CH_3$</strong></p>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct moles for both elements.</li>
+                            <li><strong>1 Mark:</strong> Correct final formula $CH_3$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-emp-1" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('emp-1')">Submit</button>
+                        <span class="mark-feedback" id="feedback-emp-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-emp-2">
+                <div class="question-header">
+                    <h4>Question 2: Medium</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <p>A substance is $43.6\text{%}$ phosphorus and $56.4\text{%}$ oxygen. Determine the empirical formula.</p>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('sol-emp-2')">Reveal Answer</button>
+                </div>
+                <div class="hidden-solution" id="sol-emp-2" style="display: none;">
+                    <p>P: $43.6/30.97 = 1.408\text{ mol}$. O: $56.4/16.00 = 3.525\text{ mol}$.</p>
+                    <p>Ratio: P = 1, O = $3.525/1.408 = 2.50$.</p>
+                    <p>Multiply by 2 $\rightarrow$ $P_2O_5$.</p>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct moles for P and O.</li>
+                            <li><strong>1 Mark:</strong> Correct molar ratio ($1:2.5$).</li>
+                            <li><strong>1 Mark:</strong> Correct whole number adjustment to $P_2O_5$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-emp-2" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('emp-2')">Submit</button>
+                        <span class="mark-feedback" id="feedback-emp-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-emp-3">
+                <div class="question-header">
+                    <h4>Question 3: Hard</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <p>Analysis of a drug shows it contains $40.9\text{%}$ Carbon, $4.58\text{%}$ Hydrogen, and $54.5\text{%}$ Oxygen. Calculate the empirical formula.</p>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('sol-emp-3')">Reveal Answer</button>
+                </div>
+                <div class="hidden-solution" id="sol-emp-3" style="display: none;">
+                    <p>C: $40.9/12.01 = 3.405\text{ mol}$. H: $4.58/1.008 = 4.544\text{ mol}$. O: $54.5/16.00 = 3.406\text{ mol}$.</p>
+                    <p>Ratio: C = 1, H = $4.544/3.405 = 1.33$, O = 1.</p>
+                    <p>Multiply by 3 $\rightarrow$ $C_3H_4O_3$.</p>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correct moles for all three.</li>
+                            <li><strong>1 Mark:</strong> Identifies the 1.33 ratio for Hydrogen.</li>
+                            <li><strong>1 Mark:</strong> Multiplies all elements by 3 correctly.</li>
+                            <li><strong>1 Mark:</strong> Final formula $C_3H_4O_3$.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-emp-3" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('emp-3')">Submit</button>
+                        <span class="mark-feedback" id="feedback-emp-3"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practise-question" id="q-emp-4">
+                <div class="question-header">
+                    <h4>Question 4: Extension</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <p>A $10.00\text{g}$ sample of a hydrated salt, $MgSO_4 \cdot xH_2O$, is heated. After all water is driven off, the remaining anhydrous $MgSO_4$ weighs $4.88\text{g}$. Calculate the empirical formula of the hydrate (find $x$).</p>
+                <div class="interaction-controls">
+                    <button class="btn-reveal" onclick="toggleSolution('sol-emp-4')">Reveal Answer</button>
+                </div>
+                <div class="hidden-solution" id="sol-emp-4" style="display: none;">
+                    <p>Mass of $MgSO_4 = 4.88\text{g}$. Mass of $H_2O = 10.00 - 4.88 = 5.12\text{g}$.</p>
+                    <p>$MM(MgSO_4) = 24.31 + 32.07 + (4 \times 16.00) = 120.38\text{ g/mol}$.</p>
+                    <p>$n(MgSO_4) = 4.88 / 120.38 = 0.0405\text{ mol}$.</p>
+                    <p>$n(H_2O) = 5.12 / 18.016 = 0.2842\text{ mol}$.</p>
+                    <p>Ratio: $MgSO_4 = 1$, $H_2O = 0.2842 / 0.0405 = 7.01 \approx 7$.</p>
+                    <p><strong>Answer: $MgSO_4 \cdot 7H_2O$ (Epsom Salts)</strong></p>
+                    <div class="marking-criteria">
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly finds mass of water lost ($5.12\text{g}$).</li>
+                            <li><strong>1 Mark:</strong> Correct $MM$ for $MgSO_4$ ($120.38$).</li>
+                            <li><strong>2 Marks:</strong> Correct mole values for both parts.</li>
+                            <li><strong>1 Mark:</strong> Correct ratio of 7.</li>
+                        </ul>
+                    </div>
+                    <div class="self-assessment">
+                        <select id="mark-selector-emp-4" class="mark-dropdown">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('emp-4')">Submit</button>
+                        <span class="mark-feedback" id="feedback-emp-4"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="molecular-formula.html" class="btn-next">Lesson 9: Molecular Formula &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        const MM_DATA = {
+            'C': 12.01, 'H': 1.008, 'O': 16.00, 'N': 14.01, 'S': 32.07, 'Na': 22.99, 'Cl': 35.45, 'Mg': 24.31, 'P': 30.97, 'Al': 26.98
+        };
+
+        function updateSieve() {
+            const container = document.getElementById('input-rows');
+            const rows = container.getElementsByClassName('element-input-row');
+            let data = [];
+            
+            for (let row of rows) {
+                let symbol = row.cells ? "" : row.children[0].value.trim();
+                let mass = row.cells ? 0 : parseFloat(row.children[1].value);
+                if (symbol && mass && MM_DATA[symbol]) {
+                    data.push({ sym: symbol, n: mass / MM_DATA[symbol] });
+                }
+            }
+
+            if (data.length < 1) return;
+
+            // Find smallest moles
+            let minN = Math.min(...data.map(d => d.n));
+            let ratios = data.map(d => d.n / minN);
+
+            // Handle multipliers
+            let multiplier = 1;
+            const checkFractions = [0.2, 0.25, 0.33, 0.4, 0.5, 0.6, 0.66, 0.75, 0.8];
+            const factors = [5, 4, 3, 5, 2, 5, 3, 4, 5];
+
+            for (let r of ratios) {
+                let frac = r % 1;
+                for (let i = 0; i < checkFractions.length; i++) {
+                    if (Math.abs(frac - checkFractions[i]) < 0.05) {
+                        multiplier = Math.max(multiplier, factors[i]);
+                    }
+                }
+            }
+
+            let finalFormula = "";
+            let particleCounts = [];
+            data.forEach((d, i) => {
+                let count = Math.round((d.n / minN) * multiplier);
+                finalFormula += d.sym + (count > 1 ? `<sub>${count}</sub>` : "");
+                particleCounts.push({sym: d.sym, count: count});
+            });
+
+            document.getElementById('formula-display').innerHTML = finalFormula;
+            drawMolecule(particleCounts);
+        }
+
+        function drawMolecule(counts) {
+            const canvas = document.getElementById('molecule-canvas-container');
+            canvas.innerHTML = "";
+            let colors = { 'C': '#444', 'H': '#fff', 'O': '#f00', 'N': '#00f', 'S': '#ff0' };
+            
+            counts.forEach((item, idx) => {
+                for(let i=0; i<item.count; i++) {
+                    const dot = document.createElement('div');
+                    dot.style.position = "absolute";
+                    dot.style.width = "20px";
+                    dot.style.height = "20px";
+                    dot.style.borderRadius = "50%";
+                    dot.style.background = colors[item.sym] || '#888';
+                    dot.style.border = "1px solid #000";
+                    dot.style.left = Math.random() * 80 + 10 + "%";
+                    dot.style.top = Math.random() * 80 + 10 + "%";
+                    dot.style.boxShadow = "0 0 10px rgba(255,255,255,0.2)";
+                    dot.style.transition = "all 0.5s ease";
+                    canvas.appendChild(dot);
+                }
+            });
+        }
+
+        // Standard logic for toggles and marks
+        function toggleSolution(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === "none" ? "block" : "none";
+            if (window.MathJax) MathJax.typesetPromise([el]);
+        }
+
+        function submitMark(id) {
+            const val = parseInt(document.getElementById('mark-selector-' + id).value);
+            localStorage.setItem('chem_mod2_q_' + id, val);
+            document.getElementById('feedback-' + id).innerText = " Saved!";
+            updateTotalMarks();
+        }
+
+        function updateTotalMarks() {
+            let total = 0;
+            for(let i=0; i<localStorage.length; i++){
+                let key = localStorage.key(i);
+                if(key.startsWith('chem_mod2_q_')) total += parseInt(localStorage.getItem(key));
+            }
+            document.getElementById('total-marks').innerText = total;
+        }
+
+        window.onload = updateTotalMarks;
+    </script>
+</body>
+</html>
