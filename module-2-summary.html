@@ -32,6 +32,8 @@
             border-radius: 12px;
             padding: 20px;
             transition: transform 0.2s;
+            word-wrap: break-word;
+            overflow: hidden;
         }
 
         .formula-card:hover {
@@ -48,10 +50,11 @@
         }
 
         .formula-display {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             margin: 15px 0;
             text-align: center;
             color: #f8fafc;
+            overflow-x: auto;
         }
 
         .variable-list {
@@ -59,6 +62,10 @@
             color: #94a3b8;
             list-style: none;
             padding: 0;
+        }
+
+        .variable-list li {
+            margin-bottom: 5px;
         }
 
         /* Periodic Table Styling */
@@ -76,6 +83,15 @@
             grid-template-columns: repeat(18, minmax(45px, 1fr));
             gap: 4px;
             min-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        .periodic-table-f-block {
+            display: grid;
+            grid-template-columns: repeat(15, minmax(45px, 1fr));
+            gap: 4px;
+            min-width: 750px;
+            margin-left: 100px;
         }
 
         .element {
@@ -90,6 +106,7 @@
             font-size: 0.7rem;
             cursor: default;
             transition: all 0.2s;
+            box-sizing: border-box;
         }
 
         .element:hover {
@@ -113,10 +130,16 @@
         .transition-metal { background: #1e293b; }
         .lanthanide { background: #4c1d95; }
         .actinide { background: #831843; }
+        .unknown-chemical-properties { background: #334155; }
 
         .gap { visibility: hidden; }
 
         /* Tables Styling */
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -130,6 +153,8 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #334155;
+            color: #f8fafc;
+            word-wrap: break-word;
         }
 
         .data-table th {
@@ -205,12 +230,19 @@
 <main id="main-content">
     <header class="page-header">
         <h1>Module 2 Formula Summary</h1>
-        <p class="subtitle">The Chemist's Toolkit: Every Equation and Data Set required for the HSC</p>
+        <p class="subtitle">The Chemist's Toolkit: Every Equation and Data Set required for Year 11 NSW Chemistry</p>
     </header>
 
     <section class="content-section">
-        <h2 class="section-header">1. Core Stoichiometry Formulas</h2>
+        <h2 class="section-header">1. Core Stoichiometry & Mass Formulas</h2>
         <div class="summary-grid">
+            <div class="formula-card">
+                <h3>Relative Atomic Mass ($A_r$)</h3>
+                <div class="formula-display">$$A_r = \sum \left( \frac{\text{Isotopic Mass} \times \% \text{ Abundance}}{100} \right)$$</div>
+                <ul class="variable-list">
+                    <li>Weighted average mass of naturally occurring isotopes relative to Carbon-12</li>
+                </ul>
+            </div>
             <div class="formula-card">
                 <h3>The Mole (Mass)</h3>
                 <div class="formula-display">$$n = \frac{m}{MM}$$</div>
@@ -224,159 +256,335 @@
                 <h3>The Mole (Particles)</h3>
                 <div class="formula-display">$$n = \frac{N}{N_A}$$</div>
                 <ul class="variable-list">
-                    <li>$N$: number of particles</li>
+                    <li>$N$: number of particles (atoms, molecules, ions)</li>
                     <li>$N_A$: Avogadro's constant ($6.022 \times 10^{23} \text{ mol}^{-1}$)</li>
                 </ul>
             </div>
             <div class="formula-card">
+                <h3>Percentage Composition</h3>
+                <div class="formula-display">$$\% \text{ by mass} = \frac{m_{\text{element}}}{m_{\text{compound}}} \times 100$$</div>
+                <ul class="variable-list">
+                    <li>$m_{\text{element}}$: mass of specific element in 1 mol of compound</li>
+                    <li>$m_{\text{compound}}$: molar mass of whole compound</li>
+                </ul>
+            </div>
+            <div class="formula-card">
                 <h3>Percentage Yield</h3>
-                <div class="formula-display">$$\% \text{ Yield} = \frac{\text{Actual}}{\text{Theoretical}} \times 100$$</div>
-                <p class="variable-list" style="font-style: italic;">Note: Both values must be in the same units (moles or mass).</p>
+                <div class="formula-display">$$\% \text{ Yield} = \frac{\text{Actual Yield}}{\text{Theoretical Yield}} \times 100$$</div>
+                <p class="variable-list">Both yields must be measured in identical units (mass or mol).</p>
+            </div>
+            <div class="formula-card">
+                <h3>Density ($\rho$)</h3>
+                <div class="formula-display">$$\rho = \frac{m}{V}$$</div>
+                <ul class="variable-list">
+                    <li>$\rho$: density ($\text{g/mL}$ or $\text{g/L}$)</li>
+                    <li>$m$: mass (g)</li>
+                    <li>$V$: volume ($\text{mL}$ or $\text{L}$)</li>
+                </ul>
             </div>
         </div>
 
-        <h2 class="section-header">2. Concentration & Solutions</h2>
+        <h2 class="section-header">2. Concentration & Solution Formulas</h2>
         <div class="summary-grid">
             <div class="formula-card">
-                <h3>Molarity (M)</h3>
+                <h3>Molarity / Concentration</h3>
                 <div class="formula-display">$$c = \frac{n}{V}$$</div>
                 <ul class="variable-list">
-                    <li>$c$: concentration (mol/L or M)</li>
-                    <li>$V$: volume in Litres (L)</li>
+                    <li>$c$: concentration ($\text{mol/L}$ or M)</li>
+                    <li>$n$: amount of solute (mol)</li>
+                    <li>$V$: volume of solution (L)</li>
                 </ul>
             </div>
             <div class="formula-card">
                 <h3>Dilution Formula</h3>
                 <div class="formula-display">$$c_1V_1 = c_2V_2$$</div>
                 <ul class="variable-list">
-                    <li>Subscript 1: Initial (Stock) state</li>
-                    <li>Subscript 2: Final (Diluted) state</li>
+                    <li>$c_1, V_1$: Initial (Stock) concentration and volume</li>
+                    <li>$c_2, V_2$: Final (Diluted) concentration and volume</li>
                 </ul>
             </div>
             <div class="formula-card">
-                <h3>Concentration (g/L)</h3>
-                <div class="formula-display">$$c_{g/L} = \frac{m}{V}$$</div>
-                <p class="variable-list">To convert mol/L to g/L: multiply by Molar Mass.</p>
+                <h3>Mass Concentration</h3>
+                <div class="formula-display">$$c_{\text{g/L}} = \frac{m}{V}$$</div>
+                <ul class="variable-list">
+                    <li>$m$: mass of solute (g)</li>
+                    <li>$V$: volume of solution (L)</li>
+                    <li>Conversion: $c_{\text{g/L}} = c_{\text{mol/L}} \times MM$</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Percentage by Mass (% w/w)</h3>
+                <div class="formula-display">$$\% \text{ w/w} = \frac{m_{\text{solute}}}{m_{\text{solution}}} \times 100$$</div>
+                <p class="variable-list">Mass of solute per 100g of total solution.</p>
+            </div>
+            <div class="formula-card">
+                <h3>Percentage by Volume (% v/v)</h3>
+                <div class="formula-display">$$\% \text{ v/v} = \frac{V_{\text{solute}}}{V_{\text{solution}}} \times 100$$</div>
+                <p class="variable-list">Volume of solute per 100mL of total solution.</p>
+            </div>
+            <div class="formula-card">
+                <h3>Mass/Volume Percentage (% w/v)</h3>
+                <div class="formula-display">$$\% \text{ w/v} = \frac{m_{\text{solute}} (\text{g})}{V_{\text{solution}} (\text{mL})} \times 100$$</div>
+                <p class="variable-list">Mass of solute in grams per 100mL of total solution.</p>
+            </div>
+            <div class="formula-card">
+                <h3>Parts Per Million (ppm)</h3>
+                <div class="formula-display">$$\text{ppm} = \frac{m_{\text{solute}} (\text{mg})}{m_{\text{solution}} (\text{kg})} = \frac{m_{\text{solute}} (\text{mg})}{V_{\text{solution}} (\text{L})}$$</div>
+                <p class="variable-list">Used for trace amounts of solute in aqueous solutions.</p>
             </div>
         </div>
 
-        <h2 class="section-header">3. Gas Laws</h2>
+        <h2 class="section-header">3. Gas Laws & Gas Stoichiometry Formulas</h2>
         <div class="summary-grid">
             <div class="formula-card">
-                <h3>Ideal Gas Law</h3>
-                <div class="formula-display">$$PV = nRT$$</div>
+                <h3>Molar Gas Volume ($V_M$)</h3>
+                <div class="formula-display">$$n = \frac{V}{V_M}$$</div>
                 <ul class="variable-list">
-                    <li>$P$: Pressure (kPa)</li>
-                    <li>$R$: Gas Constant ($8.314 \text{ J K}^{-1}\text{mol}^{-1}$)</li>
-                    <li>$T$: Temperature (Kelvin, $K = ^\circ C + 273.15$)</li>
+                    <li>STP ($0^\circ\text{C}, 100\text{ kPa}$): $V_M = 22.71 \text{ L/mol}$</li>
+                    <li>SLC ($25^\circ\text{C}, 100\text{ kPa}$): $V_M = 24.79 \text{ L/mol}$</li>
                 </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Boyle's Law</h3>
+                <div class="formula-display">$$P_1V_1 = P_2V_2$$</div>
+                <p class="variable-list">At constant temperature ($T$) and mole count ($n$).</p>
+            </div>
+            <div class="formula-card">
+                <h3>Charles' Law</h3>
+                <div class="formula-display">$$\frac{V_1}{T_1} = \frac{V_2}{T_2}$$</div>
+                <p class="variable-list">At constant pressure ($P$) and mole count ($n$). Temperature must be in Kelvin ($K = ^\circ\text{C} + 273.15$).</p>
+            </div>
+            <div class="formula-card">
+                <h3>Gay-Lussac's (Amontons') Law</h3>
+                <div class="formula-display">$$\frac{P_1}{T_1} = \frac{P_2}{T_2}$$</div>
+                <p class="variable-list">At constant volume ($V$) and mole count ($n$). Temperature must be in Kelvin.</p>
+            </div>
+            <div class="formula-card">
+                <h3>Avogadro's Gas Law</h3>
+                <div class="formula-display">$$\frac{V_1}{n_1} = \frac{V_2}{n_2}$$</div>
+                <p class="variable-list">At constant pressure ($P$) and temperature ($T$). Equal volumes of gases contain equal numbers of moles.</p>
             </div>
             <div class="formula-card">
                 <h3>Combined Gas Law</h3>
                 <div class="formula-display">$$\frac{P_1V_1}{T_1} = \frac{P_2V_2}{T_2}$$</div>
-                <p class="variable-list">Used when $n$ (moles) is constant.</p>
+                <p class="variable-list">Used when mole count ($n$) is fixed. Temperature in Kelvin.</p>
             </div>
             <div class="formula-card">
-                <h3>Gay-Lussac's (Volume Ratio)</h3>
+                <h3>Ideal Gas Law</h3>
+                <div class="formula-display">$$PV = nRT$$</div>
+                <ul class="variable-list">
+                    <li>$P$: Pressure ($\text{kPa}$)</li>
+                    <li>$V$: Volume ($\text{L}$)</li>
+                    <li>$n$: Amount of gas ($\text{mol}$)</li>
+                    <li>$R$: Universal Gas Constant ($8.314 \text{ J K}^{-1} \text{mol}^{-1}$)</li>
+                    <li>$T$: Absolute Temperature ($\text{K}$)</li>
+                </ul>
+            </div>
+            <div class="formula-card">
+                <h3>Gay-Lussac's Law of Combining Volumes</h3>
                 <div class="formula-display">$$V \propto n$$</div>
-                <p class="variable-list">For reactions involving <b>only</b> gases at constant $T$ and $P$, volumes react in whole number ratios.</p>
+                <p class="variable-list">When gases react at constant $T$ and $P$, reaction volumes are proportional to their stoichiometric coefficients.</p>
             </div>
         </div>
     </section>
-    
-    
 
     <section class="content-section">
-        <h2 class="section-header">4. Solubility Rules (NAGSAG)</h2>
-        <p>Essential for predicting precipitates in stoichiometry and identifying spectator ions.</p>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Rule / Ion</th>
-                    <th>Solubility</th>
-                    <th>Exceptions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><b>N</b>itrates ($NO_3^-$)</td>
-                    <td class="solubility-soluble">Always Soluble</td>
-                    <td>None</td>
-                </tr>
-                <tr>
-                    <td><b>A</b>cetates ($CH_3COO^-$)</td>
-                    <td class="solubility-soluble">Always Soluble</td>
-                    <td>None</td>
-                </tr>
-                <tr>
-                    <td><b>G</b>roup 1 Ions ($Li^+, Na^+ \dots$)</td>
-                    <td class="solubility-soluble">Always Soluble</td>
-                    <td>None</td>
-                </tr>
-                <tr>
-                    <td><b>S</b>ulfates ($SO_4^{2-}$)</td>
-                    <td class="solubility-soluble">Soluble</td>
-                    <td>$Pb^{2+}, Ba^{2+}, Sr^{2+}, Ca^{2+}$</td>
-                </tr>
-                <tr>
-                    <td><b>A</b>mmonium ($NH_4^+$)</td>
-                    <td class="solubility-soluble">Always Soluble</td>
-                    <td>None</td>
-                </tr>
-                <tr>
-                    <td><b>G</b>roup 17 (Halides: $Cl^-, Br^- \dots$)</td>
-                    <td class="solubility-soluble">Soluble</td>
-                    <td>$Ag^+, Pb^{2+}, Hg_2^{2+}$</td>
-                </tr>
-                <tr>
-                    <td>Carbonates ($CO_3^{2-}$) / Phosphates ($PO_4^{3-}$)</td>
-                    <td class="solubility-insoluble">Insoluble</td>
-                    <td>Group 1 and $NH_4^+$</td>
-                </tr>
-                <tr>
-                    <td>Hydroxides ($OH^-$)</td>
-                    <td class="solubility-insoluble">Insoluble</td>
-                    <td>Group 1, $NH_4^+$, $Ba^{2+}$, $Sr^{2+}$</td>
-                </tr>
-            </tbody>
-        </table>
+        <h2 class="section-header">4. General Equations to Memorise</h2>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Reaction Type</th>
+                        <th>General Equation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Metal Carbonate + Acid</strong></td>
+                        <td>$\text{metal carbonate} + \text{acid} \rightarrow \text{a salt} + \text{water} + \text{carbon dioxide}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Metal Oxide + Acid</strong></td>
+                        <td>$\text{metal oxide} + \text{acid} \rightarrow \text{a salt} + \text{water}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Metal Hydroxide + Acid (Neutralisation)</strong></td>
+                        <td>$\text{metal hydroxide} + \text{acid} \rightarrow \text{a salt} + \text{water}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Metal + Water</strong></td>
+                        <td>$\text{metal} + \text{water} \rightarrow \text{metal hydroxide} + \text{hydrogen gas}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Metal + Acid</strong></td>
+                        <td>$\text{metal} + \text{acid} \rightarrow \text{a salt} + \text{hydrogen gas}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Combustion (Element)</strong></td>
+                        <td>$\text{element} + \text{oxygen gas} \rightarrow \text{oxide of element}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Combustion (Hydrocarbon)</strong></td>
+                        <td>$\text{hydrocarbon} + \text{oxygen gas} \rightarrow \text{carbon dioxide} + \text{water}$</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <section class="content-section">
-        <h2 class="section-header">5. Polyatomic Ions to Memorise</h2>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Formula</th>
-                    <th>Charge</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Hydroxide</td><td>$OH^-$</td><td>-1</td></tr>
-                <tr><td>Nitrate</td><td>$NO_3^-$</td><td>-1</td></tr>
-                <tr><td>Bicarbonate (Hydrogen Carbonate)</td><td>$HCO_3^-$</td><td>-1</td></tr>
-                <tr><td>Permanganate</td><td>$MnO_4^-$</td><td>-1</td></tr>
-                <tr><td>Sulfate</td><td>$SO_4^{2-}$</td><td>-2</td></tr>
-                <tr><td>Carbonate</td><td>$CO_3^{2-}$</td><td>-2</td></tr>
-                <tr><td>Chromate</td><td>$CrO_4^{2-}$</td><td>-2</td></tr>
-                <tr><td>Dichromate</td><td>$Cr_2O_7^{2-}$</td><td>-2</td></tr>
-                <tr><td>Phosphate</td><td>$PO_4^{3-}$</td><td>-3</td></tr>
-                <tr><td>Ammonium</td><td>$NH_4^+$</td><td>+1</td></tr>
-            </tbody>
-        </table>
+        <h2 class="section-header">5. Common Polyatomic Ions</h2>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ion Formula</th>
+                        <th>Ion Name</th>
+                        <th>Ion Formula</th>
+                        <th>Ion Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$\text{NH}_4^+$</td>
+                        <td>ammonium</td>
+                        <td>$\text{CO}_3^{2-}$</td>
+                        <td>carbonate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{NO}_2^-$</td>
+                        <td>nitrite</td>
+                        <td>$\text{HCO}_3^-$</td>
+                        <td>hydrogen carbonate (bicarbonate)</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{NO}_3^-$</td>
+                        <td>nitrate</td>
+                        <td>$\text{ClO}^-$</td>
+                        <td>hypochlorite</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{SO}_3^{2-}$</td>
+                        <td>sulfite</td>
+                        <td>$\text{ClO}_2^-$</td>
+                        <td>chlorite</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{SO}_4^{2-}$</td>
+                        <td>sulfate</td>
+                        <td>$\text{ClO}_3^-$</td>
+                        <td>chlorate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{HSO}_4^-$</td>
+                        <td>hydrogen sulfate (bisulfate)</td>
+                        <td>$\text{ClO}_4^-$</td>
+                        <td>perchlorate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{OH}^-$</td>
+                        <td>hydroxide</td>
+                        <td>$\text{C}_2\text{H}_3\text{O}_2^-$ / $\text{CH}_3\text{COO}^-$</td>
+                        <td>acetate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{CN}^-$</td>
+                        <td>cyanide</td>
+                        <td>$\text{MnO}_4^-$</td>
+                        <td>permanganate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{PO}_4^{3-}$</td>
+                        <td>phosphate</td>
+                        <td>$\text{Cr}_2\text{O}_7^{2-}$</td>
+                        <td>dichromate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{HPO}_4^{2-}$</td>
+                        <td>hydrogen phosphate</td>
+                        <td>$\text{CrO}_4^{2-}$</td>
+                        <td>chromate</td>
+                    </tr>
+                    <tr>
+                        <td>$\text{H}_2\text{PO}_4^-$</td>
+                        <td>dihydrogen phosphate</td>
+                        <td>$\text{O}_2^{2-}$</td>
+                        <td>peroxide</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <section class="content-section">
-        <h2 class="section-header">6. The Periodic Table of Elements (118 Elements)</h2>
-        <p>Molar masses ($MM$) are provided to 4 significant figures, as found on the NESA Data Sheet.</p>
+        <h2 class="section-header">6. Solubility Rules (NAGSAG)</h2>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rule / Ion</th>
+                        <th>Solubility</th>
+                        <th>Exceptions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>N</b>itrates ($\text{NO}_3^-$)</td>
+                        <td class="solubility-soluble">Always Soluble</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><b>A</b>cetates ($\text{CH}_3\text{COO}^-$ / $\text{C}_2\text{H}_3\text{O}_2^-$)</td>
+                        <td class="solubility-soluble">Always Soluble</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><b>G</b>roup 1 Ions ($\text{Li}^+, \text{Na}^+, \text{K}^+ \dots$)</td>
+                        <td class="solubility-soluble">Always Soluble</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><b>S</b>ulfates ($\text{SO}_4^{2-}$)</td>
+                        <td class="solubility-soluble">Soluble</td>
+                        <td>$\text{Pb}^{2+}, \text{Ba}^{2+}, \text{Sr}^{2+}, \text{Ca}^{2+}, \text{Ag}^+, \text{Hg}_2^{2+}$</td>
+                    </tr>
+                    <tr>
+                        <td><b>A</b>mmonium ($\text{NH}_4^+$)</td>
+                        <td class="solubility-soluble">Always Soluble</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><b>G</b>roup 17 (Halides: $\text{Cl}^-, \text{Br}^-, \text{I}^-$)</td>
+                        <td class="solubility-soluble">Soluble</td>
+                        <td>$\text{Ag}^+, \text{Pb}^{2+}, \text{Hg}_2^{2+}$</td>
+                    </tr>
+                    <tr>
+                        <td>Carbonates ($\text{CO}_3^{2-}$) / Phosphates ($\text{PO}_4^{3-}$)</td>
+                        <td class="solubility-insoluble">Insoluble</td>
+                        <td>Group 1 ions and $\text{NH}_4^+$</td>
+                    </tr>
+                    <tr>
+                        <td>Hydroxides ($\text{OH}^-$)</td>
+                        <td class="solubility-insoluble">Insoluble</td>
+                        <td>Group 1 ions, $\text{NH}_4^+$, $\text{Ba}^{2+}$, $\text{Sr}^{2+}$, $\text{Ca}^{2+}$ (slightly soluble)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <h2 class="section-header">7. The Periodic Table of Elements (118 Elements)</h2>
+        <p>Molar masses ($MM$) are provided to 4 significant figures as standard on the NESA Data Sheet.</p>
         
         <div class="periodic-table-wrapper">
-            <div class="periodic-table" id="ptable">
+            <div class="periodic-table">
+                <!-- Row 1 -->
                 <div class="element reactive-nonmetal"><div class="el-num">1</div><div class="el-sym">H</div><div class="el-mass">1.008</div></div>
                 <div class="gap" style="grid-column: 2 / 18"></div>
                 <div class="element noble-gas"><div class="el-num">2</div><div class="el-sym">He</div><div class="el-mass">4.003</div></div>
                 
+                <!-- Row 2 -->
                 <div class="element alkali-metal"><div class="el-num">3</div><div class="el-sym">Li</div><div class="el-mass">6.941</div></div>
                 <div class="element alkaline-earth"><div class="el-num">4</div><div class="el-sym">Be</div><div class="el-mass">9.012</div></div>
                 <div class="gap" style="grid-column: 3 / 13"></div>
@@ -387,6 +595,7 @@
                 <div class="element reactive-nonmetal"><div class="el-num">9</div><div class="el-sym">F</div><div class="el-mass">19.00</div></div>
                 <div class="element noble-gas"><div class="el-num">10</div><div class="el-sym">Ne</div><div class="el-mass">20.18</div></div>
 
+                <!-- Row 3 -->
                 <div class="element alkali-metal"><div class="el-num">11</div><div class="el-sym">Na</div><div class="el-mass">22.99</div></div>
                 <div class="element alkaline-earth"><div class="el-num">12</div><div class="el-sym">Mg</div><div class="el-mass">24.31</div></div>
                 <div class="gap" style="grid-column: 3 / 13"></div>
@@ -397,6 +606,7 @@
                 <div class="element reactive-nonmetal"><div class="el-num">17</div><div class="el-sym">Cl</div><div class="el-mass">35.45</div></div>
                 <div class="element noble-gas"><div class="el-num">18</div><div class="el-sym">Ar</div><div class="el-mass">39.95</div></div>
 
+                <!-- Row 4 -->
                 <div class="element alkali-metal"><div class="el-num">19</div><div class="el-sym">K</div><div class="el-mass">39.10</div></div>
                 <div class="element alkaline-earth"><div class="el-num">20</div><div class="el-sym">Ca</div><div class="el-mass">40.08</div></div>
                 <div class="element transition-metal"><div class="el-num">21</div><div class="el-sym">Sc</div><div class="el-mass">44.96</div></div>
@@ -416,7 +626,103 @@
                 <div class="element reactive-nonmetal"><div class="el-num">35</div><div class="el-sym">Br</div><div class="el-mass">79.90</div></div>
                 <div class="element noble-gas"><div class="el-num">36</div><div class="el-sym">Kr</div><div class="el-mass">83.80</div></div>
 
-                </div>
+                <!-- Row 5 -->
+                <div class="element alkali-metal"><div class="el-num">37</div><div class="el-sym">Rb</div><div class="el-mass">85.47</div></div>
+                <div class="element alkaline-earth"><div class="el-num">38</div><div class="el-sym">Sr</div><div class="el-mass">87.62</div></div>
+                <div class="element transition-metal"><div class="el-num">39</div><div class="el-sym">Y</div><div class="el-mass">88.91</div></div>
+                <div class="element transition-metal"><div class="el-num">40</div><div class="el-sym">Zr</div><div class="el-mass">91.22</div></div>
+                <div class="element transition-metal"><div class="el-num">41</div><div class="el-sym">Nb</div><div class="el-mass">92.91</div></div>
+                <div class="element transition-metal"><div class="el-num">42</div><div class="el-sym">Mo</div><div class="el-mass">95.95</div></div>
+                <div class="element transition-metal"><div class="el-num">43</div><div class="el-sym">Tc</div><div class="el-mass">98.91</div></div>
+                <div class="element transition-metal"><div class="el-num">44</div><div class="el-sym">Ru</div><div class="el-mass">101.1</div></div>
+                <div class="element transition-metal"><div class="el-num">45</div><div class="el-sym">Rh</div><div class="el-mass">102.9</div></div>
+                <div class="element transition-metal"><div class="el-num">46</div><div class="el-sym">Pd</div><div class="el-mass">106.4</div></div>
+                <div class="element transition-metal"><div class="el-num">47</div><div class="el-sym">Ag</div><div class="el-mass">107.9</div></div>
+                <div class="element transition-metal"><div class="el-num">48</div><div class="el-sym">Cd</div><div class="el-mass">112.4</div></div>
+                <div class="element post-transition"><div class="el-num">49</div><div class="el-sym">In</div><div class="el-mass">114.8</div></div>
+                <div class="element post-transition"><div class="el-num">50</div><div class="el-sym">Sn</div><div class="el-mass">118.7</div></div>
+                <div class="element metalloid"><div class="el-num">51</div><div class="el-sym">Sb</div><div class="el-mass">121.8</div></div>
+                <div class="element metalloid"><div class="el-num">52</div><div class="el-sym">Te</div><div class="el-mass">127.6</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">53</div><div class="el-sym">I</div><div class="el-mass">126.9</div></div>
+                <div class="element noble-gas"><div class="el-num">54</div><div class="el-sym">Xe</div><div class="el-mass">131.3</div></div>
+
+                <!-- Row 6 -->
+                <div class="element alkali-metal"><div class="el-num">55</div><div class="el-sym">Cs</div><div class="el-mass">132.9</div></div>
+                <div class="element alkaline-earth"><div class="el-num">56</div><div class="el-sym">Ba</div><div class="el-mass">137.3</div></div>
+                <div class="element lanthanide"><div class="el-num">57-71</div><div class="el-sym">*</div><div class="el-mass">La-Lu</div></div>
+                <div class="element transition-metal"><div class="el-num">72</div><div class="el-sym">Hf</div><div class="el-mass">178.5</div></div>
+                <div class="element transition-metal"><div class="el-num">73</div><div class="el-sym">Ta</div><div class="el-mass">180.9</div></div>
+                <div class="element transition-metal"><div class="el-num">74</div><div class="el-sym">W</div><div class="el-mass">183.8</div></div>
+                <div class="element transition-metal"><div class="el-num">75</div><div class="el-sym">Re</div><div class="el-mass">186.2</div></div>
+                <div class="element transition-metal"><div class="el-num">76</div><div class="el-sym">Os</div><div class="el-mass">190.2</div></div>
+                <div class="element transition-metal"><div class="el-num">77</div><div class="el-sym">Ir</div><div class="el-mass">192.2</div></div>
+                <div class="element transition-metal"><div class="el-num">78</div><div class="el-sym">Pt</div><div class="el-mass">195.1</div></div>
+                <div class="element transition-metal"><div class="el-num">79</div><div class="el-sym">Au</div><div class="el-mass">197.0</div></div>
+                <div class="element transition-metal"><div class="el-num">80</div><div class="el-sym">Hg</div><div class="el-mass">200.6</div></div>
+                <div class="element post-transition"><div class="el-num">81</div><div class="el-sym">Tl</div><div class="el-mass">204.4</div></div>
+                <div class="element post-transition"><div class="el-num">82</div><div class="el-sym">Pb</div><div class="el-mass">207.2</div></div>
+                <div class="element post-transition"><div class="el-num">83</div><div class="el-sym">Bi</div><div class="el-mass">209.0</div></div>
+                <div class="element metalloid"><div class="el-num">84</div><div class="el-sym">Po</div><div class="el-mass">209.0</div></div>
+                <div class="element reactive-nonmetal"><div class="el-num">85</div><div class="el-sym">At</div><div class="el-mass">210.0</div></div>
+                <div class="element noble-gas"><div class="el-num">86</div><div class="el-sym">Rn</div><div class="el-mass">222.0</div></div>
+
+                <!-- Row 7 -->
+                <div class="element alkali-metal"><div class="el-num">87</div><div class="el-sym">Fr</div><div class="el-mass">223.0</div></div>
+                <div class="element alkaline-earth"><div class="el-num">88</div><div class="el-sym">Ra</div><div class="el-mass">226.0</div></div>
+                <div class="element actinide"><div class="el-num">89-103</div><div class="el-sym">**</div><div class="el-mass">Ac-Lr</div></div>
+                <div class="element transition-metal"><div class="el-num">104</div><div class="el-sym">Rf</div><div class="el-mass">267.1</div></div>
+                <div class="element transition-metal"><div class="el-num">105</div><div class="el-sym">Db</div><div class="el-mass">268.1</div></div>
+                <div class="element transition-metal"><div class="el-num">106</div><div class="el-sym">Sg</div><div class="el-mass">269.1</div></div>
+                <div class="element transition-metal"><div class="el-num">107</div><div class="el-sym">Bh</div><div class="el-mass">270.1</div></div>
+                <div class="element transition-metal"><div class="el-num">108</div><div class="el-sym">Hs</div><div class="el-mass">269.2</div></div>
+                <div class="element unknown-chemical-properties"><div class="el-num">109</div><div class="el-sym">Mt</div><div class="el-mass">278.2</div></div>
+                <div class="element unknown-chemical-properties"><div class="el-num">110</div><div class="el-sym">Ds</div><div class="el-mass">281.2</div></div>
+                <div class="element unknown-chemical-properties"><div class="el-num">111</div><div class="el-sym">Rg</div><div class="el-mass">282.2</div></div>
+                <div class="element transition-metal"><div class="el-num">112</div><div class="el-sym">Cn</div><div class="el-mass">285.2</div></div>
+                <div class="element post-transition"><div class="el-num">113</div><div class="el-sym">Nh</div><div class="el-mass">286.2</div></div>
+                <div class="element post-transition"><div class="el-num">114</div><div class="el-sym">Fl</div><div class="el-mass">289.2</div></div>
+                <div class="element post-transition"><div class="el-num">115</div><div class="el-sym">Mc</div><div class="el-mass">290.2</div></div>
+                <div class="element post-transition"><div class="el-num">116</div><div class="el-sym">Lv</div><div class="el-mass">293.2</div></div>
+                <div class="element unknown-chemical-properties"><div class="el-num">117</div><div class="el-sym">Ts</div><div class="el-mass">294.2</div></div>
+                <div class="element noble-gas"><div class="el-num">118</div><div class="el-sym">Og</div><div class="el-mass">294.2</div></div>
+            </div>
+
+            <!-- F-Block (Lanthanoids and Actinoids) -->
+            <div class="periodic-table-f-block">
+                <!-- Lanthanoids 57-71 -->
+                <div class="element lanthanide"><div class="el-num">57</div><div class="el-sym">La</div><div class="el-mass">138.9</div></div>
+                <div class="element lanthanide"><div class="el-num">58</div><div class="el-sym">Ce</div><div class="el-mass">140.1</div></div>
+                <div class="element lanthanide"><div class="el-num">59</div><div class="el-sym">Pr</div><div class="el-mass">140.9</div></div>
+                <div class="element lanthanide"><div class="el-num">60</div><div class="el-sym">Nd</div><div class="el-mass">144.2</div></div>
+                <div class="element lanthanide"><div class="el-num">61</div><div class="el-sym">Pm</div><div class="el-mass">145.0</div></div>
+                <div class="element lanthanide"><div class="el-num">62</div><div class="el-sym">Sm</div><div class="el-mass">150.4</div></div>
+                <div class="element lanthanide"><div class="el-num">63</div><div class="el-sym">Eu</div><div class="el-mass">152.0</div></div>
+                <div class="element lanthanide"><div class="el-num">64</div><div class="el-sym">Gd</div><div class="el-mass">157.3</div></div>
+                <div class="element lanthanide"><div class="el-num">65</div><div class="el-sym">Tb</div><div class="el-mass">158.9</div></div>
+                <div class="element lanthanide"><div class="el-num">66</div><div class="el-sym">Dy</div><div class="el-mass">162.5</div></div>
+                <div class="element lanthanide"><div class="el-num">67</div><div class="el-sym">Ho</div><div class="el-mass">164.9</div></div>
+                <div class="element lanthanide"><div class="el-num">68</div><div class="el-sym">Er</div><div class="el-mass">167.3</div></div>
+                <div class="element lanthanide"><div class="el-num">69</div><div class="el-sym">Tm</div><div class="el-mass">168.9</div></div>
+                <div class="element lanthanide"><div class="el-num">70</div><div class="el-sym">Yb</div><div class="el-mass">173.1</div></div>
+                <div class="element lanthanide"><div class="el-num">71</div><div class="el-sym">Lu</div><div class="el-mass">175.0</div></div>
+
+                <!-- Actinoids 89-103 -->
+                <div class="element actinide"><div class="el-num">89</div><div class="el-sym">Ac</div><div class="el-mass">227.0</div></div>
+                <div class="element actinide"><div class="el-num">90</div><div class="el-sym">Th</div><div class="el-mass">232.0</div></div>
+                <div class="element actinide"><div class="el-num">91</div><div class="el-sym">Pa</div><div class="el-mass">231.0</div></div>
+                <div class="element actinide"><div class="el-num">92</div><div class="el-sym">U</div><div class="el-mass">238.0</div></div>
+                <div class="element actinide"><div class="el-num">93</div><div class="el-sym">Np</div><div class="el-mass">237.0</div></div>
+                <div class="element actinide"><div class="el-num">94</div><div class="el-sym">Pu</div><div class="el-mass">244.0</div></div>
+                <div class="element actinide"><div class="el-num">95</div><div class="el-sym">Am</div><div class="el-mass">243.0</div></div>
+                <div class="element actinide"><div class="el-num">96</div><div class="el-sym">Cm</div><div class="el-mass">247.0</div></div>
+                <div class="element actinide"><div class="el-num">97</div><div class="el-sym">Bk</div><div class="el-mass">247.0</div></div>
+                <div class="element actinide"><div class="el-num">98</div><div class="el-sym">Cf</div><div class="el-mass">251.0</div></div>
+                <div class="element actinide"><div class="el-num">99</div><div class="el-sym">Es</div><div class="el-mass">252.0</div></div>
+                <div class="element actinide"><div class="el-num">100</div><div class="el-sym">Fm</div><div class="el-mass">257.0</div></div>
+                <div class="element actinide"><div class="el-num">101</div><div class="el-sym">Md</div><div class="el-mass">258.0</div></div>
+                <div class="element actinide"><div class="el-num">102</div><div class="el-sym">No</div><div class="el-mass">259.0</div></div>
+                <div class="element actinide"><div class="el-num">103</div><div class="el-sym">Lr</div><div class="el-mass">266.1</div></div>
+            </div>
         </div>
     </section>
 
@@ -428,38 +734,6 @@
 </main>
 
 <script>
-    // Periodic Table Data Generation (to ensure all 118 are present without infinite HTML lines)
-    const elementsData = [
-        {n:37, s:"Rb", m:85.47, c:"alkali-metal"}, {n:38, s:"Sr", m:87.62, c:"alkaline-earth"}, {n:39, s:"Y", m:88.91, c:"transition-metal"},
-        {n:40, s:"Zr", m:91.22, c:"transition-metal"}, {n:41, s:"Nb", m:92.91, c:"transition-metal"}, {n:42, s:"Mo", m:95.95, c:"transition-metal"},
-        {n:43, s:"Tc", m:98.91, c:"transition-metal"}, {n:44, s:"Ru", m:101.1, c:"transition-metal"}, {n:45, s:"Rh", m:102.9, c:"transition-metal"},
-        {n:46, s:"Pd", m:106.4, c:"transition-metal"}, {n:47, s:"Ag", m:107.9, c:"transition-metal"}, {n:48, s:"Cd", m:112.4, c:"transition-metal"},
-        {n:49, s:"In", m:114.8, c:"post-transition"}, {n:50, s:"Sn", m:118.7, c:"post-transition"}, {n:51, s:"Sb", m:121.8, c:"metalloid"},
-        {n:52, s:"Te", m:127.6, c:"metalloid"}, {n:53, s:"I", m:126.9, c:"reactive-nonmetal"}, {n:54, s:"Xe", m:131.3, c:"noble-gas"},
-        // Group 6 starts with Cs, Ba, then Lu (skipping lanthanides to the bottom)
-        {n:55, s:"Cs", m:132.9, c:"alkali-metal"}, {n:56, s:"Ba", m:137.3, c:"alkaline-earth"}, {n:71, s:"Lu", m:175.0, c:"transition-metal"},
-        {n:72, s:"Hf", m:178.5, c:"transition-metal"}, {n:73, s:"Ta", m:180.9, c:"transition-metal"}, {n:74, s:"W", m:183.8, c:"transition-metal"},
-        {n:75, s:"Re", m:186.2, c:"transition-metal"}, {n:76, s:"Os", m:190.2, c:"transition-metal"}, {n:77, s:"Ir", m:192.2, c:"transition-metal"},
-        {n:78, s:"Pt", m:195.1, c:"transition-metal"}, {n:79, s:"Au", m:197.0, c:"transition-metal"}, {n:80, s:"Hg", m:200.6, c:"transition-metal"},
-        {n:81, s:"Tl", m:204.4, c:"post-transition"}, {n:82, s:"Pb", m:207.2, c:"post-transition"}, {n:83, s:"Bi", m:209.0, c:"post-transition"},
-        {n:84, s:"Po", m:209.0, c:"metalloid"}, {n:85, s:"At", m:210.0, c:"reactive-nonmetal"}, {n:86, s:"Rn", m:222.0, c:"noble-gas"},
-        // Row 7
-        {n:87, s:"Fr", m:223.0, c:"alkali-metal"}, {n:88, s:"Ra", m:226.0, c:"alkaline-earth"}, {n:103, s:"Lr", m:266.1, c:"transition-metal"},
-        {n:104, s:"Rf", m:267.1, c:"transition-metal"}, {n:105, s:"Db", m:268.1, c:"transition-metal"}, {n:106, s:"Sg", m:269.1, c:"transition-metal"},
-        {n:107, s:"Bh", m:270.1, c:"transition-metal"}, {n:108, s:"Hs", m:269.2, c:"transition-metal"}, {n:109, s:"Mt", m:278.2, c:"transition-metal"},
-        {n:110, s:"Ds", m:281.2, c:"transition-metal"}, {n:111, s:"Rg", m:282.2, c:"transition-metal"}, {n:112, s:"Cn", m:285.2, c:"transition-metal"},
-        {n:113, s:"Nh", m:286.2, c:"post-transition"}, {n:114, s:"Fl", m:289.2, c:"post-transition"}, {n:115, s:"Mc", m:290.2, c:"post-transition"},
-        {n:116, s:"Lv", m:293.2, c:"post-transition"}, {n:117, s:"Ts", m:294.2, c:"reactive-nonmetal"}, {n:118, s:"Og", m:294.2, c:"noble-gas"}
-    ];
-
-    const ptable = document.getElementById('ptable');
-    elementsData.forEach(el => {
-        const div = document.createElement('div');
-        div.className = `element ${el.c}`;
-        div.innerHTML = `<div class="el-num">${el.n}</div><div class="el-sym">${el.s}</div><div class="el-mass">${el.m}</div>`;
-        ptable.appendChild(div);
-    });
-
     // Score Tracking logic (Standard across all pages)
     document.addEventListener("DOMContentLoaded", function() {
         updateTotalMarksDisplay();
